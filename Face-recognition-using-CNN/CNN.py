@@ -41,13 +41,15 @@ def load_data(train_folder, test_folder):
     return np.array(train_images), np.array(train_labels), np.array(test_images), np.array(test_labels)
 
 # 카테고리 지정하기
-
 nb_classes = 30
+
 # 이미지 크기 지정하기
 image_w = 64
 image_h = 64
+
 # 데이터 열기 
 X_train, y_train, X_test, y_test = load_data('train_img','test_img')
+
 # 데이터 정규화하기(0~1사이로)
 X_train = X_train.astype("float") / 256
 X_test  = X_test.astype("float")  / 256
