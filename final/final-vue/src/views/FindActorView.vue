@@ -1,0 +1,88 @@
+<template>
+  <div class="upload-image">
+    <h1>Find Similar Actor</h1>
+    <input type="file" @change="onFileChange" accept="image/*" />
+    <button @click="uploadImage" :disabled="!selectedFile">Upload</button>
+    
+    <div v-if="similarActor" class="result">
+      <h2>{{ similarActor }}</h2>
+      <img :src="actorImageUrl" alt="Similar Actor Image" v-if="actorImageUrl" />
+      <button @click="shareResult">Share</button>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+import axios from 'axios'
+
+const selectedFile = ref(null)
+const similarActor = ref(null)
+let actorImageUrl = ref(null)
+
+const onFileChange = (event) => {
+  selectedFile.value = event.target.files[0]
+};
+
+const uploadImage = async () => {
+  if (!selectedFile.value) return
+
+  const formData = new FormData()
+  formData.append('image', selectedFile.value)
+
+  try {
+    const response = await axios.post('http://localhost:8000/articles/find_similar_actor/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    similarActor.value = response.data.similar_actor
+    actorImageUrl.value = response.data.img_url
+
+    console.log('로그데이터입니다..')
+    console.log(response.data.img_url)
+    console.log(actorImageUrl)
+
+  } catch (error) {
+    console.error('Error uploading image:', error)
+  }
+};
+
+const shareResult = async () => {
+  if (!similarActor.value) {
+    alert('No result to share.')
+    return
+  }
+
+  const formData = new FormData();
+  formData.append('title', `Prediction result: ${similarActor.value}`)
+  formData.append('content', `This image was predicted to be similar to ${similarActor.value}.`)
+  formData.append('image', selectedFile.value)
+
+  try {
+    await axios.post('http://localhost:8000/upload_post/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    alert('Result shared successfully!')
+  } catch (error) {
+    console.error('Error sharing result:', error)
+  }
+};
+</script>
+
+<style scoped>
+.upload-image {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.result {
+  margin-top: 20px;
+}
+.result img {
+  max-width: 200px;
+  margin-top: 10px;
+}
+</style>
