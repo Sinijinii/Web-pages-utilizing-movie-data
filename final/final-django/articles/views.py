@@ -7,6 +7,13 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 from tensorflow.keras.models import load_model
+from .models import Post, Comment
+from .serializers import PostSerializer, CommentSerializer
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.contrib.auth import get_user_model
+
 
 # 배우 리스트
 actors = ['김다미', '김수현', '김우빈', '김지원', '김태리', '김혜수', '김혜윤', '마동석', '박보영', '박서준', '박신혜', '박은빈', '손석구',
@@ -64,3 +71,91 @@ def find_similar_actor(request):
         return JsonResponse({'similar_actor': predicted_actor, 'img_url':predicted_img})
     
     return JsonResponse({'error': 'POST method required'})
+
+
+
+
+# 결과 업로드
+
+@csrf_exempt
+def find_similar_actor(request):
+    if request.method == 'POST':
+        # 업로드된 파일 처리
+        image = request.FILES.get('image')
+        if image:
+            # 이미지 저장 (필요에 따라)
+            file_path = default_storage.save('uploads/' + image.name, image)
+            # 이미지 유사도 분석 로직 추가
+            similar_actor = "Sample Actor"  # 여기에 실제 유사도 분석 로직을 추가
+            img_url = request.build_absolute_uri('/media/' + file_path)
+            return JsonResponse({'similar_actor': similar_actor, 'img_url': img_url})
+        return JsonResponse({'error': 'No image provided'}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+@csrf_exempt
+def upload_post(request):
+    if request.method == 'POST':
+        # 업로드된 파일과 데이터 처리
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        image = request.FILES.get('image')
+        if title and content and image:
+            # 이미지 저장
+            file_path = default_storage.save('uploads/' + image.name, image)
+            # 포스트 저장 로직 추가 (예: 데이터베이스에 저장)
+            return JsonResponse({'message': 'Post uploaded successfully'})
+        return JsonResponse({'error': 'Missing required fields'}, status=400)
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+
+
+# 커뮤니티
+User = get_user_model()
+
+@api_view(['GET'])
+def get_posts(request):
+    posts = Post.objects.all().order_by('-created_at')
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_my_posts(request):
+    posts = Post.objects.filter(user=request.user).order_by('-created_at')
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def like_post(request, post_id):
+    post = Post.objects.get(id=post_id)
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
+    return Response({'status': 'success'})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def add_comment(request, post_id):
+    post = Post.objects.get(id=post_id)
+    comment = Comment.objects.create(
+        post=post,
+        user=request.user,
+        text=request.data['text']
+    )
+    serializer = CommentSerializer(comment)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def follow_user(request, user_id):
+    user_to_follow = User.objects.get(id=user_id)
+    if request.user.profile.following.filter(id=user_to_follow.id).exists():
+        request.user.profile.following.remove(user_to_follow)
+    else:
+        request.user.profile.following.add(user_to_follow)
+    return Response({'status': 'success'})
+
+

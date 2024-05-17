@@ -7,7 +7,7 @@
     <div v-if="similarActor" class="result">
       <h2>{{ similarActor }}</h2>
       <img :src="actorImageUrl" alt="Similar Actor Image" v-if="actorImageUrl" />
-      <button @click="shareResult">Share</button>
+      <router-link :to="{ name: 'SharePost', params: { similarActor: similarActor, actorImageUrl: actorImageUrl, selectedFile: selectedFile }}">Share</router-link>
     </div>
   </div>
 </template>
@@ -39,35 +39,8 @@ const uploadImage = async () => {
     similarActor.value = response.data.similar_actor
     actorImageUrl.value = response.data.img_url
 
-    console.log('로그데이터입니다..')
-    console.log(response.data.img_url)
-    console.log(actorImageUrl)
-
   } catch (error) {
     console.error('Error uploading image:', error)
-  }
-};
-
-const shareResult = async () => {
-  if (!similarActor.value) {
-    alert('No result to share.')
-    return
-  }
-
-  const formData = new FormData();
-  formData.append('title', `Prediction result: ${similarActor.value}`)
-  formData.append('content', `This image was predicted to be similar to ${similarActor.value}.`)
-  formData.append('image', selectedFile.value)
-
-  try {
-    await axios.post('http://localhost:8000/upload_post/', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    alert('Result shared successfully!')
-  } catch (error) {
-    console.error('Error sharing result:', error)
   }
 };
 </script>
