@@ -35,7 +35,7 @@ export const useCounterStore = defineStore('counter', () => {
 
   const signUp = function (payload) {
     // 1. 사용자 입력 데이터를 받아
-    const { username, password1, password2 } = payload
+    const { username, password1, password2, selectedMovies } = payload
 
     // 2. axios로 django에 요청을 보냄
     axios({
@@ -46,15 +46,36 @@ export const useCounterStore = defineStore('counter', () => {
       }
     })
      .then((response) => {
-       console.log('회원가입 성공!')
-       const password = password1
-       logIn({ username, password })
-     })
-     .catch((error) => {
-       console.log(error)
-     })
+        console.log('회원가입 성공!')
+        saveinfo( selectedMovies )
+
+        const password = password1
+        logIn({ username, password })
+       })
+       .catch((error) => {
+         console.log(error)
+       })
   }
 
+  const saveinfo = function (selectedMovies) {
+    // for (const movie of selectedMovies) {
+    //   console.log(movie)
+      axios({
+        method: 'post',
+        url: `${API_URL}/accounts/saveinfo/`,
+        data: { selectedMovies },
+        // headers: {
+        //   Authorization: `Token ${token}`
+        // }
+      })
+      .then((response) => {
+        console.log('데이터 저장 성공')
+      })
+      .catch((error) => {
+        console.log('데이터 저장 실패');
+      })
+    }
+  
   const logIn = function (payload) {
     // 1. 사용자 입력 데이터를 받아
     const { username, password } = payload

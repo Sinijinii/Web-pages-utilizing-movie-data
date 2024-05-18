@@ -57,7 +57,7 @@ const movies = [
     { id: 158445, title: '7번방의 선물', image: "https://image.tmdb.org/t/p/w500//c9TqJPm4pZCuiEXumTayoNIrBSK.jpg"}
 ]
 //   나머지 영화들도 동일한 방식으로 추가
-const selectedMovies = ref([]);
+const selectedMovies = ref([])
 
 const toggleSelection = (movieId) => {
   const index = selectedMovies.value.indexOf(movieId);
@@ -78,7 +78,7 @@ const signUp = function () {
     username: username.value,
     password1: password1.value,
     password2: password2.value,
-    // selectedMovies: selectedMovies.value,
+    selectedMovies: selectedMovies.value,
   };
 
   store.signUp(payload);

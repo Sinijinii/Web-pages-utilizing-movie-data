@@ -11,10 +11,11 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from .serializers import UserInfoSerializer
 from .models import UserInfo
 
-@api_view(['POST', 'DELETE', 'PUT'])
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def saveinfo(request):
     if request.method == 'POST':
         serializer = UserInfoSerializer(data = request.data)
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            serializer.save(user=request.user)
             return Response(serializer.data, status=status.HTTP_200_OK)
