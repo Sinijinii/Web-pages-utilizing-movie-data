@@ -20,7 +20,7 @@ actors = ['김다미', '김수현', '김우빈', '김지원', '김태리', '김�
           '손예진', '송강호', '송중기', '송혜교', '수지', '신세경', '유승호', '유해진', '윤아', '이도현', '이동휘', '이병헌', '이세영', '이정재', '이주빈', '임시완', '전도연']
 
 # 모델 파일 경로
-MODEL_PATH = os.path.abspath('final\final-django\articles\CNN\model.h5')
+MODEL_PATH = os.path.abspath('C:/Users/yb/Desktop/Web-pages-utilizing-movie-data/final/final-django/articles/CNN/model.h5')
 print(MODEL_PATH)
 model = load_model(MODEL_PATH)
 
