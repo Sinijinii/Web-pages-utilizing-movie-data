@@ -2,7 +2,6 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
-import MainView from '@/views/MainView.vue'
 
 export const useCounterStore = defineStore('counter', () => {
   const movies = ref([])
@@ -47,6 +46,7 @@ export const useCounterStore = defineStore('counter', () => {
     })
      .then((response) => {
         console.log('회원가입 성공!')
+    // 선택한 영화를 저장
         saveinfo( selectedMovies )
 
         const password = password1
@@ -58,12 +58,12 @@ export const useCounterStore = defineStore('counter', () => {
   }
 
   const saveinfo = function (selectedMovies) {
-    // for (const movie of selectedMovies) {
-    //   console.log(movie)
+    for (const movie of selectedMovies) {
+      console.log(movie)
       axios({
         method: 'post',
-        url: `${API_URL}/accounts/saveinfo/`,
-        data: { selectedMovies },
+        url: `${API_URL}/accounts/:user_pk/saveinfo/`,
+        data: { movie },
         // headers: {
         //   Authorization: `Token ${token}`
         // }
@@ -75,6 +75,7 @@ export const useCounterStore = defineStore('counter', () => {
         console.log('데이터 저장 실패');
       })
     }
+  }
   
   const logIn = function (payload) {
     // 1. 사용자 입력 데이터를 받아

@@ -7,5 +7,6 @@ urlpatterns = [
     path('api/v1/', include('movies.urls')),
     path('accounts/', include('dj_rest_auth.urls')),
     path('accounts/signup/', include('dj_rest_auth.registration.urls')),
-    path('accounts/saveinfo/', views.saveinfo)
+    path('accounts/<int:user_pk>/saveinfo/', views.saveinfo),
+    path('accounts/user/<int')
 ]

@@ -12,10 +12,10 @@ from .serializers import UserInfoSerializer
 from .models import UserInfo
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def saveinfo(request):
+# @permission_classes([IsAuthenticated])
+def saveinfo(request, user_pk):
     if request.method == 'POST':
         serializer = UserInfoSerializer(data = request.data)
         if serializer.is_valid(raise_exception=True):
-            serializer.save(user=request.user)
+            serializer.save(user_id=user_pk)
             return Response(serializer.data, status=status.HTTP_200_OK)

@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import MainView from '@/views/MainView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import LogInView from '@/views/LogInView.vue'
+import MyPageView from '@/views/MyPageView.vue'
+import { useCounterStore } from '@/stores/counter'
 
 
 const router = createRouter({
@@ -22,9 +24,12 @@ const router = createRouter({
       name: 'LogInView',
       component: LogInView
     },
+    {
+      path: '/mypage/:userId',
+      name: 'MyPageView',
+      component: MyPageView
+    }
   ]})
-
-  import { useCounterStore } from '@/stores/counter'
 
   router.beforeEach((to, from) => {
     const store = useCounterStore()
