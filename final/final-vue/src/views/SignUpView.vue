@@ -55,8 +55,8 @@ const movies = [
     { id: 634649, title: '스파이더맨 : 노 웨이 홈', image: "https://image.tmdb.org/t/p/w500//fvqoI9r1GU2EFkc0xjZ6dKCuDVR.jpg" },
     { id: 157336, title: '인터스텔라', image: "https://image.tmdb.org/t/p/w500//zDNAeWU0PxKolEX1D8Vn1qWhGjH.jpg" },
     { id: 158445, title: '7번방의 선물', image: "https://image.tmdb.org/t/p/w500//c9TqJPm4pZCuiEXumTayoNIrBSK.jpg"}
-  // 나머지 영화들도 동일한 방식으로 추가
 ]
+//   나머지 영화들도 동일한 방식으로 추가
 const selectedMovies = ref([]);
 
 const toggleSelection = (movieId) => {
@@ -78,7 +78,7 @@ const signUp = function () {
     username: username.value,
     password1: password1.value,
     password2: password2.value,
-    selectedMovies: selectedMovies.value,
+    // selectedMovies: selectedMovies.value,
   };
 
   store.signUp(payload);
