@@ -14,17 +14,23 @@
   <script setup>
   import { ref, onMounted } from 'vue'
   import axios from 'axios'
-  
+  import { useCounterStore } from '@/stores/counter'
+
   const posts = ref([])
+  const store = useCounterStore()
   
   const fetchMyPosts = async () => {
-    try {
-      const response = await axios.get('http://localhost:8000/api/my_posts/')
-      posts.value = response.data
-    } catch (error) {
-      console.error('Error fetching posts:', error)
-    }
+  try {
+    const response = await axios.get('http://localhost:8000/articles/my_posts/', {
+      headers: {
+        Authorization: `Token ${store.token}`,
+      },
+    })
+    posts.value = response.data
+  } catch (error) {
+    console.error('Error fetching posts:', error)
   }
+}
   
   onMounted(fetchMyPosts)
   </script>

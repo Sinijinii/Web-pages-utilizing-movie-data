@@ -116,10 +116,34 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
 
+  const uploadResult = function (content, img_url) {
+    const formData = new FormData()
+    formData.append('content', content)
+    formData.append('image', img_url)
+    axios({
+      method: 'post',
+      url: `${API_URL}/articles/upload_result/`,
+      data:formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Token ${token.value}`,
+      }
+
+    })
+      .then((response) => {
+        console.log(response);
+        alert('Post shared successfully!')
+        router.push('/community')
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
+
 
 
   const uploadPost = function (content) {
-
     const formData = new FormData()
     formData.append('content', content)
     formData.append('image', selectedFile.value)
@@ -158,7 +182,7 @@ export const useCounterStore = defineStore('counter', () => {
 
 
 
-  return { movies, API_URL, getMovies, signUp, logIn, token, isLogin, 
-    selectedFile, similarActor, actorImageUrl, setFile, uploadImage, uploadPost 
+  return { movies, API_URL, getMovies, signUp, logIn, token, isLogin, uploadResult,
+    selectedFile, similarActor, actorImageUrl, setFile, uploadImage, uploadPost
    }
 }, { persist: true })

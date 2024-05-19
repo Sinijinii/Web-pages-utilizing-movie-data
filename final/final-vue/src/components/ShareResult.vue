@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useCounterStore } from '@/stores/counter'
 
@@ -18,14 +18,12 @@ const fileStore = useCounterStore()
 
 const actorImageUrl = route.params.actorImageUrl
 const similarActor = route.params.similarActor
-
+console.log('print해봄');
+console.log(actorImageUrl.value);
 const content = ref('')
 
 const sharePost = async () => {
-  console.log(similarActor)
-  console.log(content.value);
-  
-  await fileStore.sharePost(similarActor, content.value, actorImageUrl)
+  fileStore.uploadResult(content.value, actorImageUrl)
 }
 </script>
 

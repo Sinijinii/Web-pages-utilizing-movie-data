@@ -8,11 +8,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 from django.contrib.auth.decorators import login_required
 from tensorflow.keras.models import load_model
-from .models import Post, Comment
+from .models import *
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import authentication_classes, permission_classes
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from django.shortcuts import get_object_or_404
@@ -98,6 +100,27 @@ def upload_post(request):
 
 
 
+# 커뮤니티
+@csrf_exempt
+@api_view(['POST'])
+def upload_result(request):
+    if request.method == 'POST':
+        data = {
+                'content': request.POST.get('content'),
+                'image': request.POST.get('image'),
+                'user': request.user.id
+            }
+        Post.objects.create(
+            content=request.POST.get('content'),
+            image= request.POST.get('image'),
+            user= request.user
+        )
+        print()
+        return Response(data,status=status.HTTP_201_CREATED)
+    return JsonResponse({'error': 'POST method required'}, status=405)
+
+
+
 
 # 커뮤니티
 @csrf_exempt
@@ -112,11 +135,13 @@ def create_post(request):
         data = {
                 'content': request.POST.get('content'),
                 'image': request.FILES.get('image'),
+                'user': request.user.id
             }
+        print(data)
         serializer = PostSerializer(data=data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
+            print('여길 통과하지 못한거니?')
             serializer.save(user=request.user)
-            serializer.save()
             print('serializer검증을 했다고....ㅠㅜ')
             print(request.user)
             # post.user = request.user
@@ -127,40 +152,65 @@ def create_post(request):
         # return JsonResponse({'success': True, 'post_id': post.id, 'image_url': image_url})
     return JsonResponse({'error': 'POST method required'}, status=405)
 
+
+
 @api_view(['GET'])
 def get_posts(request):
     posts = Post.objects.all().order_by('-created_at')
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
-@login_required
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def my_posts(request):
+    user = request.user
+    posts = Post.objects.filter(user=user).order_by('-created_at')
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def following_posts(request):
+    user = request.user
+    following = Follow.objects.filter(follower=user).values_list('following_id', flat=True)
+    posts = Post.objects.filter(user__in=following).order_by('-created_at')
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)
+
+
+
+User = get_user_model()
+
 @api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def follow_user(request, user_id):
+    follower = request.user
+    following = get_object_or_404(User, id=user_id)
+    if follower != following:
+        Follow.objects.get_or_create(follower=follower, following=following)
+        return Response({'status': 'followed'}, status=status.HTTP_200_OK)
+    return Response({'status': 'cannot follow yourself'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    if request.user in post.likes.all():
-        post.likes.remove(request.user)
-        liked = False
+    user = request.user
+    if post.likes.filter(id=user.id).exists():
+        post.likes.remove(user)
+        return Response({'status': 'unliked'}, status=status.HTTP_200_OK)
     else:
-        post.likes.add(request.user)
-        liked = True
-    return JsonResponse({'liked': liked, 'likes_count': post.likes.count()})
+        post.likes.add(user)
+        return Response({'status': 'liked'}, status=status.HTTP_200_OK)
 
 
-@login_required
-@api_view(['POST'])
-def follow_user(request, user_id):
-    user_to_follow = get_object_or_404(User, id=user_id)
-    if request.user in user_to_follow.followers.all():
-        user_to_follow.followers.remove(request.user)
-        followed = False
-    else:
-        user_to_follow.followers.add(request.user)
-        followed = True
-    return JsonResponse({'followed': followed, 'followers_count': user_to_follow.followers.count()})
-
-
-
-@csrf_exempt
 def create_comment(request):
     if request.method == 'POST':
         data = json.loads(request.body)

@@ -29,7 +29,6 @@ import { useRouter } from 'vue-router'
 import { useCounterStore } from '@/stores/counter'
 
 const fileStore = useCounterStore()
-const router = useRouter()
 
 const step = ref(0)
 const selectedFile = ref(null)
@@ -38,10 +37,12 @@ const content = ref("")
 
 const onFileChange = (event) => {
   const file = event.target.files[0]
+  console.log('똑같은거지?');
   console.log(event.target.files[0]);
   if (file) {
     selectedFile.value = file
     imageURL.value = URL.createObjectURL(file)
+    console.log(file);
     fileStore.setFile(file)
   }
 
@@ -57,6 +58,8 @@ const sharePost = async () => {
   step.value = 2
 }
 </script>
+
+
 
 <style scoped>
 .upload-container {

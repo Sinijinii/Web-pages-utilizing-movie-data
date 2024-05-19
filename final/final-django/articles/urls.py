@@ -7,5 +7,9 @@ urlpatterns = [
     path('get_posts/', views.get_posts, name='get_posts'),
     path('create_comment/', views.create_comment, name='create_comment'),
     path('like_post/<int:post_id>/', views.like_post, name='like_post'),
+    path('following_posts/', views.following_posts, name='following_posts'),
+    path('upload_result/',views.upload_result, name='upload_result'),
+    path('my_posts/', views.my_posts, name='my_posts'),
     path('follow_user/<int:user_id>/', views.follow_user, name='follow_user'),
+    
 ]
