@@ -6,6 +6,7 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
+from django.contrib.auth.decorators import login_required
 from tensorflow.keras.models import load_model
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
@@ -13,14 +14,16 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
-
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+import json
 
 # 배우 리스트
 actors = ['김다미', '김수현', '김우빈', '김지원', '김태리', '김혜수', '김혜윤', '마동석', '박보영', '박서준', '박신혜', '박은빈', '손석구',
           '손예진', '송강호', '송중기', '송혜교', '수지', '신세경', '유승호', '유해진', '윤아', '이도현', '이동휘', '이병헌', '이세영', '이정재', '이주빈', '임시완', '전도연']
 
 # 모델 파일 경로
-MODEL_PATH = os.path.abspath('C:/Users/yb/Desktop/Web-pages-utilizing-movie-data/final/final-django/articles/CNN/model.h5')
+MODEL_PATH = os.path.abspath('C:/Users/oops5/OneDrive/Desktop/SSAFY/fin_pjt/Web-pages-utilizing-movie-data/final/final-django/articles/CNN/model.h5')
 print(MODEL_PATH)
 model = load_model(MODEL_PATH)
 
@@ -31,10 +34,10 @@ print(face_cascade)
 def preprocess_image(image):
     image = cv2.resize(image, (35, 35))
     image = image.astype("float") / 255.0
-    print('전처리 완료')
+    # print('전처리 완료')
     return image
 
-@csrf_exempt
+@api_view(['POST'])
 def find_similar_actor(request):
     if request.method == 'POST':
         image_file = request.FILES['image']
@@ -55,16 +58,16 @@ def find_similar_actor(request):
         processed_image = preprocess_image(cropped)
         
         # 모델에 전달하여 예측 수행
-        print(processed_image)
+        # print(processed_image)
         prediction = model.predict(np.expand_dims(processed_image, axis=0))
         
         # 예측 결과에서 가장 높은 확률의 클래스 선택
-        print(prediction)
+        # print(prediction)
         predicted_class = np.argmax(prediction)
         
         # 클래스를 배우의 이름으로 변환
         predicted_actor = actors[predicted_class]
-        print(predicted_actor)
+        # print(predicted_actor)
 
         predicted_img = f'final/image/{predicted_class}.jpg'
 
@@ -75,27 +78,13 @@ def find_similar_actor(request):
 
 
 
-# 결과 업로드
-
-@csrf_exempt
-def find_similar_actor(request):
-    if request.method == 'POST':
-        # 업로드된 파일 처리
-        image = request.FILES.get('image')
-        if image:
-            # 이미지 저장 (필요에 따라)
-            file_path = default_storage.save('uploads/' + image.name, image)
-            # 이미지 유사도 분석 로직 추가
-            similar_actor = "Sample Actor"  # 여기에 실제 유사도 분석 로직을 추가
-            img_url = request.build_absolute_uri('/media/' + file_path)
-            return JsonResponse({'similar_actor': similar_actor, 'img_url': img_url})
-        return JsonResponse({'error': 'No image provided'}, status=400)
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
-
-@csrf_exempt
+@api_view(['POST'])
 def upload_post(request):
+    print(request.method)
     if request.method == 'POST':
         # 업로드된 파일과 데이터 처리
+        print('여기는 articles의 view함수입니다.')
+        print(request.POST)
         title = request.POST.get('title')
         content = request.POST.get('content')
         image = request.FILES.get('image')
@@ -111,7 +100,32 @@ def upload_post(request):
 
 
 # 커뮤니티
-User = get_user_model()
+@csrf_exempt
+@api_view(['POST'])
+def create_post(request):
+    if request.method == 'POST':
+        print('여기는 create_post')
+        print(request.POST.get('content'))
+        print(request.FILES['image'])
+        print('여기다')
+        print(request.user.id)
+        data = {
+                'content': request.POST.get('content'),
+                'image': request.FILES.get('image'),
+            }
+        serializer = PostSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            serializer.save()
+            print('serializer검증을 했다고....ㅠㅜ')
+            print(request.user)
+            # post.user = request.user
+            # post.save()
+            # print(post)
+            print('성공했니? 여기는 view의 create_post야')
+            return Response( serializer.data,status=status.HTTP_201_CREATED)
+        # return JsonResponse({'success': True, 'post_id': post.id, 'image_url': image_url})
+    return JsonResponse({'error': 'POST method required'}, status=405)
 
 @api_view(['GET'])
 def get_posts(request):
@@ -119,43 +133,44 @@ def get_posts(request):
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_my_posts(request):
-    posts = Post.objects.filter(user=request.user).order_by('-created_at')
-    serializer = PostSerializer(posts, many=True)
-    return Response(serializer.data)
-
+@login_required
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
 def like_post(request, post_id):
-    post = Post.objects.get(id=post_id)
+    post = get_object_or_404(Post, id=post_id)
     if request.user in post.likes.all():
         post.likes.remove(request.user)
+        liked = False
     else:
         post.likes.add(request.user)
-    return Response({'status': 'success'})
+        liked = True
+    return JsonResponse({'liked': liked, 'likes_count': post.likes.count()})
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def add_comment(request, post_id):
-    post = Post.objects.get(id=post_id)
-    comment = Comment.objects.create(
-        post=post,
-        user=request.user,
-        text=request.data['text']
-    )
-    serializer = CommentSerializer(comment)
-    return Response(serializer.data)
 
+@login_required
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
 def follow_user(request, user_id):
-    user_to_follow = User.objects.get(id=user_id)
-    if request.user.profile.following.filter(id=user_to_follow.id).exists():
-        request.user.profile.following.remove(user_to_follow)
+    user_to_follow = get_object_or_404(User, id=user_id)
+    if request.user in user_to_follow.followers.all():
+        user_to_follow.followers.remove(request.user)
+        followed = False
     else:
-        request.user.profile.following.add(user_to_follow)
-    return Response({'status': 'success'})
+        user_to_follow.followers.add(request.user)
+        followed = True
+    return JsonResponse({'followed': followed, 'followers_count': user_to_follow.followers.count()})
 
+
+
+@csrf_exempt
+def create_comment(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user = request.user
+        post_id = data.get('post_id')
+        text = data.get('text')
+        
+        post = Post.objects.get(id=post_id)
+        comment = Comment.objects.create(user=user, post=post, text=text)
+        
+        return JsonResponse({'success': True, 'comment_id': comment.id, 'text': comment.text})
+    return JsonResponse({'error': 'POST method required'})
 

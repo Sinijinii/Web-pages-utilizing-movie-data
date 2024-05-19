@@ -69,6 +69,8 @@ export const useCounterStore = defineStore('counter', () => {
       .then((response) => {
         // 3. 로그인 성공 후 응답 받은 토큰을 저장
         token.value = response.data.key
+        console.log('로그인 성공 후 ');
+        console.log(token.value);
         router.push({ name : 'MainView' })
       })
       .catch((error) => {
@@ -76,5 +78,87 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
 
-  return { movies, API_URL, getMovies, signUp, logIn, token, isLogin }
+
+
+  // SharePost부분
+  const selectedFile = ref(null)
+  const similarActor = ref('')
+  const actorImageUrl = ref('')
+  //커뮤니티
+  const posts = ref([])
+
+  const setFile = (file) => {
+    selectedFile.value = file
+  }
+
+  const uploadImage = () => {
+    if (!selectedFile.value) return
+
+    const formData = new FormData()
+    formData.append('image', selectedFile.value)
+    
+    axios({
+      method: 'post',
+      url: `${API_URL}/articles/find_similar_actor/`,
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Token ${token.value}`,
+      }
+    })
+      .then((response) => {
+        similarActor.value = response.data.similar_actor
+        actorImageUrl.value = response.data.img_url
+        console.log('Image upload successful:', response.data)
+      })
+      .catch((error) => {
+        console.error('Error uploading image:', error)
+      })
+  }
+
+
+
+  const uploadPost = function (content) {
+
+    const formData = new FormData()
+    formData.append('content', content)
+    formData.append('image', selectedFile.value)
+    console.log('너 값이 있니?');
+    console.log(token.value)
+    axios({
+      method: 'post',
+      url: `${API_URL}/articles/create_post/`,
+      data:formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Token ${token.value}`,
+      }
+
+    })
+      .then((response) => {
+        console.log(response);
+        alert('Post shared successfully!')
+        router.push('/community')
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
+
+
+  const getPosts = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/articles/get_posts/`)
+      posts.value = response.data
+    } catch (error) {
+      console.error('Error fetching posts:', error)
+    }
+  }
+
+
+
+  return { movies, API_URL, getMovies, signUp, logIn, token, isLogin, 
+    selectedFile, similarActor, actorImageUrl, setFile, uploadImage, uploadPost 
+   }
 }, { persist: true })
