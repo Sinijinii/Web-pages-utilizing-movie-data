@@ -2,12 +2,15 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
-import MainView from '@/views/MainView.vue'
 
 export const useCounterStore = defineStore('counter', () => {
   const movies = ref([])
   const API_URL = 'http://127.0.0.1:8000'
   const token = ref(null)
+  const LoginUsername = ref(null)
+  const router = useRouter()
+
+// 로그인 여부
   const isLogin = computed(() => {
     if (token.value === null) {
       return false
@@ -15,8 +18,8 @@ export const useCounterStore = defineStore('counter', () => {
       return true
     }
   })
-  const router = useRouter()
 
+// 영화목록 불러오기
   const getMovies = function () {
     axios({
       method: 'get',
@@ -33,6 +36,7 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
 
+// 회원가입
   const signUp = function (payload) {
     // 1. 사용자 입력 데이터를 받아
     const { username, password1, password2 } = payload
@@ -46,15 +50,38 @@ export const useCounterStore = defineStore('counter', () => {
       }
     })
      .then((response) => {
-       console.log('회원가입 성공!')
-       const password = password1
-       logIn({ username, password })
-     })
-     .catch((error) => {
-       console.log(error)
-     })
+        console.log('회원가입 성공!')
+    // 선택한 영화를 저장
+        const password = password1
+        logIn({ username, password })
+       })
+       .catch((error) => {
+         console.log(error)
+       })
   }
 
+// 유저 정보저장
+  const saveinfo = function (selectedMovies) {
+    for (const movie of selectedMovies) {
+      console.log(movie)
+      axios({
+        method: 'post',
+        url: `${API_URL}/${LoginUsername.value}/saveinfo/`,
+        data: { movie },
+        headers: {
+          Authorization: `Token ${token}`
+        }
+      })
+      .then((response) => {
+        console.log('데이터 저장 성공')
+      })
+      .catch((error) => {
+        console.log('데이터 저장 실패');
+      })
+    }
+  }
+
+// 로그인
   const logIn = function (payload) {
     // 1. 사용자 입력 데이터를 받아
     const { username, password } = payload
@@ -66,15 +93,16 @@ export const useCounterStore = defineStore('counter', () => {
         username, password
       }
     })
-      .then((response) => {
-        // 3. 로그인 성공 후 응답 받은 토큰을 저장
+    .then((response) => {
+      // 3. 로그인 성공 후 응답 받은 토큰을 저장
+        LoginUsername.value = username
         token.value = response.data.key
+        console.log(token.value);
         router.push({ name : 'MainView' })
       })
       .catch((error) => {
         console.log(error)
       })
   }
-
-  return { movies, API_URL, getMovies, signUp, logIn, token, isLogin }
+  return { movies, API_URL, token, isLogin, LoginUsername, getMovies, signUp, logIn, saveinfo}
 }, { persist: true })
