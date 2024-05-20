@@ -10,6 +10,8 @@ import ProfileView from '@/views/ProfileView.vue'
 import { useCounterStore } from '@/stores/counter'
 import FollowingView from '@/views/FollowingView.vue'
 import { useCounterStore } from '@/stores/counter'
+import MyPageView from '@/views/MyPageView.vue'
+import { useCounterStore } from '@/stores/counter'
 
 
 const router = createRouter({
@@ -30,6 +32,27 @@ const router = createRouter({
       name: 'LogInView',
       component: LogInView
     },
+    {
+      path: '/mypage/:userId',
+      name: 'MyPageView',
+      component: MyPageView
+    }
+  ]})
+
+  router.beforeEach((to, from) => {
+    const store = useCounterStore()
+    // 인증되지 않은 사용자는 메인 페이지에 접근 할 수 없음
+    if (to.name === 'MainView' && store.isLogin === false) {
+      window.alert('로그인이 필요해요!!')
+      return { name: 'LogInView' }
+    }
+  
+    // 인증된 사용자는 회원가입과 로그인 페이지에 접근 할 수 없음
+    if ((to.name === 'SignUpView' || to.name === 'LogInView') && (store.isLogin === true)) {
+      window.alert('이미 로그인 했습니다.')
+      return { name: 'MainView' }
+    }
+  })
     {
       path: '/recommand',
       name: 'UserRecommandView',

@@ -18,8 +18,8 @@ class Movie(models.Model):
     ott_platforms = models.ManyToManyField('OTTPlatform', related_name='movies')
     # users = models.ManyToManyField(User, related_name='movies')
 
-    def __str__(self):
-        return self.title
+    # def __str__(self):
+    #     return self.title
 
 # OTT 플랫폼 모델
 class OTTPlatform(models.Model):
@@ -27,13 +27,13 @@ class OTTPlatform(models.Model):
     platformId = models.IntegerField()
     logopath = models.CharField(max_length=255)
 
-    def __str__(self):
-        return self.name
+    # def __str__(self):
+    #     return self.name
 
 # 장르 모델
 class Genre(models.Model):
     name = models.CharField(max_length=255)
     genreId = models.IntegerField()
 
-    def __str__(self):
-        return self.name
+    # def __str__(self):
+    #     return self.name
