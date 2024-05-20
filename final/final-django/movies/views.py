@@ -54,10 +54,34 @@ def MovieSimilarityView(request):
 
 
     result = {
-        "top_10_casts_selec2": [{"title": movie[0].title, "poster_path": movie[0].poster_path, "movie_id": movie[0].id} for movie in top_10_casts_selec2],
-        "top_10_genres_selec2": [{"title": movie[0].title, "poster_path": movie[0].poster_path, "movie_id": movie[0].id} for movie in top_10_genres_selec2]
-    }
-    print(result)
+    "top_10_casts_selec2": [
+        {
+            "title": movie[0].title,
+            "poster_path": movie[0].poster_path,
+            "movie_id": movie[0].id,
+            "casts": movie[0].casts,
+            "genres": [genre.name for genre in movie[0].genres.all()],  # genres 필드 순회하여 각 객체의 name 속성을 추출
+            "overview": movie[0].overview,
+            "ott_platforms": [platform.name for platform in movie[0].ott_platforms.all()]  # ott_platforms 필드 순회하여 각 객체의 name 속성을 추출
+        }
+        for movie in top_10_casts_selec2
+    ],
+    "top_10_genres_selec2": [
+        {
+            "title": movie[0].title,
+            "poster_path": movie[0].poster_path,
+            "movie_id": movie[0].id,
+            "casts": movie[0].casts,
+            "genres": [genre.name for genre in movie[0].genres.all()],  # genres 필드 순회하여 각 객체의 name 속성을 추출
+            "overview": movie[0].overview,
+            "ott_platforms": [platform.name for platform in movie[0].ott_platforms.all()]  # ott_platforms 필드 순회하여 각 객체의 name 속성을 추출
+        }
+        for movie in top_10_genres_selec2
+    ]}
+
+
+    print(f'프린트으으으으ㅡ으으으으으으응@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ {result}')
+
     return Response(result, status=status.HTTP_200_OK)
 
 
@@ -65,9 +89,14 @@ def MovieSimilarityView(request):
 def MovieDetail(request, movie_id):
     movie = Movie.objects.get(id=movie_id)
     data = {
-        'title': movie.title,
-        'poster_path': movie.poster_path,
+    'title': movie.title,
+    'poster_path': movie.poster_path,
+    'genres': [genre.name for genre in movie.genres.all()],  # genres 필드 순회하여 각 객체의 name 속성을 추출
+    'casts': movie.casts,
+    'overview': movie.overview,
+    'ott_platforms': [platform.name for platform in movie.ott_platforms.all()]  # ott_platforms 필드 순회하여 각 객체의 name 속성을 추출
     }
+
     return JsonResponse(data)
 
 

@@ -6,7 +6,7 @@
         <ul>
             <li v-for="movie in genreRecommendmovie" :key="movie.id">
                 <img :src="getPostUrl(movie.poster_path)" alt="영화 포스터" @click="movetodetail(movie.movie_id)"> <br>
-                {{ movie.title }}
+                {{ movie.title }} <br>
                 {{ movie }}
             </li>
         </ul>

@@ -241,6 +241,6 @@ export const useCounterStore = defineStore('counter', () => {
 
 
   return { movies, API_URL, getMovies, signUp, logIn, token, isLogin, uploadResult,isLogin, LoginUsername,getMovies, signUp, logIn, saveinfo,
-    selectedFile, similarActor, actorImageUrl, setFile, uploadImage, uploadPost
+    selectedFile, similarActor, actorImageUrl, setFile, uploadImage, uploadPost, getRecommend
    }
 }, { persist: true })

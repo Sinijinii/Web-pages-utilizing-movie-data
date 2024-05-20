@@ -53,11 +53,6 @@ const router = createRouter({
       component: SelectView
     },
     {
-      path: '/recommand',
-      name: 'UserRecommandView',
-      component: UserRecommandView
-    },
-    {
       path:'/upload',
       name:'UploadImage',
       component:UploadImage
@@ -102,8 +97,8 @@ const router = createRouter({
       path: '/post/:id/edit',
       name: 'EditPost',
       component: EditPost
-    }
-    
+    },
+    {
       path: '/mypage/:id/moreinfo/movies',
       name: 'Usermovie',
       component: Usermovie
