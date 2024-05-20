@@ -10,7 +10,15 @@
         </div>
     </div>
 
-    <div></div>
+    <div>
+      <h2>구독하신 ott를 선택하세요</h2>
+        <div v-for="ott in otts" :key="ott.id" class="ott-container" @click="toggleSelectionOtt(ott.id)">
+          <img :src="ott.logopath" :alt="ott.name" :class="{'selected': selectedotts.includes(ott.id)}">
+        <div>
+    </div>
+
+      </div>
+    </div>
     <button type="submit">입력</button>
   </form>
 </template>
@@ -50,7 +58,12 @@ const movies = [
     { id: 157336, title: '인터스텔라', image: "https://image.tmdb.org/t/p/w500//zDNAeWU0PxKolEX1D8Vn1qWhGjH.jpg" },
     { id: 158445, title: '7번방의 선물', image: "https://image.tmdb.org/t/p/w500//c9TqJPm4pZCuiEXumTayoNIrBSK.jpg"}
 ]
-
+const otts = [
+  { id: 8, name: 'Netflix', logopath: "https://image.tmdb.org/t/p/w500//pbpMk2JmcoNnQwx5JGpXngfoWtp.jpg" },
+  { id: 97, name: 'Watcha', logopath: "https://image.tmdb.org/t/p/w500//5gmEivxOGPdq4Afpq1f8ktLtEW1.jpg" },
+  { id: 337, name: 'Disney Plus', logopath: "https://image.tmdb.org/t/p/w500//97yvRBw1GzX7fXprcF80er19ot.jpg" }
+  ]
+//  수정
 const toggleSelection = (movieId) => {
   const index = selectedmovies.value.indexOf(movieId);
   if (index === -1) {
@@ -60,13 +73,21 @@ const toggleSelection = (movieId) => {
   }
 }
 
+const toggleSelectionOtt = (OttId) => {
+  const index = selectedotts.value.indexOf(OttId);
+  if (index === -1) {
+    selectedotts.value.push(OttId)
+  } else {
+    selectedotts.value.splice(index, 1)
+  }
+}
+
 
 const saveinfo = function () {
 if (selectedmovies.value.length < 3) {
   alert('최소 3개의 영화를 선택해주세요.');
   return;
 }
-console.log(selectedmovies.value);
 axios({
   method: 'post',
   url: `${store.API_URL}/${userId.value}/saveinfo/`,
@@ -80,11 +101,9 @@ axios({
       }
 })
 .then((response) => {
-  console.log('끼얏호우');
   router.push({name: 'MyPageView', params: {'username': store.LoginUsername}})
 })
 .catch((error) => {
-  console.log('실패!');
   console.log(error)
 })
 }
@@ -95,6 +114,36 @@ axios({
   display: inline-block;
   margin: 10px;
   cursor: pointer;
+}
+
+.ott-container {
+  display: inline-block;
+  margin: 10px;
+  cursor: pointer;
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.ott-container img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  display: block;
+  margin: auto;
+  position: absolute;
+  top: 0; 
+  bottom: 0; 
+  left: 0; 
+  right: 0;
+}
+
+.ott-container img.selected {
+  border: 5px solid blue;
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
 .movie-container img.selected {

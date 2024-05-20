@@ -3,14 +3,13 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from .models import UserInfo, Movie
+from .models import UserInfo, Movie, OTTPlatform
 
 # permission Decorators
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from django.shortcuts import get_object_or_404, get_list_or_404
-
 
 
 @api_view(['POST'])
@@ -22,14 +21,14 @@ def saveinfo(request, user_pk):
     except UserInfo.DoesNotExist:
         return Response({'error': 'UserInfo not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-    selectedmoviespks = userinfo.selectedmovies.values_list('pk', flat=True)
-    addlist = []
-    for mid in request.data['selectedmovies']:
-        if mid not in list(selectedmoviespks):
-            addlist.append(mid)
-    for adder in addlist:
-        userinfo.selectedmovies.add(Movie.objects.get(pk=adder))
+    userinfo.selectedmovies.clear()
+    userinfo.selectedotts.clear()
 
+    for mid in request.data['selectedmovies']:
+        userinfo.selectedmovies.add(Movie.objects.get(pk=mid))
+
+    for oid in request.data['selectedotts']:
+        userinfo.selectedotts.add(OTTPlatform.objects.get(pk=oid))
 
     return Response({'save':"success"}, status=status.HTTP_201_CREATED)
 
