@@ -5,7 +5,8 @@ import LogInView from '@/views/LogInView.vue'
 import MyPageView from '@/views/MyPageView.vue'
 import SelectView from '@/views/SelectView.vue'
 import Usermovie from "@/components/Usermovie.vue"
-import UserRecommandView from '@/views/UserRecommandView.vue'
+import UserRecommendView from '@/views/UserRecommendView.vue'
+import MovieDetail from '@/components/MovieDetail.vue'
 import UploadImage from '@/components/UploadImage.vue'
 import SharePost from '@/components/ShareResult.vue'
 import CommunityView from '@/views/CommunityView.vue'
@@ -103,6 +104,20 @@ const router = createRouter({
       component: EditPost
     }
     
+      path: '/mypage/:id/moreinfo/movies',
+      name: 'Usermovie',
+      component: Usermovie
+    },
+    {
+      path: '/recommend',
+      name: 'UserRecommendView',
+      component: UserRecommendView
+    },
+    {
+      path: '/detail/:movieId',
+      name: 'MovieDetail',
+      component: MovieDetail
+    },
   ]})
 
   router.beforeEach((to, from) => {
