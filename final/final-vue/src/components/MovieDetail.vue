@@ -8,7 +8,7 @@
         <h3>오티티 : {{ formatOtt(movie.ott_platforms) }}</h3>
     </div>
 </template>
-
+  
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
