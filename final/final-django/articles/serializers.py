@@ -17,11 +17,9 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'text', 'created_at']
 
 class PostSerializer(serializers.ModelSerializer):
-    comment_set = CommentSerializer(many=True, read_only=True)
-    comment_count = serializers.IntegerField(source='comment_set.count', read_only=True)
-    # likes_count = serializers.SerializerMethodField()
+    user = UserSerializer(read_only=True)
+    likes = UserSerializer(read_only=True, many=True)
+
     class Meta:
         model = Post
-        fields = '__all__'
-        read_only_fields = ('comment_set','comment_count')
-
+        fields = ['id', 'user', 'image', 'content', 'created_at', 'likes']

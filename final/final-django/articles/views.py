@@ -24,7 +24,15 @@ import json
 import urllib
 from PIL import Image
 from googletrans import Translator
+import os
+import time
+import random
 
+
+###########################################################################################
+# CNN 모델을 통한 닮은 꼴 배우 찾기
+# 사용자의 사진을 통해 CNN 모델을 돌림
+###########################################################################################
 
 # 배우 리스트
 actors = ['김다미', '김수현', '김우빈', '김지원', '김태리', '김혜수', '김혜윤', '마동석', '박보영', '박서준', '박신혜', '박은빈', '손석구',
@@ -85,6 +93,11 @@ def find_similar_actor(request):
 
 
 
+###########################################################################################
+# 커뮤니티활용 View
+# 
+###########################################################################################
+
 
 @api_view(['POST'])
 def upload_post(request):
@@ -106,7 +119,6 @@ def upload_post(request):
 
 
 
-# 커뮤니티
 @csrf_exempt
 @api_view(['POST'])
 def upload_result(request):
@@ -162,10 +174,29 @@ def create_post(request):
 
 @api_view(['GET'])
 def get_posts(request):
-    posts = Post.objects.all().order_by('-created_at')
+    posts = Post.objects.all().select_related('user').prefetch_related('likes').order_by('-created_at')
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
+
+@csrf_exempt
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id, user=request.user)
+    post.delete()
+    return JsonResponse({'message': 'Post deleted successfully'})
+
+
+@csrf_exempt
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id, user=request.user)
+    post.content = request.data.get('content', post.content)
+    post.save()
+    serializer = PostSerializer(post)
+    return Response(serializer.data)
 
 
 @api_view(['GET'])
@@ -173,9 +204,14 @@ def get_posts(request):
 @permission_classes([IsAuthenticated])
 def my_posts(request):
     user = request.user
+    print(user)
+    print('adsffffffffffffffffffffffffffffffffffffffffffffffffs')
     posts = Post.objects.filter(user=user).order_by('-created_at')
     serializer = PostSerializer(posts, many=True)
+    
+    print(serializer)
     return Response(serializer.data)
+
 
 
 @api_view(['GET'])
@@ -192,30 +228,37 @@ def following_posts(request):
 
 User = get_user_model()
 
+@csrf_exempt
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def follow_user(request, user_id):
-    follower = request.user
-    following = get_object_or_404(User, id=user_id)
-    if follower != following:
-        Follow.objects.get_or_create(follower=follower, following=following)
-        return Response({'status': 'followed'}, status=status.HTTP_200_OK)
-    return Response({'status': 'cannot follow yourself'}, status=status.HTTP_400_BAD_REQUEST)
+def follow_user(request):
+    user_id = request.data.get('user_id')
+    try:
+        user_to_follow = User.objects.get(id=user_id)
+        follow, created = Follow.objects.get_or_create(follower=request.user, following=user_to_follow)
+        if not created:
+            follow.delete()
+            following = False
+        else:
+            following = True
+        return JsonResponse({'following': following})
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
 
+@csrf_exempt
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
-@permission_classes([IsAuthenticated])
-def like_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
-    user = request.user
-    if post.likes.filter(id=user.id).exists():
-        post.likes.remove(user)
-        return Response({'status': 'unliked'}, status=status.HTTP_200_OK)
-    else:
-        post.likes.add(user)
-        return Response({'status': 'liked'}, status=status.HTTP_200_OK)
-
+def like_post(request):
+    post_id = request.data.get('post_id')
+    try:
+        post = Post.objects.get(id=post_id)
+        if request.user in post.likes.all():
+            post.likes.remove(request.user)
+            liked = False
+        else:
+            post.likes.add(request.user)
+            liked = True
+        return JsonResponse({'liked': liked, 'likes_count': post.likes.count()})
+    except Post.DoesNotExist:
+        return JsonResponse({'error': 'Post not found'}, status=404)
 
 def create_comment(request):
     if request.method == 'POST':
@@ -231,28 +274,45 @@ def create_comment(request):
     return JsonResponse({'error': 'POST method required'})
 
 
+
+###########################################################################################
+# 생성형 ai 이미지 출력
+# 사용자의 입력값을 기반으로 번역 후 이미지 출력
+###########################################################################################
 @csrf_exempt
 @api_view(['POST'])
 def GenerateImageView(request):
     if request.method == 'POST':
+
         keywords = request.POST.getlist('keywords[]')
+
         res = f'{keywords[3]}인 {keywords[1]}한 {keywords[0]}가 {keywords[5]}에 있는 {keywords[2]}이자 주인공인 {keywords[4]}장르의 영화 포스터인데, {keywords[6]} {keywords[7]}'
-        print(res)
-        # 프롬프트에 사용할 제시어
+        print(f"Constructed sentence: {res}")
+
+        # Google Cloud Translation API로 번역
         translator = Translator()
-        prompt = translator.translate(res,src='ko',dest='en')
-        print(prompt.text)
-        
+        prompt = translator.translate(res, src='ko', dest='en')
+        print(f"Translated prompt: {prompt.text}")
+
         negative_prompt = ""
 
-        # 이미지 생성하기 REST API 호출
         response = t2i(prompt.text, negative_prompt)
         img_url = response.get("images")[0].get("image")
-        print(img_url)
-        # 응답의 첫 번째 이미지 생성 결과 출력하기
-        return JsonResponse({'img_url':img_url})        
-    
+        randomint = random.random()
+        img_name = f"karlo_{randomint}.jpg"
+        print(f"Image URL: {img_url}")
+        img_path = os.path.join(settings.MEDIA_ROOT, 'post', img_name)
+        download(img_url,img_path)
 
+        return JsonResponse({'img_url': img_path})
+       
+       
+       
+from requests import get
+def download(url, file_name):
+    with open(file_name, "wb") as file:   # open in binary mode
+        response = get(url)               # get request
+        file.write(response.content)      # write to file
 
 
 
