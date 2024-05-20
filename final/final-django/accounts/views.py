@@ -20,15 +20,19 @@ from .models import UserInfo
 def saveinfo(request, user_pk):
     try:
         userinfo = UserInfo.objects.get(user_id=user_pk)
+
     except UserInfo.DoesNotExist:
         return Response({'error': 'UserInfo not found.'}, status=status.HTTP_404_NOT_FOUND)
     
     serializer = UserInfoSerializer(userinfo, data=request.data, partial=True)
+    print(serializer)
     if serializer.is_valid(raise_exception=True):
+        data = serializer.data
+        print(data)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])

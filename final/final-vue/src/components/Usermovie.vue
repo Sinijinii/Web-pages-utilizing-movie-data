@@ -18,7 +18,7 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useCounterStore } from '@/stores/counter'
 import axios from 'axios'
-import MyPageView from '@/views/MyPageView.vue';
+
 
 const store = useCounterStore()
 const selectedmovies = ref([])
@@ -60,17 +60,17 @@ const toggleSelection = (movieId) => {
 
 
 const saveinfo = function () {
-// console.log(selectedmovies.value);
 if (selectedmovies.value.length < 3) {
   alert('최소 3개의 영화를 선택해주세요.');
   return;
 }
+console.log(selectedmovies.value);
 axios({
   method: 'post',
   url: `${store.API_URL}/${userId.value}/saveinfo/`,
   data: {
-    selectedMovies: selectedmovies.value,
-    selectedOtts: selectedotts.value
+    'selectedmovies': selectedmovies.value,
+    'selectedotts': selectedotts.value
   },
   headers: {
         Authorization: `Token ${store.token}`
@@ -84,27 +84,6 @@ axios({
   console.log(error)
 })
 }
-
-
-    // for (const movie of selectedMovies) {
-    //   console.log(movie)
-    //   axios({
-    //     method: 'post',
-    //     url: `${API_URL}/${LoginUsername.value}/saveinfo/`,
-    //     data: { movie },
-    //     headers: {
-    //       Authorization: `Token ${token}`
-    //     }
-    //   })
-    //   .then((response) => {
-    //     console.log('데이터 저장 성공')
-    //   })
-    //   .catch((error) => {
-    //     console.log('데이터 저장 실패');
-    //   })
-    // }
-  // }
-
 </script>
 
 <style scoped>
