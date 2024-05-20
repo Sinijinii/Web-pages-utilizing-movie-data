@@ -1,12 +1,18 @@
 <template>
-  <div>App.vue // navbar 사용 [RouterLink로 로고, 추천영화, game, mypage]</div>
-  <!-- <RouterView /> -->
-  <MainView />
+    <nav>
+      <RouterLink :to="{ name: 'SignUpView' }">회원가입</RouterLink> |
+      <RouterLink :to="{ name: 'LogInView' }">로그인</RouterLink> |
+      <RouterLink :to="{ name: 'UserRecommandView' }">추천 영화</RouterLink> |
+      <RouterLink :to="{ name: 'Community' }">Community</RouterLink>
+    </nav>
+    <RouterView />
+
+
 </template>
 
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import MainView from './views/MainView.vue';
+// import MainView from './views/MainView.vue'
 </script>
 
 <style>

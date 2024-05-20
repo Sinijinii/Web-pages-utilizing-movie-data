@@ -1,0 +1,27 @@
+[{
+    "model": "movies.OTTPlatform",
+    "pk": 8,
+    "fields": {
+        "name": "Netflix",
+        "platformId": 8,
+        "logopath": "/pbpMk2JmcoNnQwx5JGpXngfoWtp.jpg"
+    }
+},
+{
+    "model": "movies.OTTPlatform",
+    "pk": 97,
+    "fields": {
+        "name": "Watcha",
+        "platformId": 97,
+        "logopath": "/5gmEivxOGPdq4Afpq1f8ktLtEW1.jpg"
+    }
+},
+{
+    "model": "movies.OTTPlatform",
+    "pk": 337,
+    "fields": {
+        "name": "Disney Plus",
+        "platformId": 337,
+        "logopath": "/97yvRBw1GzX7fXprcF80er19ot.jpg"
+    }
+}]
