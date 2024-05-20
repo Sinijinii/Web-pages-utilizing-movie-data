@@ -1,7 +1,7 @@
 <template>
   <div class="share-post">
     <h1>Share Your Result</h1>
-    <img :src="actorImageUrl" alt="Similar Actor Image" /> <br>
+    <img :src="`${store.API_URL}${actorImageUrl}`" alt="Similar Actor Image" /> <br>
     {{ similarActor }} <br>
     <textarea v-model="content" placeholder="Write something..."></textarea>
     <button @click="sharePost">Share</button>

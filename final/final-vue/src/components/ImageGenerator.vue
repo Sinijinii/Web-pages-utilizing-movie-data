@@ -19,7 +19,7 @@
         <div v-if="isLoading">Loading...</div>
         <div v-if="imageUrl && !isLoading">
           <h2>Generated Image</h2>
-          <img :src="imageUrl" alt="Generated Image" />
+          <img :src="`${store.API_URL}${imageUrl}`" alt="Generated Image" />
           <button @click="ShareResult">Share</button>
         </div>
       </div>
@@ -76,7 +76,6 @@
   const selectedOptions = ref([]); // 선택된 옵션들
   const imageUrl = ref('') //이미지 저장할 곳
   const isLoading = ref(false); // 로딩 상태
-
 
   const nextStep = () => {
     step.value++;

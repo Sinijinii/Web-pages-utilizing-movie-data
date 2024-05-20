@@ -4,7 +4,7 @@ import SignUpView from '@/views/SignUpView.vue'
 import LogInView from '@/views/LogInView.vue'
 import MyPageView from '@/views/MyPageView.vue'
 import SelectView from '@/views/SelectView.vue'
-import Usermovie from "@/components/Usermovie.vue";
+import Usermovie from "@/components/Usermovie.vue"
 import UserRecommandView from '@/views/UserRecommandView.vue'
 import UploadImage from '@/components/UploadImage.vue'
 import SharePost from '@/components/ShareResult.vue'
@@ -14,6 +14,8 @@ import { useCounterStore } from '@/stores/counter'
 import FollowingView from '@/views/FollowingView.vue'
 import FindActorView from '@/views/FindActorView.vue'
 import ImageGenerator from '@/components/ImageGenerator.vue'
+import PostDetail from '@/components/PostDetail.vue'
+import EditPost from '@/components/EditPost.vue'
 
 
 const router = createRouter({
@@ -89,6 +91,16 @@ const router = createRouter({
       path: '/ImageGenerator',
       name: 'ImageGenerator',
       component: ImageGenerator
+    },
+    {
+      path: '/post/:id',
+      name: 'PostDetail',
+      component: PostDetail
+    },
+    {
+      path: '/post/:id/edit',
+      name: 'EditPost',
+      component: EditPost
     }
     
   ]})

@@ -11,8 +11,12 @@
     <div class="posts">
       <h1>Community Posts</h1>
       <div v-for="post in posts" :key="post.id" class="post">
-        <h2>{{ post.user.username }}</h2>
-        <img :src="post.image" alt="Post Image" />
+        <RouterLink :to="{ name: 'PostDetail', params: { id: post.id } }">View Details</RouterLink>
+        <!-- <div v-if="post.user.id === store.user.id"> -->
+          <button @click="deletePost(post.id)">Delete</button>
+          <RouterLink :to="{ name: 'EditPost', params: { id: post.id } }">Edit</RouterLink>
+        <!-- </div> -->
+        <img :src="`${store.API_URL}${post.image}`" alt="Post Image" />
         <p>{{ post.content }}</p>
         <p>{{ post.created_at }}</p>
         <p>Likes: {{ post.likes.length }}</p>
@@ -20,6 +24,8 @@
     </div>
   </div>
 </template>
+
+
 
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
@@ -31,12 +37,27 @@ import { useCounterStore } from '@/stores/counter'
 const posts = ref([])
 
 const store = useCounterStore()
+console.log(router)
+
 const fetchPosts = async () => {
   try {
     const response = await axios.get(`${store.API_URL}/articles/get_posts/`)
     posts.value = response.data
   } catch (error) {
     console.error('Error fetching posts:', error)
+  }
+}
+
+const deletePost = async (postId) => {
+  try {
+    await axios.delete(`${store.API_URL}/articles/delete_post/${postId}/`, {
+      headers: {
+        'Authorization': `Token ${store.token}`
+      }
+    })
+    posts.value = posts.value.filter(post => post.id !== postId)
+  } catch (error) {
+    console.error('Error deleting post:', error)
   }
 }
 
