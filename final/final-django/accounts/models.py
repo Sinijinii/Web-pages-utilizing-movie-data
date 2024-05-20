@@ -1,13 +1,14 @@
 from django.contrib.auth.models import AbstractUser
-from movies.models import Movie
-from django.db import models
+from movies.models import Movie, OTTPlatform
+from django.contrib.auth import get_user_model
 
+# Create your models here.
 class User(AbstractUser):
     pass
-
+    
 class UserInfo(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='info')
-    selectedmovies = models.ManyToManyField(Movie, related_name='user')
-
-    def __str__(self):
-        return f"{self.user.username}'s info"
+    User = get_user_model()
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='userinfo')
+    # user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='info')
+    selectedMovies = models.ManyToManyField(Movie, related_name='user')
+    selectedOtts = models.ManyToManyField(OTTPlatform, related_name='user')

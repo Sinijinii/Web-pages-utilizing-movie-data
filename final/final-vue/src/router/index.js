@@ -2,6 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import MainView from '@/views/MainView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import LogInView from '@/views/LogInView.vue'
+import MyPageView from '@/views/MyPageView.vue'
+import SelectView from '@/views/SelectView.vue'
+import Usermovie from "@/components/Usermovie.vue";
 import UserRecommandView from '@/views/UserRecommandView.vue'
 import UploadImage from '@/components/UploadImage.vue'
 import SharePost from '@/components/ShareResult.vue'
@@ -9,9 +12,7 @@ import CommunityView from '@/views/CommunityView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import { useCounterStore } from '@/stores/counter'
 import FollowingView from '@/views/FollowingView.vue'
-import { useCounterStore } from '@/stores/counter'
-import MyPageView from '@/views/MyPageView.vue'
-import { useCounterStore } from '@/stores/counter'
+
 
 
 const router = createRouter({
@@ -33,26 +34,20 @@ const router = createRouter({
       component: LogInView
     },
     {
-      path: '/mypage/:userId',
+      path: '/mypage/:username',
       name: 'MyPageView',
       component: MyPageView
-    }
-  ]})
-
-  router.beforeEach((to, from) => {
-    const store = useCounterStore()
-    // 인증되지 않은 사용자는 메인 페이지에 접근 할 수 없음
-    if (to.name === 'MainView' && store.isLogin === false) {
-      window.alert('로그인이 필요해요!!')
-      return { name: 'LogInView' }
-    }
-  
-    // 인증된 사용자는 회원가입과 로그인 페이지에 접근 할 수 없음
-    if ((to.name === 'SignUpView' || to.name === 'LogInView') && (store.isLogin === true)) {
-      window.alert('이미 로그인 했습니다.')
-      return { name: 'MainView' }
-    }
-  })
+    },
+    {
+      path: '/mypage/:id/moreinfo/movies',
+      name: 'Usermovie',
+      component: Usermovie
+    },
+    {
+      path: '/mypage/:id/moreinfo',
+      name: 'SelectView',
+      component: SelectView
+    },
     {
       path: '/recommand',
       name: 'UserRecommandView',
@@ -85,27 +80,22 @@ const router = createRouter({
       component: FollowingView
     }
     
-    
+  ]})
 
-    ]})
-
-    
-    router.beforeEach((to, from) => {
-      const store = useCounterStore()
-      // 인증되지 않은 사용자는 메인 페이지에 접근 할 수 없음
-      if (to.name === 'MainView' && store.isLogin === false) {
-        window.alert('로그인이 필요해요!!')
-        return { name: 'LogInView' }
-      }
-    
-      // 인증된 사용자는 회원가입과 로그인 페이지에 접근 할 수 없음
-      if ((to.name === 'SignUpView' || to.name === 'LogInView') && (store.isLogin === true)) {
-        window.alert('이미 로그인 했습니다.')
-        return { name: 'MainView' }
-      }
-      
-    })
-
+  router.beforeEach((to, from) => {
+    const store = useCounterStore()
+    // 인증되지 않은 사용자는 메인 페이지에 접근 할 수 없음
+    if (to.name === 'MainView' && store.isLogin === false) {
+      window.alert('로그인이 필요해요!!')
+      return { name: 'LogInView' }
+    }
+  
+    // 인증된 사용자는 회원가입과 로그인 페이지에 접근 할 수 없음
+    if ((to.name === 'SignUpView' || to.name === 'LogInView') && (store.isLogin === true)) {
+      window.alert('이미 로그인 했습니다.')
+      return { name: 'MainView' }
+    }
+  })
 
 
 export default router
