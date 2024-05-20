@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>영화 선택하는 곳</h1>
+    <h1>영화, OTT 선택하는 곳</h1>
   </div>
   <form @submit.prevent="saveinfo">
     <div>
@@ -9,6 +9,8 @@
           <img :src="movie.image" :alt="movie.title" :class="{'selected': selectedmovies.includes(movie.id)}" style="width: 100px; height: auto;">
         </div>
     </div>
+
+    <div></div>
     <button type="submit">입력</button>
   </form>
 </template>
@@ -69,18 +71,20 @@ axios({
   method: 'post',
   url: `${store.API_URL}/${userId.value}/saveinfo/`,
   data: {
-    'selectedmovies': selectedmovies.value,
-    'selectedotts': selectedotts.value
+    // userinfo: userId.value,
+    selectedmovies: selectedmovies.value,
+    selectedotts: selectedotts.value
   },
   headers: {
         Authorization: `Token ${store.token}`
       }
 })
 .then((response) => {
-  console.log(selectedmovies.value);
+  console.log('끼얏호우');
   router.push({name: 'MyPageView', params: {'username': store.LoginUsername}})
 })
 .catch((error) => {
+  console.log('실패!');
   console.log(error)
 })
 }
