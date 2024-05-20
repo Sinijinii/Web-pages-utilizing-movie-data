@@ -1,20 +1,6 @@
 from django.contrib.auth.models import AbstractUser
-<<<<<<< HEAD
-from django.db import models
-
-class User(AbstractUser):
-    favorite_movies = models.ManyToManyField('Movie', blank=True)
-
-class Movie(models.Model):
-    title = models.CharField(max_length=255)
-    tmdb_id = models.IntegerField()
-    image_url = models.URLField()
-
-    def __str__(self):
-        return self.title
-=======
 from movies.models import Movie
-
+from django.db import models
 
 class User(AbstractUser):
     pass
@@ -25,4 +11,4 @@ class UserInfo(models.Model):
 
     # def str(self):
     #     return f"{self.user.username}'s info"
->>>>>>> f205237a688b2aa981eb78f9db19601edd51bcb8
+

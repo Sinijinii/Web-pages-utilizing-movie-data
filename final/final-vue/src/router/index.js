@@ -4,9 +4,11 @@ import SignUpView from '@/views/SignUpView.vue'
 import LogInView from '@/views/LogInView.vue'
 import UserRecommandView from '@/views/UserRecommandView.vue'
 import UploadImage from '@/components/UploadImage.vue'
-import SharePost from '@/components/SharePost.vue'
+import SharePost from '@/components/ShareResult.vue'
 import CommunityView from '@/views/CommunityView.vue'
 import ProfileView from '@/views/ProfileView.vue'
+import { useCounterStore } from '@/stores/counter'
+import FollowingView from '@/views/FollowingView.vue'
 import { useCounterStore } from '@/stores/counter'
 
 
@@ -39,7 +41,7 @@ const router = createRouter({
       component:UploadImage
     },
     {
-      path: '/share-post',
+      path: '/share-post/:similarActor/:actorImageUrl',
       name: 'SharePost',
       component: SharePost,
       props: true,
@@ -54,8 +56,16 @@ const router = createRouter({
       name: 'ProfileView',
       component: ProfileView
     },
+    {
+      path: '/following',
+      name: 'FollowingView',
+      component: FollowingView
+    }
     
+    
+
     ]})
+
     
     router.beforeEach((to, from) => {
       const store = useCounterStore()
@@ -74,8 +84,5 @@ const router = createRouter({
     })
 
 
-
-
-  
 
 export default router

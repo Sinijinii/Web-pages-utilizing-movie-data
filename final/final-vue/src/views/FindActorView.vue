@@ -7,7 +7,7 @@
     <div v-if="similarActor" class="result">
       <h2>{{ similarActor }}</h2>
       <img :src="actorImageUrl" alt="Similar Actor Image" v-if="actorImageUrl" />
-      <router-link :to="{ name: 'SharePost', params: { similarActor: similarActor, actorImageUrl: actorImageUrl, selectedFile: selectedFile }}">Share</router-link>
+      <button @click="ShareResult">Share</button>
     </div>
   </div>
 </template>
@@ -15,7 +15,9 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
+import {useRouter} from 'vue-router';
 
+const router = useRouter()
 const selectedFile = ref(null)
 const similarActor = ref(null)
 let actorImageUrl = ref(null)
@@ -36,13 +38,28 @@ const uploadImage = async () => {
         'Content-Type': 'multipart/form-data',
       },
     });
+    console.log(response);
     similarActor.value = response.data.similar_actor
     actorImageUrl.value = response.data.img_url
+
+    console.log('이미지 주소는')
+    console.log(actorImageUrl)
 
   } catch (error) {
     console.error('Error uploading image:', error)
   }
-};
+}
+
+
+const ShareResult = () => {
+  router.push({
+    name: 'SharePost',
+    params: {
+      similarActor: similarActor.value,
+      actorImageUrl: actorImageUrl.value,
+    }
+  })
+}
 </script>
 
 <style scoped>
