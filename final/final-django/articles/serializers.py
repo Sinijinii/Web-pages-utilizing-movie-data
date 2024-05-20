@@ -24,3 +24,4 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = '__all__'
         read_only_fields = ('comment_set','comment_count')
+

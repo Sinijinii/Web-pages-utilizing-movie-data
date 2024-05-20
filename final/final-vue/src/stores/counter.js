@@ -123,7 +123,8 @@ export const useCounterStore = defineStore('counter', () => {
 
     const formData = new FormData()
     formData.append('image', selectedFile.value)
-    
+    console.log("adsjfkasnd");
+    console.log(formData);
     axios({
       method: 'post',
       url: `${API_URL}/articles/find_similar_actor/`,
@@ -166,7 +167,6 @@ export const useCounterStore = defineStore('counter', () => {
         console.log(error)
       })
   }
-
 
 
 

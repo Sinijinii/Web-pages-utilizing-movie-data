@@ -19,18 +19,24 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 import json
+import requests
+import json
+import urllib
+from PIL import Image
+from googletrans import Translator
+
 
 # 배우 리스트
 actors = ['김다미', '김수현', '김우빈', '김지원', '김태리', '김혜수', '김혜윤', '마동석', '박보영', '박서준', '박신혜', '박은빈', '손석구',
           '손예진', '송강호', '송중기', '송혜교', '수지', '신세경', '유승호', '유해진', '윤아', '이도현', '이동휘', '이병헌', '이세영', '이정재', '이주빈', '임시완', '전도연']
 
 # 모델 파일 경로
-MODEL_PATH = os.path.abspath('C:/Users/oops5/OneDrive/Desktop/SSAFY/fin_pjt/Web-pages-utilizing-movie-data/final/final-django/articles/CNN/model.h5')
+MODEL_PATH = os.path.abspath('C:/Users/SSAFY/Desktop/sinijini/fin_pjt/Web-pages-utilizing-movie-data/final/final-django/articles/CNN/model.h5')
 print(MODEL_PATH)
 model = load_model(MODEL_PATH)
-
+REST_API_KEY = '8f7951c8882033e6548aa0bd67a0f772'
 # 얼굴 탐지 모델 로드
-face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+face_cascade = cv2.CascadeClassifier('C:/Users/SSAFY/Desktop/sinijini/fin_pjt/Web-pages-utilizing-movie-data/final/final-django/articles/haarcascade_frontalface_default.xml')
 print(face_cascade)
 # 이미지 전처리 함수
 def preprocess_image(image):
@@ -223,4 +229,51 @@ def create_comment(request):
         
         return JsonResponse({'success': True, 'comment_id': comment.id, 'text': comment.text})
     return JsonResponse({'error': 'POST method required'})
+
+
+@csrf_exempt
+@api_view(['POST'])
+def GenerateImageView(request):
+    if request.method == 'POST':
+        keywords = request.POST.getlist('keywords[]')
+        res = f'{keywords[3]}인 {keywords[1]}한 {keywords[0]}가 {keywords[5]}에 있는 {keywords[2]}이자 주인공인 {keywords[4]}장르의 영화 포스터인데, {keywords[6]} {keywords[7]}'
+        print(res)
+        # 프롬프트에 사용할 제시어
+        translator = Translator()
+        prompt = translator.translate(res,src='ko',dest='en')
+        print(prompt.text)
+        
+        negative_prompt = ""
+
+        # 이미지 생성하기 REST API 호출
+        response = t2i(prompt.text, negative_prompt)
+        img_url = response.get("images")[0].get("image")
+        print(img_url)
+        # 응답의 첫 번째 이미지 생성 결과 출력하기
+        return JsonResponse({'img_url':img_url})        
+    
+
+
+
+
+# 이미지 생성하기 요청
+def t2i(prompt, negative_prompt):
+    r = requests.post(
+        'https://api.kakaobrain.com/v2/inference/karlo/t2i',
+        json = {
+            "version": "v2.1", 
+            "prompt": prompt,
+            "negative_prompt": negative_prompt, 
+            "height": 1024,
+            "width": 1024
+        },
+        headers = {
+            'Authorization': f'KakaoAK {REST_API_KEY}',
+            'Content-Type': 'application/json'
+        }
+    )
+    # 응답 JSON 형식으로 변환
+    response = json.loads(r.content)
+    return response
+
 

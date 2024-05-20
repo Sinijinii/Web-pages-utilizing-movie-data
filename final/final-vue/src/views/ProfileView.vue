@@ -21,7 +21,7 @@
   
   const fetchMyPosts = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/articles/my_posts/', {
+    const response = await axios.get(`${store}/articles/my_posts/`, {
       headers: {
         Authorization: `Token ${store.token}`,
       },

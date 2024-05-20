@@ -14,7 +14,7 @@ import { useRoute } from 'vue-router'
 import { useCounterStore } from '@/stores/counter'
 
 const route = useRoute()
-const fileStore = useCounterStore()
+const store = useCounterStore()
 
 const actorImageUrl = route.params.actorImageUrl
 const similarActor = route.params.similarActor
@@ -23,8 +23,9 @@ console.log(actorImageUrl.value);
 const content = ref('')
 
 const sharePost = async () => {
-  fileStore.uploadResult(content.value, actorImageUrl)
+  store.uploadResult(content.value, actorImageUrl)
 }
+
 </script>
 
 <style scoped>

@@ -12,7 +12,8 @@ import CommunityView from '@/views/CommunityView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import { useCounterStore } from '@/stores/counter'
 import FollowingView from '@/views/FollowingView.vue'
-
+import FindActorView from '@/views/FindActorView.vue'
+import ImageGenerator from '@/components/ImageGenerator.vue'
 
 
 const router = createRouter({
@@ -78,6 +79,16 @@ const router = createRouter({
       path: '/following',
       name: 'FollowingView',
       component: FollowingView
+    },
+    {
+      path: '/findactor',
+      name: 'FindActor',
+      component: FindActorView
+    },
+    {
+      path: '/ImageGenerator',
+      name: 'ImageGenerator',
+      component: ImageGenerator
     }
     
   ]})

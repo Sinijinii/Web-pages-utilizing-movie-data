@@ -2,6 +2,7 @@
   <div>
     <h1>영화 선택하는 곳</h1>
   </div>
+  {{ movies }}
   <form @submit.prevent="saveinfo">
     <div>
       <h2>선호하는 영화를 선택하세요 (최소 3개)</h2>

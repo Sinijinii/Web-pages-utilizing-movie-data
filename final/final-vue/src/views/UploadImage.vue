@@ -13,7 +13,7 @@
   import { useCounterStore } from '@/stores/counter'
   import axios from 'axios'
   
-  const fileStore = useCounterStore()
+  const store = useCounterStore()
   const router = useRouter()
   
   const selectedFile = ref(null)
@@ -21,7 +21,7 @@
   
   const onFileChange = (event) => {
     selectedFile.value = event.target.files[0]
-    fileStore.setFile(selectedFile.value)
+    store.setFile(selectedFile.value)
   }
   
   const uploadImage = async () => {
@@ -31,17 +31,17 @@
     formData.append('image', selectedFile.value)
   
     try {
-      const response = await axios.post('http://localhost:8000/articles/find_similar_actor/', formData, {
+      const response = await axios.post(`${store.API_URL}/articles/find_similar_actor/`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
       const actorImageUrl = response.data.img_url
   
-      fileStore.similarActor = response.data.similar_actor
-      fileStore.actorImageUrl = actorImageUrl
+      store.similarActor = response.data.similar_actor
+      store.actorImageUrl = actorImageUrl
   
-      await fileStore.sharePost(content.value, actorImageUrl)
+      await store.sharePost(content.value, actorImageUrl)
       router.push('/community')
     } catch (error) {
       console.error('Error uploading image:', error)

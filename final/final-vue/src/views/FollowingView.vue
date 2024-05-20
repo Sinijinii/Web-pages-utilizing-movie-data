@@ -15,13 +15,13 @@
 import { ref, onMounted } from 'vue'
 import { useCounterStore } from '@/stores/counter'
 
-const fileStore = useCounterStore()
+const store = useCounterStore()
 const followingPosts = ref([])
 
 onMounted(async () => {
-  await fileStore.getPosts()
+  await store.getPosts()
   // 팔로우한 사람들의 게시글만 필터링
-  followingPosts.value = fileStore.posts.filter(post => {
+  followingPosts.value = store.posts.filter(post => {
     // 팔로우한 사용자 ID와 일치하는 게시글 필터링 로직 추가
     return true // 임시로 모든 게시글을 반환
   })

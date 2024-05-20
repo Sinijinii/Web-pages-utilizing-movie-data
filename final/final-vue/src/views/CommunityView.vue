@@ -1,9 +1,12 @@
 <template>
   <div class="community">
     <div class="sidebar">
-      <router-link to="/upload">New Post</router-link>
-      <router-link to="/profile">My Profile</router-link>
-      <router-link to="/following">Following</router-link>
+      <RouterLink :to="{ name: 'Community' }">Community</RouterLink>
+      <RouterLink :to="{name: 'UploadImage'}">New Post</RouterLink>
+      <RouterLink :to="{name: 'ProfileView'}">My Profile</RouterLink>
+      <RouterLink :to="{name: 'FollowingView'}">Following</RouterLink>
+      <RouterLink :to="{name: 'FindActor'}">FindActor</RouterLink>
+      <RouterLink :to="{name:'ImageGenerator'}">ImageGenerator</RouterLink>
     </div>
     <div class="posts">
       <h1>Community Posts</h1>
@@ -19,14 +22,18 @@
 </template>
 
 <script setup>
+import { RouterLink, RouterView } from 'vue-router'
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
+import router from '@/router';
+import { useCounterStore } from '@/stores/counter'
 
 const posts = ref([])
 
+const store = useCounterStore()
 const fetchPosts = async () => {
   try {
-    const response = await axios.get('http://127.0.0.1:8000/articles/get_posts/')
+    const response = await axios.get(`${store.API_URL}/articles/get_posts/`)
     posts.value = response.data
   } catch (error) {
     console.error('Error fetching posts:', error)

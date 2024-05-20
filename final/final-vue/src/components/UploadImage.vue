@@ -28,7 +28,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCounterStore } from '@/stores/counter'
 
-const fileStore = useCounterStore()
+const store = useCounterStore()
 
 const step = ref(0)
 const selectedFile = ref(null)
@@ -43,7 +43,7 @@ const onFileChange = (event) => {
     selectedFile.value = file
     imageURL.value = URL.createObjectURL(file)
     console.log(file);
-    fileStore.setFile(file)
+    store.setFile(file)
   }
 
   console.log(file);
@@ -54,7 +54,7 @@ const nextStep = () => {
 }
 
 const sharePost = async () => {
-  await fileStore.uploadPost(content.value)
+  await store.uploadPost(content.value)
   step.value = 2
 }
 </script>

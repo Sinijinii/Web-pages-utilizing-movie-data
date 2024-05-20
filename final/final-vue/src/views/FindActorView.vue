@@ -16,7 +16,9 @@
 import { ref } from 'vue'
 import axios from 'axios'
 import {useRouter} from 'vue-router';
+import { useCounterStore } from '@/stores/counter'
 
+const store = useCounterStore()
 const router = useRouter()
 const selectedFile = ref(null)
 const similarActor = ref(null)
@@ -33,7 +35,7 @@ const uploadImage = async () => {
   formData.append('image', selectedFile.value)
 
   try {
-    const response = await axios.post('http://localhost:8000/articles/find_similar_actor/', formData, {
+    const response = await axios.post(`${store.API_URL}/articles/find_similar_actor/`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

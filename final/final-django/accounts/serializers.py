@@ -37,8 +37,8 @@ class MovieSerializer(serializers.ModelSerializer):
 #         fields = '__all__'
 
 class UserInfoSerializer(serializers.ModelSerializer):
-    selectedMovies = serializers.PrimaryKeyRelatedField(queryset=Movie.objects.all(), many=True, required=False)
-    selectedOtts = serializers.PrimaryKeyRelatedField(queryset=OTTPlatform.objects.all(), many=True, required=False)
+    selectedmovies = serializers.PrimaryKeyRelatedField(queryset=Movie.objects.all(), many=True, required=False)
+    selectedotts = serializers.PrimaryKeyRelatedField(queryset=OTTPlatform.objects.all(), many=True, required=False)
     # selectedgenres = serializers.PrimaryKeyRelatedField(queryset=Genre.objects.all(), many=True, required=False)
     
     class Meta:
