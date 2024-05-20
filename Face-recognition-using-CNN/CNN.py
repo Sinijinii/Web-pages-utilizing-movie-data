@@ -105,3 +105,5 @@ else:
 score = model.evaluate(X_test, y_test_one_hot, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
+
+
