@@ -1,18 +1,7 @@
 <template>
     <div class="post-detail">
-      <h1>{{ post.user.username }}'s Post</h1>
-      <img :src="`${store.API_URL}${post.image}`" alt="Post Image" />
-      <p>{{ post.content }}</p>
-      <p>{{ post.created_at }}</p>
-      <p>Likes: {{ post.likes.length }}</p>
-      <button @click="toggleLike(post)">
-        {{ post.likes.some(like => like.id === store.user.id) ? 'Unlike' : 'Like' }}
-      </button>
-      <!-- 내 게시글일 때만 삭제 및 수정 버튼 표시 -->
-      <template v-if="post.user.id === store.user.id">
-        <button @click="deletePost(post.id)">Delete</button>
-        <RouterLink :to="{ name: 'EditPost', params: { id: post.id } }">Edit</RouterLink>
-      </template>
+      <h1>{{ userid }}번 Post</h1>
+      <RouterLink :to="{ name: 'EditPost', params: { id: userid } }">Edit</RouterLink>
     </div>
   </template>
   
@@ -21,11 +10,15 @@
   import { useRoute, useRouter } from 'vue-router'
   import axios from 'axios'
   import { useCounterStore } from '@/stores/counter'
-  
+
   const route = useRoute()
+  const store = useCounterStore()
+
+  const userid = route.params.id
+
   const router = useRouter()
   const post = ref(null)
-  const store = useCounterStore()
+
   
   const fetchPost = async () => {
     try {
@@ -36,24 +29,7 @@
     }
   }
   
-  const toggleLike = async (post) => {
-    try {
-      const response = await axios.post(`${store.API_URL}/like_post/`, {
-        post_id: post.id
-      }, {
-        headers: {
-          'Authorization': `Token ${store.token}`
-        }
-      })
-      if (response.data.liked) {
-        post.likes.push({ id: store.user.id })
-      } else {
-        post.likes = post.likes.filter(user => user.id !== store.user.id)
-      }
-    } catch (error) {
-      console.error('Error liking post:', error)
-    }
-  }
+
   
   const deletePost = async (postId) => {
     try {

@@ -11,6 +11,7 @@
     <div class="posts">
       <h1>Community Posts</h1>
       <div v-for="post in posts" :key="post.id" class="post">
+      
         <RouterLink :to="{ name: 'PostDetail', params: { id: post.id } }">View Details</RouterLink>
         <!-- <div v-if="post.user.id === store.user.id"> -->
           <button @click="deletePost(post.id)">Delete</button>
