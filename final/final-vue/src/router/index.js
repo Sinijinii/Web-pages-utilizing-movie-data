@@ -3,8 +3,7 @@ import MainView from '@/views/MainView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import LogInView from '@/views/LogInView.vue'
 import MyPageView from '@/views/MyPageView.vue'
-import SelectView from '@/views/SelectView.vue'
-import Usermovie from "@/components/Usermovie.vue"
+import Usermovie from "@/components/Usermovie.vue";
 import UserRecommandView from '@/views/UserRecommandView.vue'
 import { useCounterStore } from '@/stores/counter'
 import UploadImage from '@/components/Community/UploadImage.vue'
@@ -42,14 +41,9 @@ const router = createRouter({
       component: MyPageView
     },
     {
-      path: '/mypage/:id/moreinfo/movies',
+      path: '/mypage/:id/moreinfo/',
       name: 'Usermovie',
       component: Usermovie
-    },
-    {
-      path: '/mypage/:id/moreinfo',
-      name: 'SelectView',
-      component: SelectView
     },
     {
       path: '/recommand',
@@ -107,8 +101,8 @@ const router = createRouter({
 
   router.beforeEach((to, from) => {
     const store = useCounterStore()
-    // 인증되지 않은 사용자는 메인 페이지에 접근 할 수 없음
-    if (to.name === 'MainView' && store.isLogin === false) {
+    // 인증되지 않은 사용자는 마이 페이지에 접근 할 수 없음
+    if (to.name === 'MyPageView' && store.isLogin === false) {
       window.alert('로그인이 필요해요!!')
       return { name: 'LogInView' }
     }
