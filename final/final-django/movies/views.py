@@ -82,7 +82,7 @@ def calculate_similarities(target_casts: Set[str], target_genres: Set[str], comp
 def MovieSimilarityView(request):
     user = request.user
     user_info = user.userinfo
-    selec_data = user_info.selectedMovies.all()
+    selec_data = user_info.selectedmovies.all()
     selec2_data = Movie.objects.all()
 
     selec_casts, selec_genres = extract_combined_data(selec_data)
