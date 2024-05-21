@@ -19,12 +19,12 @@ const route = useRoute()
 const router = useRouter()
 const store = useCounterStore()
 const username = ref(route.params.username)
-const selectedmovies = ref([])
-const selectedotts = ref([])
+const selectedMovies = ref([])
+const selectedOtts = ref([])
 const userId = ref(null)
 
 const moreinfo = () => {
-  router.push({name: 'SelectView', params: {id: userId.value}})
+  router.push({name: 'SelectView', params: { id: userId.value }})
 }
 
 onMounted (() => {
@@ -36,8 +36,8 @@ onMounted (() => {
       }
 })
 .then((response) => {
-  selectedmovies.value = response.data.selectedmovies
-  selectedotts.value = response.data.selectedotts
+  selectedMovies.value = response.data.selectedmovies
+  selectedOtts.value = response.data.selectedotts
   userId.value = response.data.user
 }).catch((error) => {
   console.log(error)

@@ -5,7 +5,12 @@ import LogInView from '@/views/LogInView.vue'
 import MyPageView from '@/views/MyPageView.vue'
 import SelectView from '@/views/SelectView.vue'
 import Usermovie from "@/components/Usermovie.vue"
-import UserRecommandView from '@/views/UserRecommandView.vue'
+import UserRecommendView from '@/views/UserRecommendView.vue'
+import MovieDetail from '@/components/MovieDetail.vue'
+import UploadImage from '@/components/UploadImage.vue'
+import SharePost from '@/components/ShareResult.vue'
+import CommunityView from '@/views/CommunityView.vue'
+import ProfileView from '@/views/ProfileView.vue'
 import { useCounterStore } from '@/stores/counter'
 import UploadImage from '@/components/Community/UploadImage.vue'
 import SharePost from '@/components/Community/ShareResult.vue'
@@ -52,11 +57,6 @@ const router = createRouter({
       component: SelectView
     },
     {
-      path: '/recommand',
-      name: 'UserRecommandView',
-      component: UserRecommandView
-    },
-    {
       path:'/upload',
       name:'UploadImage',
       component:UploadImage
@@ -101,8 +101,22 @@ const router = createRouter({
       path: '/post/:id/edit',
       name: 'EditPost',
       component: EditPost
-    }
-    
+    },
+    {
+      path: '/mypage/:id/moreinfo/movies',
+      name: 'Usermovie',
+      component: Usermovie
+    },
+    {
+      path: '/recommend',
+      name: 'UserRecommendView',
+      component: UserRecommendView
+    },
+    {
+      path: '/detail/:movieId',
+      name: 'MovieDetail',
+      component: MovieDetail
+    },
   ]})
 
   router.beforeEach((to, from) => {

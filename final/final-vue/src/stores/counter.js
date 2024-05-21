@@ -10,6 +10,37 @@ export const useCounterStore = defineStore('counter', () => {
   const LoginUsername = ref(null)
   const router = useRouter()
 
+
+  // //추천영화 받아오는 함수
+  // const getRecommend = () => {
+  //   return axios.get(`${API_URL}/api/v1/recommend/`)
+  //     .then(response => {
+  //       return response.data
+  //     })
+  //     .catch(error => {
+  //       console.log(error)
+  //       return Promise.reject(error)
+  //     })
+  // }
+
+  //추천영화 받아오는 함수
+  const getRecommend = () => {
+    return axios({
+      method: 'get',
+      url: `${API_URL}/api/v1/recommend/`,
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+      .then(response => {
+        return response.data
+      })
+      .catch(error => {
+        console.log(error)
+        return Promise.reject(error)
+      })
+  }
+
 // 로그인 여부
   const isLogin = computed(() => {
     if (token.value === null) {
@@ -210,6 +241,6 @@ export const useCounterStore = defineStore('counter', () => {
 
 
   return { movies, API_URL, getMovies, signUp, logIn, token, isLogin, uploadResult,isLogin, LoginUsername,getMovies, signUp, logIn, saveinfo,
-    selectedFile, similarActor, actorImageUrl, setFile, uploadImage, uploadPost
+    selectedFile, similarActor, actorImageUrl, setFile, uploadImage, uploadPost, getRecommend
    }
 }, { persist: true })
