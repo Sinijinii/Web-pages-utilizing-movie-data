@@ -204,8 +204,6 @@ def update_post(request, post_id):
 @permission_classes([IsAuthenticated])
 def my_posts(request):
     user = request.user
-    print(user)
-    print('adsffffffffffffffffffffffffffffffffffffffffffffffffs')
     posts = Post.objects.filter(user=user).order_by('-created_at')
     serializer = PostSerializer(posts, many=True)
     
@@ -261,17 +259,11 @@ def follow_user(request):
 #         return JsonResponse({'error': 'Post not found'}, status=404)
 
 # 영빈이 만든 좋아요 기능
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    
-    # 본인의 게시물에 좋아요 불가능
-    if post.user == request.user:
-        print(f'포트스.유저 확이이이이이이이ㅣ이이이이ㅣ이이ㅣ인 {post.user}')
-        print(f'리퀘.유저 확이이이이이이이ㅣ이이이이ㅣ이이ㅣ인 {request.user}')
-
-        return Response({'에러 : 내 게시글에는 좋아요를 누를 수 없습니다.'}, status=status.HTTP_400_BAD_REQUEST)
     
     # 이미 좋아요를 했으면 좋아요 취소
     if request.user in post.likes.all():
@@ -282,7 +274,10 @@ def like_post(request, post_id):
         post.likes.add(request.user)
         liked = True
 
-    return Response({'liked': liked, 'likes_count': post.likes.count()})
+    return JsonResponse({'liked': liked, 'likes_count': post.likes.count()})
+
+
+
 
 def create_comment(request):
     if request.method == 'POST':

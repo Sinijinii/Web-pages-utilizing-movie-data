@@ -10,20 +10,33 @@
     </div>
     <div class="posts">
       <h1>Community Posts</h1>
-      <div v-for="post in posts" :key="post.id" class="post">
-      
-        <RouterLink :to="{ name: 'PostDetail', params: { id: post.id } }">View Details</RouterLink>
-        <!-- <div v-if="post.user.id === store.user.id"> -->
-        <button @click="deletePost(post.id)">Delete</button>
-        <RouterLink :to="{ name: 'EditPost', params: { id: post.id } }">Edit</RouterLink>
-        <!-- </div> -->
-        <img :src="`${store.API_URL}${post.image}`" alt="Post Image" />
-        <p>{{ post.content }}</p>
-        <p>{{ post.created_at }}</p>
-        <p>Likes: {{ post.likes.length }}</p>
+
+        <div v-for="post in posts" :key="post.id" class="post">
+        
+          <RouterLink :to="{ name: 'PostDetail', params: { id: post?.id } }">View Details</RouterLink> |
+
+          <button @click="deletePost(post?.id)">Delete</button> |
+
+          <RouterLink :to="{ name: 'EditPost', params: { id: post?.id } }">Edit</RouterLink> |
+
+          <br>
+          <img :src="`${store.API_URL}${post.image}`" alt="Post Image" />
+
+          <p>{{ post?.content }}</p>
+
+          <p>{{ post?.created_at }}</p>
+
+          <p>Likes: {{ post.likes.length }}</p>
+
+          <button @click="toggleLike(post)">
+            {{ post.likes.includes(store.userId) ? 'Unlike' : 'Like' }}
+          </button>
+
+
+        </div>
       </div>
     </div>
-  </div>
+
 </template>
 
 
@@ -61,6 +74,33 @@ const deletePost = async (postId) => {
     console.error('Error deleting post:', error)
   }
 }
+
+
+const toggleLike = (post) => {
+  axios({
+    method: 'post',
+    url: `${store.API_URL}/articles/like_post/${post.id}/`,
+    headers: {
+      'Authorization': `Token ${store.token}`
+    }
+  })
+    .then(response => {
+      const liked = response.data.liked
+      if (liked) {
+        post.likes.push(store.userId)
+      } else {
+        const index = post.likes.indexOf(store.userId)
+        if (index > -1) {
+          post.likes.splice(index, 1)
+        }
+      }
+    })
+    .catch(error => {
+      console.error('좋아요 기능 실패했다', error)
+    })
+}
+
+
 
 onMounted(fetchPosts)
 </script>

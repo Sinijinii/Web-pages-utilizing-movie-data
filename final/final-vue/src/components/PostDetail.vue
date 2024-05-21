@@ -1,11 +1,15 @@
 <template>
     <div class="post-detail">
       <h1>{{ userid }}번 Post</h1>
+
       <RouterLink :to="{ name: 'EditPost', params: { id: userid } }">Edit</RouterLink>
+
       <p>Likes: {{ post.likes.length }}</p>
+<!-- 
       <button @click="toggleLike(post)">
         {{ post.likes.some(like => like.id === store.user.id) ? 'Unlike' : 'Like' }}
-      </button>
+      </button> -->
+      
     </div>
 </template>
   
@@ -48,24 +52,24 @@
   }
   
 
-  const toggleLike = async (post) => {
-    try {
-      const response = await axios.post(`${store.API_URL}/like_post/${post.id}/`, {}, {
-        post_id: post.id
-      }, {
-        headers: {
-          'Authorization': `Token ${store.token}`
-        }
-      })
-      if (response.data.liked) {
-        post.likes.push({ id: store.user.id })
-      } else {
-        post.likes = post.likes.filter(user => user.id !== store.user.id)
-      }
-    } catch (error) {
-      console.error('좋아요 기능 실패했다', error)
-    }
-  }
+  // const toggleLike = async (post) => {
+  //   try {
+  //     const response = await axios.post(`${store.API_URL}/like_post/${post.id}/`, {}, {
+  //       post_id: post.id
+  //     }, {
+  //       headers: {
+  //         'Authorization': `Token ${store.token}`
+  //       }
+  //     })
+  //     if (response.data.liked) {
+  //       post.likes.push({ id: store.user.id })
+  //     } else {
+  //       post.likes = post.likes.filter(user => user.id !== store.user.id)
+  //     }
+  //   } catch (error) {
+  //     console.error('좋아요 기능 실패했다', error)
+  //   }
+  // }
 
   onMounted(fetchPost)
 </script>
