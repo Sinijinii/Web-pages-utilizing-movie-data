@@ -1,8 +1,17 @@
 <template>
     <div>
-        <h3></h3>
-        <div>
-            <img class="movie-container" v-for="movie in store.loginmovies.top" :key="movie.id" :src="`${store.BasicPosterPath}${movie.poster_path}`"></img>
+        <h3>Ott별</h3>
+        <div v-if="'Netflix' in store.loginmovies">
+            <h4>Netfilx</h4>
+            <img class="movie-container" v-for="movie in store.loginmovies.Netflix" :key="movie.id" :src="`${store.BasicPosterPath}${movie.poster_path}`">
+        </div>
+        <div v-if="'Watcha' in store.loginmovies">
+            <h4>Watcha</h4>
+            <img class="movie-container" v-for="movie in store.loginmovies.Watcha" :key="movie.id" :src="`${store.BasicPosterPath}${movie.poster_path}`">
+        </div>
+        <div v-if="'DisneyPlus' in store.loginmovies">
+            <h4>Disney Plus</h4>
+            <img class="movie-container" v-for="movie in store.loginmovies.DisneyPlus" :key="movie.id" :src="`${store.BasicPosterPath}${movie.poster_path}`">
         </div>
     </div>
 </template>

@@ -3,7 +3,6 @@ import MainView from '@/views/MainView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import LogInView from '@/views/LogInView.vue'
 import MyPageView from '@/views/MyPageView.vue'
-import SelectView from '@/views/SelectView.vue'
 import Usermovie from "@/components/Usermovie.vue";
 import UserRecommandView from '@/views/UserRecommandView.vue'
 import UploadImage from '@/components/UploadImage.vue'

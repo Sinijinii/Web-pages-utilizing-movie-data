@@ -2,7 +2,7 @@
     <div>
         <h3>최신순</h3>
         <div>
-            <img class="movie-container" v-for="movie in store.movies.latest" :key="movie.id" :src="`${store.BasicPosterPath}${movie.poster_path}`"></img>
+            <img class="movie-container" v-for="movie in store.movies.latest" :key="movie.id" :src="`${store.BasicPosterPath}${movie.poster_path}`">
         </div>
     </div>
 </template>

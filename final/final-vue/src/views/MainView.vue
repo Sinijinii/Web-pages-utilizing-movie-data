@@ -1,31 +1,39 @@
 <template>
   <div>
     <h1>메인 페이지</h1>
-    <p>로그인 여부에 따라 페이지에 표시되는 영화가 다름</p>
-    
-    <TopRateMovie />
-    <MostVotedMovie />
-    <LatestMovie />
+    <div>
+      <OttMovie v-if="store.isLogin" />
+      <TopRateMovie v-if="!loading" />
+      <MostVotedMovie v-if="!loading" />
+      <LatestMovie v-if="!loading" />
+    </div>
   </div>
 </template>
 
 <script setup>
 import { useCounterStore } from '@/stores/counter'
-import { onMounted } from 'vue'
+import { onMounted ,ref,watch } from 'vue'
 import TopRateMovie from '@/components/TopRateMovie.vue'
 import MostVotedMovie from '@/components/MostVotedMovie.vue'
 import LatestMovie from '@/components/LatestMovie.vue'
+import OttMovie from '@/components/OttMovie.vue'
 
 const store = useCounterStore()
+const loading = ref(true)
+
+// console.log(loading.value);
 onMounted(async () => {
   await store.getMovies()
-  if (store.isLogin) {
+  loading.value = false
+});
+
+// watch(() => store.isLogin, () => {
+//   store.getLoginMovies()
+// })
+if (store.isLogin === true) {
   store.getLoginMovies()
 }
-})
-
 </script>
 
 <style scoped>
-
 </style>

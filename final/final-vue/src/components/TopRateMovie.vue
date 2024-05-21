@@ -2,7 +2,7 @@
     <div>
         <h3>인기순</h3>
         <div>
-            <img class="movie-container" v-for="movie in store.movies.top" :key="movie.id" :src="`${store.BasicPosterPath}${movie.poster_path}`"></img>
+            <img class="movie-container" v-for="movie in store.movies.top" :key="movie.id" :src="`${store.BasicPosterPath}${movie.poster_path}`">
         </div>
     </div>
 </template>

@@ -95,7 +95,7 @@ export const useCounterStore = defineStore('counter', () => {
         LoginUsername.value = username
         token.value = response.data.key
         console.log(token.value);
-        router.push({ name : 'MainView' })
+        router.replace({ name : 'MainView' })
       })
       .catch((error) => {
         console.log(error)
@@ -156,7 +156,7 @@ export const useCounterStore = defineStore('counter', () => {
     })
       .then((response) => {
         console.log(response);
-        alert('Post shared successfully!')
+        alert('Post shared successfully!!')
         router.push('/community')
       })
       .catch((error) => {
@@ -182,7 +182,7 @@ export const useCounterStore = defineStore('counter', () => {
     })
       .then((response) => {
         console.log(response);
-        alert('Post shared successfully!')
+        alert('Post shared successfully!!')
         router.push('/community')
       })
       .catch((error) => {
@@ -201,8 +201,8 @@ export const useCounterStore = defineStore('counter', () => {
 
 
 
-  return { movies, API_URL, getMovies, signUp, logIn, token, isLogin, uploadResult, 
-          LoginUsername, BasicPosterPath, loginmovies, getLoginMovies,
-          selectedFile, similarActor, actorImageUrl, setFile, uploadImage, uploadPost
+  return { movies, API_URL, getMovies, signUp, logIn, token, isLogin, uploadResult,
+            loginmovies, getLoginMovies, LoginUsername, BasicPosterPath, selectedFile,
+            similarActor, actorImageUrl, setFile, uploadImage, uploadPost
         }
 }, { persist: true })

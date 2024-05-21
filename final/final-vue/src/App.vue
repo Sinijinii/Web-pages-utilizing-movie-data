@@ -22,6 +22,7 @@ const store = useCounterStore()
 const router = useRouter()
 const logout = function() {
   store.token = null
+  store.loginmovies = null
   router.push({ name: 'LogInView'})
 }
 </script>
