@@ -10,6 +10,7 @@
     </div>
     <div class="posts">
       <h1>Community Posts</h1>
+
       <div v-if="posts && posts.length">
         <div v-for="post in posts" :key="post?.id" class="post">
           <RouterLink v-if="post?.id" :to="{ name: 'PostDetail', params: { id: post?.id } }">View Details</RouterLink>
@@ -21,6 +22,20 @@
             <RouterLink :to="{ name: 'EditPost', params: { id: post?.id } }">Edit</RouterLink>
             <button @click="deletePost(post?.id)">Delete</button>
           </div>
+          
+                    <span class="title"> 내용 :</span> <span>{{ post.content }}</span> <br>
+          
+                    <span class="title"> 작성시간 : </span> <span>{{ post.created_at }}</span> <br>
+          
+                    <span class="like">Likes :</span><span>{{ post.likes.length }}</span>          
+          
+                    <button class="likebtn" @click="toggleLike(post)">
+                      {{ post.likes.includes(store.userId) ? 'Unlike' : 'Like' }}
+                    </button>
+                    
+                      <!-- <p>Likes: {{ post.likes.length }}</p>
+          
+                    <p>{{ post.user.username }}</p> -->
           <!-- 댓글 섹션 시작 -->
           <div class="comments">
             <h3>Comments</h3>
@@ -43,7 +58,7 @@
             <input v-model="newCommentContents[post.id]" placeholder="Write a comment" />
             <button @click="createComment({ postId: post.id, content: newCommentContents[post.id] })">Submit</button>
           </div>
-          <!-- 댓글 섹션 끝 -->
+
         </div>
       </div>
       <p v-else>No posts available.</p>
@@ -91,6 +106,37 @@ const deletePost = async (postId) => {
     posts.value = posts.value.filter(post => post.id !== postId)
   })
   .catch((error) => {
+        console.log(error)
+  })
+}
+
+
+const toggleLike = (post) => {
+  axios({
+    method: 'post',
+    url: `${store.API_URL}/articles/like_post/${post.id}/`,
+    headers: {
+      'Authorization': `Token ${userstore.token}`
+    }
+  })
+    .then(response => {
+      const liked = response.data.liked
+      if (liked) {
+        post.likes.push(store.userId)
+      } else {
+        const index = post.likes.indexOf(store.userId)
+        if (index > -1) {
+          post.likes.splice(index, 1)
+        }
+      }
+    })
+    .catch(error => {
+      console.error('좋아요 기능 실패했다', error)
+    })
+}
+
+
+onMounted(() => {
     console.error('Error deleting post:', error)
   })
 }

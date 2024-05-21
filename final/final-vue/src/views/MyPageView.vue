@@ -19,8 +19,8 @@ const route = useRoute()
 const router = useRouter()
 const store = useCounterStore()
 const username = ref(route.params.username)
-const selectedmovies = ref([])
-const selectedotts = ref([])
+const selectedMovies = ref([])
+const selectedOtts = ref([])
 const userId = ref(null)
 
 const moreinfo = () => {
@@ -37,8 +37,8 @@ onMounted (() => {
 })
 // 여기 수정함
 .then((response) => {
-  selectedmovies.value = response.data.selectedmovies
-  selectedotts.value = response.data.selectedotts
+  selectedMovies.value = response.data.selectedmovies
+  selectedOtts.value = response.data.selectedotts
   userId.value = response.data.user
 }).catch((error) => {
   console.log(error)

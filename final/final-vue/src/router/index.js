@@ -1,8 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useCounterStore } from '@/stores/counter'
+
 import MainView from '@/views/MainView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import LogInView from '@/views/LogInView.vue'
 import MyPageView from '@/views/MyPageView.vue'
+import SelectView from '@/views/SelectView.vue'
+import Usermovie from "@/components/Usermovie.vue"
+import UserRecommendView from '@/views/UserRecommendView.vue'
+import MovieDetail from '@/components/MovieDetail.vue'
 import Usermovie from "@/components/Usermovie.vue";
 import UserRecommandView from '@/views/UserRecommandView.vue'
 import { useCounterStore } from '@/stores/counter'
@@ -95,8 +101,22 @@ const router = createRouter({
       path: '/post/:id/edit',
       name: 'EditPost',
       component: EditPost
-    }
-    
+    },
+    {
+      path: '/mypage/:id/moreinfo/movies',
+      name: 'Usermovie',
+      component: Usermovie
+    },
+    {
+      path: '/recommend',
+      name: 'UserRecommendView',
+      component: UserRecommendView
+    },
+    {
+      path: '/detail/:movieId',
+      name: 'MovieDetail',
+      component: MovieDetail
+    },
   ]})
 
   router.beforeEach((to, from) => {
