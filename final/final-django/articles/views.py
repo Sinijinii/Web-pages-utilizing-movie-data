@@ -204,14 +204,21 @@ def update_post(request, post_id):
 @permission_classes([IsAuthenticated])
 def my_posts(request):
     user = request.user
-    print(user)
-    print('adsffffffffffffffffffffffffffffffffffffffffffffffffs')
     posts = Post.objects.filter(user=user).order_by('-created_at')
     serializer = PostSerializer(posts, many=True)
     
     print(serializer)
     return Response(serializer.data)
 
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def detail_post(request,post_id):
+    posts = Post.objects.filter(id=post_id)
+    serializer = PostSerializer(posts, many=True)
+    
+    print(serializer)
+    return Response(serializer.data)
 
 
 @api_view(['GET'])

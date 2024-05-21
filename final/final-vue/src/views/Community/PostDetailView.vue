@@ -1,32 +1,45 @@
 <template>
     <div class="post-detail">
-      <h1>{{ userid }}번 Post</h1>
-      <RouterLink :to="{ name: 'EditPost', params: { id: userid } }">Edit</RouterLink>
+      <h1>{{ postid }}번 Post</h1>
+      <img :src="`${store.API_URL}${post?.image}`" alt="Post Image" />
+        <p>{{ post?.content }}</p>
+        <p>{{ post?.created_at }}</p>
+      <div v-if="userstore.LoginUsername === post?.user.username">
+        <RouterLink :to="{ name: 'EditPost', params: { id: postId } }">Edit</RouterLink>
+        <button @click="deletePost(postId)">Delete</button>
+      </div>
+
     </div>
   </template>
   
   <script setup>
-  import { onMounted, ref } from 'vue'
+  import { onMounted, ref, onBeforeMount } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import axios from 'axios'
   import { useCounterStore } from '@/stores/counter'
+  import { useCommunity } from '@/stores/community'
 
   const route = useRoute()
-  const store = useCounterStore()
-
-  const userid = route.params.id
+  const store = useCommunity()
+  const userstore = useCounterStore()
+  const postid = route.params.id
 
   const router = useRouter()
+
   const post = ref(null)
 
   
   const fetchPost = async () => {
-    try {
-      const response = await axios.get(`${store.API_URL}/get_post/${route.params.id}/`)
-      post.value = response.data
-    } catch (error) {
-      console.error('Error fetching post:', error)
-    }
+    axios({
+      method:'get',
+      url:`${store.API_URL}/articles/detail_post/${postid}/`,
+    })
+    .then(response => {
+      post.value = response.data[0]
+    })
+    .catch(error => {
+      console.log(error)
+    })
   }
   
 
@@ -44,9 +57,13 @@
     }
   }
   
-  onMounted(fetchPost)
+  onBeforeMount(() => {
+    fetchPost()
+  })
+
   </script>
   
+
   <style scoped>
   .post-detail {
     padding: 20px;

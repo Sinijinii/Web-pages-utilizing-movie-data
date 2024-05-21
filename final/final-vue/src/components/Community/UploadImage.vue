@@ -26,9 +26,9 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useCounterStore } from '@/stores/counter'
+import { useCommunity } from '@/stores/community'
 
-const store = useCounterStore()
+const store = useCommunity()
 
 const step = ref(0)
 const selectedFile = ref(null)

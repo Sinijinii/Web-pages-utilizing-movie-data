@@ -22,31 +22,38 @@
   </div>
 </template>
   
-  <script setup>
-  import { ref, onMounted } from 'vue'
+<script setup>
+  import { onMounted, ref, onBeforeMount } from 'vue'
   import axios from 'axios'
   import { useCounterStore } from '@/stores/counter'
+  import { useCommunity } from '@/stores/community'
 
   const posts = ref([])
-  const store = useCounterStore()
-  
+  const store = useCommunity()
+  const tokenstore = useCounterStore()
   const fetchMyPosts = async () => {
-  try {
-    const response = await axios.get(`${store}/articles/my_posts/`, {
+    axios({
+      method:'get',
+      url:`${store.API_URL}/articles/my_posts/`,
       headers: {
-        Authorization: `Token ${store.token}`,
-      },
+        Authorization: `Token ${tokenstore.token}`
+      }
     })
-    posts.value = response.data
-  } catch (error) {
-    console.error('Error fetching posts:', error)
-  }
+    .then(response => {
+      posts.value = response.data
+      console.log(posts);
+    })
+    .catch(error => {
+      console.log(error)
+    })
 }
   
-  onMounted(fetchMyPosts)
-  </script>
+onBeforeMount(() => {
+  fetchMyPosts()
+})
+</script>
   
-  <style scoped>
+<style scoped>
 
   .sidebar {
     width: 200px;
@@ -83,5 +90,5 @@
     width: 80%;
     margin-top: 10px;
   }
-  </style>
+</style>
   

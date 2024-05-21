@@ -29,11 +29,11 @@
   <script setup>
   import { ref } from 'vue';
   import axios from 'axios';
-  import { useCounterStore } from '@/stores/counter';
+  import { useCommunity } from '@/stores/community'
   import {useRouter} from 'vue-router';
 
   const router = useRouter()
-  const store = useCounterStore()
+  const store = useCommunity()
 
   // options 배열 정의
   const options = [

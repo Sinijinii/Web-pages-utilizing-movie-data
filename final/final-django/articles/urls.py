@@ -5,6 +5,7 @@ urlpatterns = [
     path('find_similar_actor/', views.find_similar_actor, name='find_similar_actor'),
     path('create_post/', views.create_post, name='create_post'),
     path('get_posts/', views.get_posts, name='get_posts'),
+    path('detail_post/<int:post_id>/',views.detail_post,name='detail_post'),
     path('create_comment/', views.create_comment, name='create_comment'),
     path('like_post/<int:post_id>/', views.like_post, name='like_post'),
     path('following_posts/', views.following_posts, name='following_posts'),

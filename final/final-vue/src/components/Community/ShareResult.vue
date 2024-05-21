@@ -11,10 +11,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { useCounterStore } from '@/stores/counter'
+import { useCommunity } from '@/stores/community'
 
 const route = useRoute()
-const store = useCounterStore()
+const store = useCommunity()
 
 const actorImageUrl = route.params.actorImageUrl
 const similarActor = route.params.similarActor
