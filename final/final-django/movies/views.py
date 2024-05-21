@@ -80,7 +80,7 @@ def MovieSimilarityView(request):
     ]}
 
 
-    print(f'프린트으으으으ㅡ으으으으으으응@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ {result}')
+    # print(f'프린트으으으으ㅡ으으으으으으응@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ {result}')
 
     return Response(result, status=status.HTTP_200_OK)
 

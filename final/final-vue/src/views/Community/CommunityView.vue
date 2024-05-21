@@ -10,18 +10,34 @@
     </div>
     <div class="posts">
       <h1>Community Posts</h1>
+
       <div v-if="posts && posts.length">
+
         <div v-for="post in posts" :key="post.id" class="post">
-          <RouterLink v-if="post.id" :to="{ name: 'PostDetail', params: { id: post.id } }">View Details</RouterLink>
-          <img :src="`${store.API_URL}${post.image}`" alt="Post Image" />
-          <p>{{ post.content }}</p>
-          <p>{{ post.created_at }}</p>
-          <p>Likes: {{ post.likes.length }}</p>
-          <p>{{ post.user.username }}</p>
+
+          <img :src="`${store.API_URL}${post.image}`" alt="Post Image" /> <br>
+
+          <RouterLink class="detail" v-if="post.id" :to="{ name: 'PostDetail', params: { id: post.id } }">View Details</RouterLink>
+
           <div v-if="userstore.LoginUsername === post.user.username">
-            <RouterLink :to="{ name: 'EditPost', params: { id: post.id } }">Edit</RouterLink>
-            <button @click="deletePost(post.id)">Delete</button>
+            <RouterLink class="edit" :to="{ name: 'EditPost', params: { id: post.id } }">Edit</RouterLink> 
+            <button class="deletebtn" @click="deletePost(post.id)">Delete</button>
           </div>
+
+          <span class="title"> 내용 :</span> <span>{{ post.content }}</span> <br>
+
+          <span class="title"> 작성시간 : </span> <span>{{ post.created_at }}</span> <br>
+
+          <span class="like">Likes :</span><span>{{ post.likes.length }}</span>          
+
+          <button class="likebtn" @click="toggleLike(post)">
+            {{ post.likes.includes(store.userId) ? 'Unlike' : 'Like' }}
+          </button>
+          
+            <!-- <p>Likes: {{ post.likes.length }}</p>
+
+          <p>{{ post.user.username }}</p> -->
+
         </div>
       </div>
       <p v-else>No posts available.</p>
@@ -70,6 +86,32 @@ const deletePost = async (postId) => {
   })
 }
 
+
+const toggleLike = (post) => {
+  axios({
+    method: 'post',
+    url: `${store.API_URL}/articles/like_post/${post.id}/`,
+    headers: {
+      'Authorization': `Token ${userstore.token}`
+    }
+  })
+    .then(response => {
+      const liked = response.data.liked
+      if (liked) {
+        post.likes.push(store.userId)
+      } else {
+        const index = post.likes.indexOf(store.userId)
+        if (index > -1) {
+          post.likes.splice(index, 1)
+        }
+      }
+    })
+    .catch(error => {
+      console.error('좋아요 기능 실패했다', error)
+    })
+}
+
+
 onMounted(() => {
   fetchPosts()
 })
@@ -111,4 +153,31 @@ onMounted(() => {
   width: 80%;
   margin-top: 10px;
 }
+
+.like{
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.likebtn {
+  margin-left: 40px;
+}
+
+.edit {
+  margin-right: 10px;
+}
+
+
+.deletebtn {
+  margin-left: 10px;
+}
+
+.detail {
+  font-weight: bold;
+}
+
+.title {
+  font-weight: bold;
+}
+
 </style>

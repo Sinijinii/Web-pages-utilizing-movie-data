@@ -5,16 +5,31 @@
         </div>
         <div class="details">
             <h1>{{ movie.title }}</h1>
-            <h2>줄거리</h2>
-            <p>{{ movie.overview }}</p>
-            <h2>장르</h2>
-            <p>{{ formatGenres(movie.genres) }}</p>
-            <h2>배우</h2>
-            <p>{{ formatCasts(movie.casts) }}</p>
-            <h2>OTT Platforms</h2>
-            <p>{{ formatOtt(movie.ott_platforms) }}</p>
-            <h2>평점</h2>
-            <p>{{ movie.vote_average }} 점</p>
+
+            <div class="section">
+                <h2>줄거리</h2>
+                <span>{{ movie.overview }}</span>
+            </div>
+
+            <div class="section">
+                <h2>장르</h2>
+                <span>{{ formatGenres(movie.genres) }}</span>
+            </div>
+
+            <div class="section">
+                <h2>배우</h2>
+                <span>{{ formatCasts(movie.casts) }}</span>
+            </div>
+
+            <div class="section">
+                <h2>OTT Platforms</h2>
+                <span>{{ formatOtt(movie.ott_platforms) }}</span>
+            </div>
+
+            <div class="section">
+                <h2>평점</h2>
+                <span>{{ movie.vote_average }} 점</span>
+            </div>
         </div>
     </div>
 </template>
@@ -73,6 +88,11 @@ function formatOtt(ott_platforms) {
 </script>
 
 <style scoped>
+.section {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+}
 .movie-details {
     display: flex;
     align-items: flex-start;
@@ -89,7 +109,7 @@ function formatOtt(ott_platforms) {
     margin-left: 310px;
 }
 
-p {
+span {
     font-weight: bold;
 }
 

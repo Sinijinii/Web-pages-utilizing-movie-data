@@ -2,10 +2,11 @@
     <div class="post-detail">
       <h1>{{ postid }}번 Post</h1>
       <img :src="`${store.API_URL}${post?.image}`" alt="Post Image" />
-        <p>{{ post?.content }}</p>
-        <p>{{ post?.created_at }}</p>
+        <p>내용 : {{ post?.content }}</p>
+        <p>작성시간 : {{ post?.created_at }}</p>
       <div v-if="userstore.LoginUsername === post?.user.username">
-        <RouterLink :to="{ name: 'EditPost', params: { id: postId } }">Edit</RouterLink>
+        <RouterLink :to="{ name: 'EditPost', params: { id: postId } }">Edit</RouterLink> |
+
         <button @click="deletePost(postId)">Delete</button>
       </div>
 
