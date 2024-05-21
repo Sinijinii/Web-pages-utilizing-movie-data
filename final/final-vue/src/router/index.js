@@ -5,13 +5,9 @@ import MainView from '@/views/MainView.vue'
 import SignUpView from '@/views/SignUpView.vue'
 import LogInView from '@/views/LogInView.vue'
 import MyPageView from '@/views/MyPageView.vue'
-import SelectView from '@/views/SelectView.vue'
 import Usermovie from "@/components/Usermovie.vue"
 import UserRecommendView from '@/views/UserRecommendView.vue'
 import MovieDetail from '@/components/MovieDetail.vue'
-import Usermovie from "@/components/Usermovie.vue";
-import UserRecommandView from '@/views/UserRecommandView.vue'
-import { useCounterStore } from '@/stores/counter'
 import UploadImage from '@/components/Community/UploadImage.vue'
 import SharePost from '@/components/Community/ShareResult.vue'
 import ImageGenerator from '@/components/Community/ImageGenerator.vue'
@@ -50,11 +46,6 @@ const router = createRouter({
       path: '/mypage/:id/moreinfo/',
       name: 'Usermovie',
       component: Usermovie
-    },
-    {
-      path: '/recommand',
-      name: 'UserRecommandView',
-      component: UserRecommandView
     },
     {
       path:'/upload',
