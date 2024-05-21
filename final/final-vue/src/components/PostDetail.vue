@@ -17,12 +17,12 @@
 
   const route = useRoute()
   const store = useCounterStore()
+
   const userid = route.params.id
+
   const router = useRouter()
   const post = ref(null)
-
-
-
+  
   const fetchPost = async () => {
     try {
       const response = await axios.get(`${store.API_URL}/get_post/${route.params.id}/`)
