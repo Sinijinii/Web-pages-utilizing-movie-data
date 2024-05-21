@@ -38,7 +38,7 @@
   
   const toggleLike = async (post) => {
     try {
-      const response = await axios.post(`${store.API_URL}/like_post/`, {
+      const response = await axios.post(`${store.API_URL}/like_post/${post.id}/`, {}, {
         post_id: post.id
       }, {
         headers: {
@@ -51,7 +51,7 @@
         post.likes = post.likes.filter(user => user.id !== store.user.id)
       }
     } catch (error) {
-      console.error('Error liking post:', error)
+      console.error('좋아요 기능 실패했다', error)
     }
   }
   

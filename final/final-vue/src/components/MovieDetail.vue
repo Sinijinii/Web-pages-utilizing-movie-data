@@ -1,11 +1,21 @@
 <template>
-    <div>
-        <h1>{{ movie.title }}</h1>
-        <h3><img :src="getPosterUrl(movie.poster_path)" alt="영화 포스터"></h3>
-        <h3>줄거리 : {{ movie.overview }}</h3>
-        <h3>장르 : {{ formatGenres(movie.genres) }}</h3>
-        <h3>배우 : {{ formatCasts(movie.casts) }}</h3>
-        <h3>오티티 : {{ formatOtt(movie.ott_platforms) }}</h3>
+    <div class="movie-details">
+        <div class="poster">
+            <img :src="getPosterUrl(movie.poster_path)" alt="영화 포스터">
+        </div>
+        <div class="details">
+            <h1>{{ movie.title }}</h1>
+            <h2>줄거리</h2>
+            <p>{{ movie.overview }}</p>
+            <h2>장르</h2>
+            <p>{{ formatGenres(movie.genres) }}</p>
+            <h2>배우</h2>
+            <p>{{ formatCasts(movie.casts) }}</p>
+            <h2>OTT Platforms</h2>
+            <p>{{ formatOtt(movie.ott_platforms) }}</p>
+            <h2>평점</h2>
+            <p>{{ movie.vote_average }} 점</p>
+        </div>
     </div>
 </template>
   
@@ -62,4 +72,25 @@ function formatOtt(ott_platforms) {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.movie-details {
+    display: flex;
+    align-items: flex-start;
+}
+
+.poster {
+    width: 200px;
+    height: 300px;
+    flex-shrink: 0;
+}
+
+.details {
+    flex-grow: 1;
+    margin-left: 310px;
+}
+
+p {
+    font-weight: bold;
+}
+
+</style>

@@ -39,7 +39,7 @@ actors = ['김다미', '김수현', '김우빈', '김지원', '김태리', '김�
           '손예진', '송강호', '송중기', '송혜교', '수지', '신세경', '유승호', '유해진', '윤아', '이도현', '이동휘', '이병헌', '이세영', '이정재', '이주빈', '임시완', '전도연']
 
 # 모델 파일 경로
-MODEL_PATH = os.path.abspath('C:\\Users\\yb\\Desktop\\Web-pages-utilizing-movie-data\\final\\final-django\\articles\\CNN\\model.h5')
+MODEL_PATH = os.path.abspath("C:\\Users\\SSAFY\\Desktop\\Web-pages-utilizing-movie-data\\final\\final-django\\articles\\CNN\\model.h5")
 print(MODEL_PATH)
 model = load_model(MODEL_PATH)
 REST_API_KEY = '8f7951c8882033e6548aa0bd67a0f772'
@@ -244,21 +244,45 @@ def follow_user(request):
     except User.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
 
-@csrf_exempt
+# @csrf_exempt
+# @api_view(['POST'])
+# def like_post(request):
+#     post_id = request.data.get('post_id')
+#     try:
+#         post = Post.objects.get(id=post_id)
+#         if request.user in post.likes.all():
+#             post.likes.remove(request.user)
+#             liked = False
+#         else:
+#             post.likes.add(request.user)
+#             liked = True
+#         return JsonResponse({'liked': liked, 'likes_count': post.likes.count()})
+#     except Post.DoesNotExist:
+#         return JsonResponse({'error': 'Post not found'}, status=404)
+
+# 영빈이 만든 좋아요 기능
 @api_view(['POST'])
-def like_post(request):
-    post_id = request.data.get('post_id')
-    try:
-        post = Post.objects.get(id=post_id)
-        if request.user in post.likes.all():
-            post.likes.remove(request.user)
-            liked = False
-        else:
-            post.likes.add(request.user)
-            liked = True
-        return JsonResponse({'liked': liked, 'likes_count': post.likes.count()})
-    except Post.DoesNotExist:
-        return JsonResponse({'error': 'Post not found'}, status=404)
+@permission_classes([IsAuthenticated])
+def like_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    
+    # 본인의 게시물에 좋아요 불가능
+    if post.user == request.user:
+        print(f'포트스.유저 확이이이이이이이ㅣ이이이이ㅣ이이ㅣ인 {post.user}')
+        print(f'리퀘.유저 확이이이이이이이ㅣ이이이이ㅣ이이ㅣ인 {request.user}')
+
+        return Response({'에러 : 내 게시글에는 좋아요를 누를 수 없습니다.'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    # 이미 좋아요를 했으면 좋아요 취소
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+        liked = False
+    # 좋아요를 하지 않았으면 좋아요 누르기
+    else:
+        post.likes.add(request.user)
+        liked = True
+
+    return Response({'liked': liked, 'likes_count': post.likes.count()})
 
 def create_comment(request):
     if request.method == 'POST':

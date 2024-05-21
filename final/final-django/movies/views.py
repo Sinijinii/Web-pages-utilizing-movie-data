@@ -62,7 +62,7 @@ def MovieSimilarityView(request):
             "casts": movie[0].casts,
             "genres": [genre.name for genre in movie[0].genres.all()],  # genres 필드 순회하여 각 객체의 name 속성을 추출
             "overview": movie[0].overview,
-            "ott_platforms": [platform.name for platform in movie[0].ott_platforms.all()]  # ott_platforms 필드 순회하여 각 객체의 name 속성을 추출
+            "ott_platforms": [platform.name for platform in movie[0].ott_platforms.all()],  # ott_platforms 필드 순회하여 각 객체의 name 속성을 추출
         }
         for movie in top_10_casts_selec2
     ],
@@ -74,7 +74,7 @@ def MovieSimilarityView(request):
             "casts": movie[0].casts,
             "genres": [genre.name for genre in movie[0].genres.all()],  # genres 필드 순회하여 각 객체의 name 속성을 추출
             "overview": movie[0].overview,
-            "ott_platforms": [platform.name for platform in movie[0].ott_platforms.all()]  # ott_platforms 필드 순회하여 각 객체의 name 속성을 추출
+            "ott_platforms": [platform.name for platform in movie[0].ott_platforms.all()],  # ott_platforms 필드 순회하여 각 객체의 name 속성을 추출
         }
         for movie in top_10_genres_selec2
     ]}
@@ -94,7 +94,8 @@ def MovieDetail(request, movie_id):
     'genres': [genre.name for genre in movie.genres.all()],  # genres 필드 순회하여 각 객체의 name 속성을 추출
     'casts': movie.casts,
     'overview': movie.overview,
-    'ott_platforms': [platform.name for platform in movie.ott_platforms.all()]  # ott_platforms 필드 순회하여 각 객체의 name 속성을 추출
+    'ott_platforms': [platform.name for platform in movie.ott_platforms.all()],  # ott_platforms 필드 순회하여 각 객체의 name 속성을 추출
+    'vote_average': movie.vote_average,
     }
 
     return JsonResponse(data)
