@@ -6,7 +6,7 @@
     
     <div v-if="similarActor" class="result">
       <h2>{{ similarActor }}</h2>
-      <img :src="actorImageUrl" alt="Similar Actor Image" v-if="actorImageUrl" />
+      <img :src="`${userstore.API_URL}/media/${actorImageUrl}`" alt="Similar Actor Image" v-if="actorImageUrl" />
       <button @click="ShareResult">Share</button>
     </div>
   </div>
@@ -17,13 +17,13 @@ import { ref } from 'vue'
 import axios from 'axios'
 import {useRouter} from 'vue-router';
 import { useCommunity } from '@/stores/community'
-
+import {useCounterStore} from '@/stores/counter'
 const store = useCommunity()
 const router = useRouter()
 const selectedFile = ref(null)
 const similarActor = ref(null)
 let actorImageUrl = ref(null)
-
+const userstore = useCounterStore()
 const onFileChange = (event) => {
   selectedFile.value = event.target.files[0]
 };

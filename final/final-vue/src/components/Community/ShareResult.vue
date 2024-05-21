@@ -1,7 +1,7 @@
 <template>
   <div class="share-post">
     <h1>Share Your Result</h1>
-    <img :src="`${store.API_URL}${actorImageUrl}`" alt="Similar Actor Image" /> <br>
+    <img :src="`${userstore.API_URL}/media/${actorImageUrl}`" alt="Similar Actor Image" /> <br>
     {{ similarActor }} <br>
     <textarea v-model="content" placeholder="Write something..."></textarea>
     <button @click="sharePost">Share</button>
@@ -12,17 +12,20 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useCommunity } from '@/stores/community'
-
+import {useCounterStore} from '@/stores/counter'
 const route = useRoute()
 const store = useCommunity()
+const userstore = useCounterStore()
 
 const actorImageUrl = route.params.actorImageUrl
 const similarActor = route.params.similarActor
+
 console.log('print해봄');
 console.log(actorImageUrl.value);
 const content = ref('')
 
-const sharePost = async () => {
+const sharePost = () => {
+  console.log('durlek');
   store.uploadResult(content.value, actorImageUrl)
 }
 

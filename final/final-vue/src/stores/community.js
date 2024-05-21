@@ -2,10 +2,12 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import {useCounterStore} from '@/stores/counter'
 
 export const useCommunity = defineStore('Community', () => {
   const API_URL = 'http://127.0.0.1:8000'
-  const token = ref(null)
+  const store = useCounterStore()
+  const token = ref(store.token)
   const router = useRouter()
 
   // SharePost부분
@@ -45,7 +47,9 @@ export const useCommunity = defineStore('Community', () => {
       })
   }
 
-  const uploadResult = function (content, img_url) {
+  const uploadResult = (content, img_url) =>{
+    console.log('토큰이다 이자식아');
+    console.log(token);
     const formData = new FormData()
     formData.append('content', content)
     formData.append('image', img_url)
@@ -65,7 +69,7 @@ export const useCommunity = defineStore('Community', () => {
         router.push('/community')
       })
       .catch((error) => {
-        console.log(error)
+        console.log('error',error)
       })
   }
 

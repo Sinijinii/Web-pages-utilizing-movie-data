@@ -12,11 +12,11 @@
     <div class="posts">
       <h1>My Profile</h1>
       <div v-for="post in posts" :key="post.id" class="post">
+        {{ post }}
         <h2>{{ post.user.username }}</h2>
         <img :src="`${store.API_URL}${post.image}`" alt="Post Image" />
         <p>{{ post.content }}</p>
         <p>{{ post.created_at }}</p>
-        <p>Likes: {{ post.likes.length }}</p>
       </div>
     </div>
   </div>
