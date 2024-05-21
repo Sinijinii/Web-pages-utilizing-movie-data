@@ -2,19 +2,20 @@
   <div class="community">
     <div class="sidebar">
       <RouterLink :to="{ name: 'Community' }">Community</RouterLink>
-      <RouterLink :to="{name: 'UploadImage'}">New Post</RouterLink>
-      <RouterLink :to="{name: 'ProfileView'}">My Profile</RouterLink>
-      <RouterLink :to="{name: 'FollowingView'}">Following</RouterLink>
-      <RouterLink :to="{name: 'FindActor'}">FindActor</RouterLink>
-      <RouterLink :to="{name:'ImageGenerator'}">ImageGenerator</RouterLink>
+      <RouterLink :to="{ name: 'UploadImage' }">New Post</RouterLink>
+      <RouterLink :to="{ name: 'ProfileView' }">My Profile</RouterLink>
+      <RouterLink :to="{ name: 'FollowingView' }">Following</RouterLink>
+      <RouterLink :to="{ name: 'FindActor' }">FindActor</RouterLink>
+      <RouterLink :to="{ name: 'ImageGenerator' }">ImageGenerator</RouterLink>
     </div>
     <div class="posts">
       <h1>Community Posts</h1>
       <div v-for="post in posts" :key="post.id" class="post">
+
         <RouterLink :to="{ name: 'PostDetail', params: { id: post.id } }">View Details</RouterLink>
         <!-- <div v-if="post.user.id === store.user.id"> -->
-          <button @click="deletePost(post.id)">Delete</button>
-          <RouterLink :to="{ name: 'EditPost', params: { id: post.id } }">Edit</RouterLink>
+        <button @click="deletePost(post.id)">Delete</button>
+        <RouterLink :to="{ name: 'EditPost', params: { id: post.id } }">Edit</RouterLink>
         <!-- </div> -->
         <img :src="`${store.API_URL}${post.image}`" alt="Post Image" />
         <p>{{ post.content }}</p>
