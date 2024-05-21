@@ -2,10 +2,10 @@
   <div>
     <h1>마이페이지</h1>
     <p>{{ username }}의 페이지</p>
-    <p>{{ selectedmovies }}</p>
-    <p>{{ selectedotts }}</p>
+    <p>내가 좋아하는 영화: {{ selectedmovies }}</p>
+    <p>내가 구독한 ott: {{ selectedotts }}</p>
     <!-- 회원 수정, ott, 영화 선택, 좋아하는 영화 장르 변경, 닮은꼴 찾기 링크 -->
-    <button @click="moreinfo">추가 정보 입력하기</button>
+    <button @click="moreinfo">추가 정보 수정하기</button>
   </div>
 </template>
 
@@ -24,7 +24,7 @@ const selectedotts = ref([])
 const userId = ref(null)
 
 const moreinfo = () => {
-  router.push({name: 'SelectView', params: {id: userId.value}})
+  router.push({name: 'Usermovie', params: {id: userId.value}})
 }
 
 onMounted (() => {
@@ -35,6 +35,7 @@ onMounted (() => {
         Authorization: `Token ${store.token}`
       }
 })
+// 여기 수정함
 .then((response) => {
   selectedmovies.value = response.data.selectedmovies
   selectedotts.value = response.data.selectedotts

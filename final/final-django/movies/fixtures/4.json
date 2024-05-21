@@ -8355,4 +8355,152 @@
         "movie": 14784,
         "genre": 18
     }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 68721,
+        "genre": 28
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 68721,
+        "genre": 12
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 68721,
+        "genre": 878
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 19995,
+        "genre": 28
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 19995,
+        "genre": 12
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 19995,
+        "genre": 14
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 19995,
+        "genre": 878
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 278,
+        "genre": 18
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 278,
+        "genre": 80
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 138843,
+        "genre": 27
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 138843,
+        "genre": 53
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 838209,
+        "genre": 9648
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 838209,
+        "genre": 27
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 838209,
+        "genre": 53
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 155,
+        "genre": 18
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 155,
+        "genre": 28
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 155,
+        "genre": 80
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 155,
+        "genre": 53
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 634649,
+        "genre": 28
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 634649,
+        "genre": 12
+    }
+},
+{
+    "model": "movies.movie_genres",
+    "fields": {
+        "movie": 634649,
+        "genre": 878
+    }
 }]
+

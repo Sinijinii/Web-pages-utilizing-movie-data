@@ -1,14 +1,23 @@
 <template>
   <div>
-    <h1>영화 선택하는 곳</h1>
+    <h1>영화, OTT 선택하는 곳</h1>
   </div>
-  {{ movies }}
   <form @submit.prevent="saveinfo">
     <div>
       <h2>선호하는 영화를 선택하세요 (최소 3개)</h2>
         <div v-for="movie in movies" :key="movie.id" class="movie-container" @click="toggleSelection(movie.id)">
           <img :src="movie.image" :alt="movie.title" :class="{'selected': selectedmovies.includes(movie.id)}" style="width: 100px; height: auto;">
         </div>
+    </div>
+
+    <div>
+      <h2>구독하신 ott를 선택하세요</h2>
+        <div v-for="ott in otts" :key="ott.id" class="ott-container" @click="toggleSelectionOtt(ott.id)">
+          <img :src="ott.logopath" :alt="ott.name" :class="{'selected': selectedotts.includes(ott.id)}">
+        <div>
+    </div>
+
+      </div>
     </div>
     <button type="submit">입력</button>
   </form>
@@ -19,7 +28,7 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useCounterStore } from '@/stores/counter'
 import axios from 'axios'
-import MyPageView from '@/views/MyPageView.vue';
+
 
 const store = useCounterStore()
 const selectedmovies = ref([])
@@ -49,7 +58,12 @@ const movies = [
     { id: 157336, title: '인터스텔라', image: "https://image.tmdb.org/t/p/w500//zDNAeWU0PxKolEX1D8Vn1qWhGjH.jpg" },
     { id: 158445, title: '7번방의 선물', image: "https://image.tmdb.org/t/p/w500//c9TqJPm4pZCuiEXumTayoNIrBSK.jpg"}
 ]
-
+const otts = [
+  { id: 8, name: 'Netflix', logopath: "https://image.tmdb.org/t/p/w500//pbpMk2JmcoNnQwx5JGpXngfoWtp.jpg" },
+  { id: 97, name: 'Watcha', logopath: "https://image.tmdb.org/t/p/w500//5gmEivxOGPdq4Afpq1f8ktLtEW1.jpg" },
+  { id: 337, name: 'Disney Plus', logopath: "https://image.tmdb.org/t/p/w500//97yvRBw1GzX7fXprcF80er19ot.jpg" }
+  ]
+//  수정
 const toggleSelection = (movieId) => {
   const index = selectedmovies.value.indexOf(movieId);
   if (index === -1) {
@@ -59,9 +73,17 @@ const toggleSelection = (movieId) => {
   }
 }
 
+const toggleSelectionOtt = (OttId) => {
+  const index = selectedotts.value.indexOf(OttId);
+  if (index === -1) {
+    selectedotts.value.push(OttId)
+  } else {
+    selectedotts.value.splice(index, 1)
+  }
+}
+
 
 const saveinfo = function () {
-// console.log(selectedmovies.value);
 if (selectedmovies.value.length < 3) {
   alert('최소 3개의 영화를 선택해주세요.');
   return;
@@ -70,42 +92,21 @@ axios({
   method: 'post',
   url: `${store.API_URL}/${userId.value}/saveinfo/`,
   data: {
-    selectedMovies: selectedmovies.value,
-    selectedOtts: selectedotts.value
+    // userinfo: userId.value,
+    selectedmovies: selectedmovies.value,
+    selectedotts: selectedotts.value
   },
   headers: {
         Authorization: `Token ${store.token}`
       }
 })
 .then((response) => {
-  console.log(selectedmovies.value);
   router.push({name: 'MyPageView', params: {'username': store.LoginUsername}})
 })
 .catch((error) => {
   console.log(error)
 })
 }
-
-
-    // for (const movie of selectedMovies) {
-    //   console.log(movie)
-    //   axios({
-    //     method: 'post',
-    //     url: `${API_URL}/${LoginUsername.value}/saveinfo/`,
-    //     data: { movie },
-    //     headers: {
-    //       Authorization: `Token ${token}`
-    //     }
-    //   })
-    //   .then((response) => {
-    //     console.log('데이터 저장 성공')
-    //   })
-    //   .catch((error) => {
-    //     console.log('데이터 저장 실패');
-    //   })
-    // }
-  // }
-
 </script>
 
 <style scoped>
@@ -113,6 +114,36 @@ axios({
   display: inline-block;
   margin: 10px;
   cursor: pointer;
+}
+
+.ott-container {
+  display: inline-block;
+  margin: 10px;
+  cursor: pointer;
+  width: 200px;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.ott-container img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  display: block;
+  margin: auto;
+  position: absolute;
+  top: 0; 
+  bottom: 0; 
+  left: 0; 
+  right: 0;
+}
+
+.ott-container img.selected {
+  border: 5px solid blue;
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
 }
 
 .movie-container img.selected {

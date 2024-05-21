@@ -20,7 +20,7 @@
     "model": "movies.OTTPlatform",
     "pk": 337,
     "fields": {
-        "name": "Disney Plus",
+        "name": "DisneyPlus",
         "platformId": 337,
         "logopath": "/97yvRBw1GzX7fXprcF80er19ot.jpg"
     }

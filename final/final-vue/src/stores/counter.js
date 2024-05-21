@@ -4,11 +4,44 @@ import axios from 'axios'
 import { useRouter } from 'vue-router'
 
 export const useCounterStore = defineStore('counter', () => {
-  const movies = ref([])
+  const movies = ref()
+  const loginmovies = ref()
   const API_URL = 'http://127.0.0.1:8000'
   const token = ref(null)
   const LoginUsername = ref(null)
   const router = useRouter()
+  const BasicPosterPath = 'https://image.tmdb.org/t/p/w500'
+
+
+  // //추천영화 받아오는 함수
+  // const getRecommend = () => {
+  //   return axios.get(`${API_URL}/api/v1/recommend/`)
+  //     .then(response => {
+  //       return response.data
+  //     })
+  //     .catch(error => {
+  //       console.log(error)
+  //       return Promise.reject(error)
+  //     })
+  // }
+
+  //추천영화 받아오는 함수
+  const getRecommend = () => {
+    return axios({
+      method: 'get',
+      url: `${API_URL}/api/v1/recommend/`,
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+      .then(response => {
+        return response.data
+      })
+      .catch(error => {
+        console.log(error)
+        return Promise.reject(error)
+      })
+  }
 
 // 로그인 여부
   const isLogin = computed(() => {
@@ -24,9 +57,9 @@ export const useCounterStore = defineStore('counter', () => {
     axios({
       method: 'get',
       url: `${API_URL}/api/v1/movies/`,
-      headers: {
-        Authorization: `Token ${token.value}`
-      }
+      // headers: {
+      //   Authorization: `Token ${token.value}`
+      // }
     })
       .then(response => {
         movies.value = response.data
@@ -36,10 +69,26 @@ export const useCounterStore = defineStore('counter', () => {
       })
   }
 
+  const getLoginMovies = function() {
+    axios({
+      method: 'get',
+      url: `${API_URL}/api/v1/loginmovies/`,
+      headers: {
+        Authorization: `Token ${token.value}`
+      }
+    })
+      .then(response => {
+        loginmovies.value = response.data
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }
+
 // 회원가입
   const signUp = function (payload) {
     // 1. 사용자 입력 데이터를 받아
-    const { username, password1, password2, selectedMovies } = payload
+    const { username, password1, password2} = payload
 
     // 2. axios로 django에 요청을 보냄
     axios({
@@ -60,27 +109,6 @@ export const useCounterStore = defineStore('counter', () => {
        })
   }
 
-// 유저 정보저장
-  const saveinfo = function (selectedMovies) {
-    for (const movie of selectedMovies) {
-      console.log(movie)
-      axios({
-        method: 'post',
-        url: `${API_URL}/${LoginUsername.value}/saveinfo/`,
-        data: { movie },
-        headers: {
-          Authorization: `Token ${token}`
-        }
-      })
-      .then((response) => {
-        console.log('데이터 저장 성공')
-      })
-      .catch((error) => {
-        console.log('데이터 저장 실패');
-      })
-    }
-  }
-
 // 로그인
   const logIn = function (payload) {
     // 1. 사용자 입력 데이터를 받아
@@ -98,7 +126,7 @@ export const useCounterStore = defineStore('counter', () => {
         LoginUsername.value = username
         token.value = response.data.key
         console.log(token.value);
-        router.push({ name : 'MainView' })
+        router.replace({ name : 'MainView' })
       })
       .catch((error) => {
         console.log(error)
@@ -160,15 +188,13 @@ export const useCounterStore = defineStore('counter', () => {
     })
       .then((response) => {
         console.log(response);
-        alert('Post shared successfully!')
+        alert('Post shared successfully!!')
         router.push('/community')
       })
       .catch((error) => {
         console.log(error)
       })
   }
-
-
 
   const uploadPost = function (content) {
     const formData = new FormData()
@@ -188,15 +214,13 @@ export const useCounterStore = defineStore('counter', () => {
     })
       .then((response) => {
         console.log(response);
-        alert('Post shared successfully!')
+        alert('Post shared successfully!!')
         router.push('/community')
       })
       .catch((error) => {
         console.log(error)
       })
   }
-
-
 
   const getPosts = async () => {
     try {
@@ -209,7 +233,8 @@ export const useCounterStore = defineStore('counter', () => {
 
 
 
-  return { movies, API_URL, getMovies, signUp, logIn, token, isLogin, uploadResult,isLogin, LoginUsername,getMovies, signUp, logIn, saveinfo,
-    selectedFile, similarActor, actorImageUrl, setFile, uploadImage, uploadPost
-   }
+  return { movies, API_URL, getMovies, signUp, logIn, token, isLogin, uploadResult,
+            loginmovies, getLoginMovies, LoginUsername, BasicPosterPath, selectedFile,
+            similarActor, actorImageUrl, setFile, uploadImage, uploadPost, getRecommend
+        }
 }, { persist: true })

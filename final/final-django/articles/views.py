@@ -40,7 +40,7 @@ actors = ['김다미', '김수현', '김우빈', '김지원', '김태리', '김�
           '손예진', '송강호', '송중기', '송혜교', '수지', '신세경', '유승호', '유해진', '윤아', '이도현', '이동휘', '이병헌', '이세영', '이정재', '이주빈', '임시완', '전도연']
 
 # 모델 파일 경로
-MODEL_PATH = os.path.abspath('C:/Users/SSAFY/Desktop/sinijini/fin_pjt/Web-pages-utilizing-movie-data/final/final-django/articles/CNN/model.h5')
+MODEL_PATH = os.path.abspath("C:\\Users\\SSAFY\\Desktop\\Web-pages-utilizing-movie-data\\final\\final-django\\articles\\CNN\\model.h5")
 print(MODEL_PATH)
 model = load_model(MODEL_PATH)
 REST_API_KEY = '8f7951c8882033e6548aa0bd67a0f772'
@@ -339,9 +339,73 @@ def comment_like_count(request, review_pk, comment_pk):
 
 
 
+User = get_user_model()
+
+@csrf_exempt
+@api_view(['POST'])
+def follow_user(request):
+    user_id = request.data.get('user_id')
+    try:
+        user_to_follow = User.objects.get(id=user_id)
+        follow, created = Follow.objects.get_or_create(follower=request.user, following=user_to_follow)
+        if not created:
+            follow.delete()
+            following = False
+        else:
+            following = True
+        return JsonResponse({'following': following})
+    except User.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+
+# @csrf_exempt
+# @api_view(['POST'])
+# def like_post(request):
+#     post_id = request.data.get('post_id')
+#     try:
+#         post = Post.objects.get(id=post_id)
+#         if request.user in post.likes.all():
+#             post.likes.remove(request.user)
+#             liked = False
+#         else:
+#             post.likes.add(request.user)
+#             liked = True
+#         return JsonResponse({'liked': liked, 'likes_count': post.likes.count()})
+#     except Post.DoesNotExist:
+#         return JsonResponse({'error': 'Post not found'}, status=404)
+
+# 영빈이 만든 좋아요 기능
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def like_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    
+    # 이미 좋아요를 했으면 좋아요 취소
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+        liked = False
+    # 좋아요를 하지 않았으면 좋아요 누르기
+    else:
+        post.likes.add(request.user)
+        liked = True
+
+    return JsonResponse({'liked': liked, 'likes_count': post.likes.count()})
 
 
 
+
+def create_comment(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user = request.user
+        post_id = data.get('post_id')
+        text = data.get('text')
+        
+        post = Post.objects.get(id=post_id)
+        comment = Comment.objects.create(user=user, post=post, text=text)
+        
+        return JsonResponse({'success': True, 'comment_id': comment.id, 'text': comment.text})
+    return JsonResponse({'error': 'POST method required'})
 
 
 
