@@ -14,17 +14,22 @@ class Post(models.Model):
     image = models.ImageField(upload_to='posts/', blank=True)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_posts', blank=True)
+    like_review_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_reviews')
 
 class Comment(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    text = models.TextField()
+    content = models.CharField(max_length=20)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-class Follow(models.Model):
-    follower = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='following', on_delete=models.CASCADE)
-    following = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='followers', on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+    # 댓글 작성자
+    write_comment_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='write_comment')
+    # 상위 댓글
+    super_comment = models.ForeignKey('self', on_delete=models.CASCADE, related_name='commented', null=True, blank=True)
+    # 댓글을 좋아요한 사용자
+    like_comment_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_comments')
+    # 댓글이 달린 게시물
+    commented_review= models.ForeignKey(Post, on_delete=models.CASCADE, related_name='review_comment')
     
     

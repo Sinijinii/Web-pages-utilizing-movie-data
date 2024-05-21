@@ -8,8 +8,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import default_storage
 from django.contrib.auth.decorators import login_required
 from tensorflow.keras.models import load_model
+from django.db.models import Count
 from .models import *
-from .serializers import PostSerializer, CommentSerializer
+from .serializers import *
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -174,8 +175,9 @@ def create_post(request):
 
 @api_view(['GET'])
 def get_posts(request):
-    posts = Post.objects.all().select_related('user').prefetch_related('likes').order_by('-created_at')
+    posts = Post.objects.all().select_related('user').prefetch_related('review_comment__write_comment_user').order_by('-created_at')    
     serializer = PostSerializer(posts, many=True)
+    print('getpost 통과')
     return Response(serializer.data)
 
 
@@ -221,64 +223,135 @@ def detail_post(request,post_id):
     return Response(serializer.data)
 
 
-@api_view(['GET'])
-@authentication_classes([TokenAuthentication])
+
+
+
+
+
+
+###########################################################################################
+# 댓글 구현 View
+# 
+###########################################################################################
+
+
+@api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
-def following_posts(request):
+
+def comment_list_or_create(request, review_pk):
+    print('-----------------------------------')
+    print(review_pk)
+    review = get_object_or_404(Post, pk=review_pk)
+
+    def comment_list():
+        serializer = ReviewOnlySerializer(review)
+        # 해당 댓글이 달린 게시물의 모든 댓글 출력
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def comment_create():
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(commented_review=review, write_comment_user=request.user)
+            serializer = ReviewOnlySerializer(review)
+            # 생성 시, 해당 댓글이 달린 게시물의 모든 댓글 출력
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    if request.method == 'GET':
+        return comment_list()
+    elif request.method == 'POST':
+        return comment_create()
+
+
+# 대댓글 생성 및 전체 댓글 수정 및 삭제
+@api_view(['POST', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def comment_update_or_delete(request, review_pk, comment_pk):
+    # 대댓글 생성 시 : 댓글을 단 게시글 번호, 상위 댓글이 될 번호
+    # 수정 및 삭제 시 : 댓글을 단 게시글 번호, 수정/삭제하려는 댓글 번호
+    review = get_object_or_404(Post, pk=review_pk)
+    comment = get_object_or_404(Comment, pk=comment_pk)
+
+    def comment_create():
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            new_super = Comment.objects.get(id=comment_pk)
+            serializer.save(commented_review=review, write_comment_user=request.user, super_comment=new_super)
+
+            serializer = ReviewOnlySerializer(review)
+            # 생성 시, 해당 댓글이 달린 게시물의 모든 댓글 출력
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def comment_update():
+        serializer = CommentSerializer(comment, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            serializer = ReviewOnlySerializer(review)
+            # 수정 시, 수정된 댓글이 달린 게시물의 모든 댓글 출력
+            return Response(serializer.data)
+
+    def comment_delete():
+        delete_data = {'content': '삭제된 댓글입니다.'}
+        serializer = CommentSerializer(comment, data=delete_data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            serializer = ReviewOnlySerializer(review)
+            return Response(serializer.data)
+
+            
+    if request.method == 'POST':
+        return comment_create()
+    elif request.method == 'PUT':
+        if request.user == comment.write_comment_user:
+            return comment_update()
+    elif request.method == 'DELETE':
+        if request.user == comment.write_comment_user:
+            return comment_delete()
+
+
+# 댓글 좋아요 등록 및 해제
+@api_view(['POST'])
+@permission_classes([IsAuthenticated]) # 인증된 사용자만 권한 허용
+def comment_like(request, review_pk, comment_pk):
+    review = get_object_or_404(Post, pk=review_pk)
+    comment = get_object_or_404(Comment, pk=comment_pk)
     user = request.user
-    following = Follow.objects.filter(follower=user).values_list('following_id', flat=True)
-    posts = Post.objects.filter(user__in=following).order_by('-created_at')
-    serializer = PostSerializer(posts, many=True)
+    if comment.like_comment_users.filter(pk=user.pk).exists():
+        comment.like_comment_users.remove(user)
+        serializer = ReviewOnlySerializer(review)
+        return Response(serializer.data)
+    else:
+        comment.like_comment_users.add(user)
+        serializer = ReviewOnlySerializer(review)
+        return Response(serializer.data)
+
+
+# 댓글 별 좋아요 개수 조회
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def comment_like_count(request, review_pk, comment_pk):
+    comments = Comment.objects.annotate(
+        like_comment_users_count = Count('like_comment_users', distinct=True)
+    )
+
+    comment = comments.get(pk=comment_pk)
+    serializer = CommentLikeSerializer(comment)
     return Response(serializer.data)
 
 
 
-User = get_user_model()
 
-@csrf_exempt
-@api_view(['POST'])
-def follow_user(request):
-    user_id = request.data.get('user_id')
-    try:
-        user_to_follow = User.objects.get(id=user_id)
-        follow, created = Follow.objects.get_or_create(follower=request.user, following=user_to_follow)
-        if not created:
-            follow.delete()
-            following = False
-        else:
-            following = True
-        return JsonResponse({'following': following})
-    except User.DoesNotExist:
-        return JsonResponse({'error': 'User not found'}, status=404)
 
-@csrf_exempt
-@api_view(['POST'])
-def like_post(request):
-    post_id = request.data.get('post_id')
-    try:
-        post = Post.objects.get(id=post_id)
-        if request.user in post.likes.all():
-            post.likes.remove(request.user)
-            liked = False
-        else:
-            post.likes.add(request.user)
-            liked = True
-        return JsonResponse({'liked': liked, 'likes_count': post.likes.count()})
-    except Post.DoesNotExist:
-        return JsonResponse({'error': 'Post not found'}, status=404)
 
-def create_comment(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        user = request.user
-        post_id = data.get('post_id')
-        text = data.get('text')
-        
-        post = Post.objects.get(id=post_id)
-        comment = Comment.objects.create(user=user, post=post, text=text)
-        
-        return JsonResponse({'success': True, 'comment_id': comment.id, 'text': comment.text})
-    return JsonResponse({'error': 'POST method required'})
+
+
+
+
+
+
+
+
+
+
 
 
 

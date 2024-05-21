@@ -11,17 +11,39 @@
     <div class="posts">
       <h1>Community Posts</h1>
       <div v-if="posts && posts.length">
-        <div v-for="post in posts" :key="post.id" class="post">
-          <RouterLink v-if="post.id" :to="{ name: 'PostDetail', params: { id: post.id } }">View Details</RouterLink>
-          <img :src="`${store.API_URL}${post.image}`" alt="Post Image" />
-          <p>{{ post.content }}</p>
-          <p>{{ post.created_at }}</p>
-          <p>Likes: {{ post.likes.length }}</p>
-          <p>{{ post.user.username }}</p>
-          <div v-if="userstore.LoginUsername === post.user.username">
-            <RouterLink :to="{ name: 'EditPost', params: { id: post.id } }">Edit</RouterLink>
-            <button @click="deletePost(post.id)">Delete</button>
+        <div v-for="post in posts" :key="post?.id" class="post">
+          <RouterLink v-if="post?.id" :to="{ name: 'PostDetail', params: { id: post?.id } }">View Details</RouterLink>
+          <img :src="`${store.API_URL}${post?.image}`" alt="Post Image" />
+          <p>{{ post?.content }}</p>
+          <p>{{ post?.created_at }}</p>
+          <p>{{ post?.user.username }}</p>
+          <div v-if="userstore.LoginUsername === post?.user.username">
+            <RouterLink :to="{ name: 'EditPost', params: { id: post?.id } }">Edit</RouterLink>
+            <button @click="deletePost(post?.id)">Delete</button>
           </div>
+          <!-- 댓글 섹션 시작 -->
+          <div class="comments">
+            <h3>Comments</h3>
+            <div v-if="post?.comments && post?.comments.length">
+              <div v-for="comment in post?.comments" :key="comment?.id" class="comment">
+                <p>{{ comment.write_comment_user_name }}: {{ comment?.content }}</p>
+                <button @click="toggleReplyForm(comment?.id)">Reply</button>
+                <div v-if="replyFormVisible === comment?.id">
+                  <input v-model="replyContents[comment?.id]" placeholder="Write a reply" />
+                  <button @click="createCommentToComment({ postId: post?.id, superCommentId: comment?.id, content: replyContents[comment?.id] })">Submit</button>
+                </div>
+                <div v-if="comment?.commented && comment?.commented.length" class="replies">
+                  <div v-for="reply in comment?.commented" :key="reply?.id" class="reply">
+                    <p>{{ reply.write_comment_user_name }}: {{ reply?.content }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div v-else>No comments available.</div>
+            <input v-model="newCommentContents[post.id]" placeholder="Write a comment" />
+            <button @click="createComment({ postId: post.id, content: newCommentContents[post.id] })">Submit</button>
+          </div>
+          <!-- 댓글 섹션 끝 -->
         </div>
       </div>
       <p v-else>No posts available.</p>
@@ -31,46 +53,111 @@
 
 <script setup>
 import { RouterLink } from 'vue-router'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, onBeforeMount } from 'vue'
 import axios from 'axios'
 import { useCommunity } from '@/stores/community'
 import { useCounterStore } from '@/stores/counter'
 
 const userstore = useCounterStore()
 const posts = ref([])
+const replyFormVisible = ref(null)
+const newCommentContents = ref({})
+const replyContents = ref({})
 
 const store = useCommunity()
 
 const fetchPosts = async () => {
   axios({
-    method:'get',
-    url:`${store.API_URL}/articles/get_posts/`
+    method: 'get',
+    url: `${store.API_URL}/articles/get_posts/`
   })
-  .then((response)=>{
+  .then((response) => {
     posts.value = response.data
   })
   .catch((error) => {
-        console.log(error)
+    console.error('Error fetching posts:', error)
   })
 }
 
 const deletePost = async (postId) => {
   axios({
-    method:'delete',
+    method: 'delete',
     url: `${store.API_URL}/articles/delete_post/${postId}/`,
     headers: {
-        'Authorization': `Token ${store.token}`
-      }
+      'Authorization': `Token ${userstore.token}`
+    }
   })
-  .then((response)=>{
+  .then(() => {
     posts.value = posts.value.filter(post => post.id !== postId)
   })
   .catch((error) => {
-        console.log(error)
+    console.error('Error deleting post:', error)
   })
 }
 
-onMounted(() => {
+const createComment = async ({ postId, content }) => {
+  axios({
+    method: 'post',
+    url: `${store.API_URL}/articles/${postId}/comments/`,
+    headers: {
+      'Authorization': `Token ${userstore.token}`
+    },
+    data: { content }
+  })
+  .then((response) => {
+    // 댓글 작성 후 게시물 데이터 다시 불러오기
+    fetchPostById(postId)
+    newCommentContents.value[postId] = '' // 댓글 작성 후 입력 필드를 빈 값으로 설정
+  })
+  .catch((error) => {
+    console.error('Error creating comment:', error)
+  })
+}
+
+const createCommentToComment = async ({ postId, superCommentId, content }) => {
+  axios({
+    method: 'post',
+    url: `${store.API_URL}/articles/${postId}/comments/${superCommentId}/`,
+    headers: {
+      'Authorization': `Token ${userstore.token}`
+    },
+    data: { content }
+  })
+  .then((response) => {
+    // 대댓글 작성 후 게시물 데이터 다시 불러오기
+    fetchPostById(postId)
+    replyContents.value[superCommentId] = '' // 대댓글 작성 후 입력 필드를 빈 값으로 설정
+  })
+  .catch((error) => {
+    console.error('Error creating reply:', error)
+  })
+}
+
+const toggleReplyForm = (commentId) => {
+  replyFormVisible.value = replyFormVisible.value === commentId ? null : commentId
+  if (replyFormVisible.value !== null) {
+    replyContents.value[replyFormVisible.value] = ''
+  }
+}
+
+const fetchPostById = async (postId) => {
+  axios({
+    method: 'get',
+    url: `${store.API_URL}/articles/detail_post/${postId}/`
+  })
+  .then((response) => {
+    const updatedPost = response.data[0]
+    const postIndex = posts.value.findIndex(post => post.id === postId)
+    if (postIndex !== -1) {
+      posts.value[postIndex] = updatedPost
+    }
+  })
+  .catch((error) => {
+    console.error('Error fetching post by ID:', error)
+  })
+}
+
+onBeforeMount(() => {
   fetchPosts()
 })
 </script>
@@ -110,5 +197,21 @@ onMounted(() => {
 .post p {
   width: 80%;
   margin-top: 10px;
+}
+
+.comments {
+  margin-top: 20px;
+}
+
+.comment {
+  margin-bottom: 10px;
+}
+
+.replies {
+  margin-left: 20px;
+}
+
+.reply {
+  margin-bottom: 5px;
 }
 </style>
