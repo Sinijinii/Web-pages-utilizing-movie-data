@@ -1,8 +1,9 @@
 from django.db import models
 from django.conf import settings
 
+
 # Create your models here.
-User = settings.AUTH_USER_MODEL
+# User = settings.AUTH_USER_MODEL
 
 # 영화 모델
 class Movie(models.Model):
@@ -16,7 +17,7 @@ class Movie(models.Model):
     vote_count = models.IntegerField()
     genres = models.ManyToManyField('Genre', related_name='movies')
     ott_platforms = models.ManyToManyField('OTTPlatform', related_name='movies')
-    # users = models.ManyToManyField(User, related_name='movies')
+    likes = models.ManyToManyField('accounts.UserInfo', related_name='liked_movies', blank=True)
 
     # def __str__(self):
     #     return self.title

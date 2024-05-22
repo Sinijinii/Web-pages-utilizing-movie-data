@@ -121,6 +121,7 @@ const toggleLike = (post) => {
   })
     .then(response => {
       const liked = response.data.liked
+      // console.log(response.data);
       if (liked) {
         post.likes.push(store.userId)
       } else {

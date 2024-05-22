@@ -26,7 +26,8 @@ from googletrans import Translator
 import os
 import random
 from pathlib import Path
-from pathlib import Path
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -363,29 +364,12 @@ def follow_user(request):
     except User.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
 
-# @csrf_exempt
-# @api_view(['POST'])
-# def like_post(request):
-#     post_id = request.data.get('post_id')
-#     try:
-#         post = Post.objects.get(id=post_id)
-#         if request.user in post.likes.all():
-#             post.likes.remove(request.user)
-#             liked = False
-#         else:
-#             post.likes.add(request.user)
-#             liked = True
-#         return JsonResponse({'liked': liked, 'likes_count': post.likes.count()})
-#     except Post.DoesNotExist:
-#         return JsonResponse({'error': 'Post not found'}, status=404)
-
 # 영빈이 만든 좋아요 기능
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def like_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    
     # 이미 좋아요를 했으면 좋아요 취소
     if request.user in post.likes.all():
         post.likes.remove(request.user)
@@ -396,9 +380,6 @@ def like_post(request, post_id):
         liked = True
 
     return JsonResponse({'liked': liked, 'likes_count': post.likes.count()})
-
-
-
 
 def create_comment(request):
     if request.method == 'POST':
