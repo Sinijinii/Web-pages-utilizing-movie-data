@@ -84,12 +84,12 @@ class CommentLikeSerializer(serializers.ModelSerializer):
         
 class PostSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
-    
+    likes = UserSerializer(read_only=True, many=True)
     comments = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ['id', 'user', 'image', 'content', 'created_at', 'comments']
+        fields = ['id', 'user', 'image', 'content', 'created_at','updated_at', 'comments','likes']
 
     def get_comments(self, obj):
         comments = obj.review_comment.filter(super_comment=None)
