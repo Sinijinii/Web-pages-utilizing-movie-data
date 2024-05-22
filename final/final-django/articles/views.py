@@ -1,7 +1,6 @@
 import os
 import numpy as np
 import cv2
-import tensorflow as tf
 from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -22,17 +21,20 @@ from django.shortcuts import get_object_or_404
 import json
 import requests
 import json
-import urllib
 from PIL import Image
 from googletrans import Translator
 import os
-import time
 import random
+from pathlib import Path
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+print('---------------------------------------------------------')
+print(BASE_DIR)
 ###########################################################################################
 # CNN 모델을 통한 닮은 꼴 배우 찾기
 # 사용자의 사진을 통해 CNN 모델을 돌림
@@ -43,6 +45,7 @@ actors = ['김다미', '김수현', '김우빈', '김지원', '김태리', '김�
           '손예진', '송강호', '송중기', '송혜교', '수지', '신세경', '유승호', '유해진', '윤아', '이도현', '이동휘', '이병헌', '이세영', '이정재', '이주빈', '임시완', '전도연']
 
 # 모델 파일 경로
+MODEL_PATH = os.path.abspath(f"{BASE_DIR}/articles/CNN/model.h5")
 MODEL_PATH = os.path.abspath(f"{BASE_DIR}/articles/CNN/model.h5")
 print(MODEL_PATH)
 model = load_model(MODEL_PATH)
