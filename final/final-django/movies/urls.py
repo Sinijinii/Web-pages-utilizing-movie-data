@@ -9,4 +9,5 @@ urlpatterns = [
   path('recommend/', views.MovieSimilarityView, name='Movie_similarity_view'),
   path('detail/<int:movie_id>/', views.MovieDetail, name='MovieDetail'),
   path('loginmovies/', views.loginmovie_list),
+  path('searchmovie/<str:movietitle>/', views.SearchMovie, name='SearchMovie'),
 ]
