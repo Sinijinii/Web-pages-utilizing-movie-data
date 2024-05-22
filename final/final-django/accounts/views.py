@@ -10,6 +10,7 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from django.shortcuts import get_object_or_404, get_list_or_404
+from .serializers import MovieSerializer
 
 
 @api_view(['POST'])
