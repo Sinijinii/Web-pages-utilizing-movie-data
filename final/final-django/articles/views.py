@@ -1,7 +1,6 @@
 import os
 import numpy as np
 import cv2
-import tensorflow as tf
 from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -22,14 +21,20 @@ from django.shortcuts import get_object_or_404
 import json
 import requests
 import json
-import urllib
 from PIL import Image
 from googletrans import Translator
 import os
-import time
 import random
+from pathlib import Path
+from pathlib import Path
 
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+print('---------------------------------------------------------')
+print(BASE_DIR)
 ###########################################################################################
 # CNN 모델을 통한 닮은 꼴 배우 찾기
 # 사용자의 사진을 통해 CNN 모델을 돌림
@@ -40,12 +45,13 @@ actors = ['김다미', '김수현', '김우빈', '김지원', '김태리', '김�
           '손예진', '송강호', '송중기', '송혜교', '수지', '신세경', '유승호', '유해진', '윤아', '이도현', '이동휘', '이병헌', '이세영', '이정재', '이주빈', '임시완', '전도연']
 
 # 모델 파일 경로
-MODEL_PATH = os.path.abspath("C:\\Users\\SSAFY\\Desktop\\Web-pages-utilizing-movie-data\\final\\final-django\\articles\\CNN\\model.h5")
+MODEL_PATH = os.path.abspath(f"{BASE_DIR}/articles/CNN/model.h5")
+MODEL_PATH = os.path.abspath(f"{BASE_DIR}/articles/CNN/model.h5")
 print(MODEL_PATH)
 model = load_model(MODEL_PATH)
 REST_API_KEY = '8f7951c8882033e6548aa0bd67a0f772'
 # 얼굴 탐지 모델 로드
-face_cascade = cv2.CascadeClassifier('C:/Users/SSAFY/Desktop/sinijini/fin_pjt/Web-pages-utilizing-movie-data/final/final-django/articles/haarcascade_frontalface_default.xml')
+face_cascade = cv2.CascadeClassifier(f'{BASE_DIR}/articles/haarcascade_frontalface_default.xml')
 print(face_cascade)
 # 이미지 전처리 함수
 def preprocess_image(image):
@@ -420,7 +426,27 @@ def GenerateImageView(request):
 
         keywords = request.POST.getlist('keywords[]')
 
-        res = f'{keywords[3]}인 {keywords[1]}한 {keywords[0]}가 {keywords[5]}에 있는 {keywords[2]}이자 주인공인 {keywords[4]}장르의 영화 포스터인데, {keywords[6]} {keywords[7]}'
+        gender = keywords[0]
+        personality = keywords[1]
+        clothing_style = keywords[2]
+        activity_space = keywords[3]
+        occupation = keywords[4]
+        hobby = keywords[5]
+        movie_genre = keywords[6]
+        direction = keywords[7]
+
+        # N일 경우 성별 또는 동물 캐릭터 중 랜덤 선택
+        if direction == 'N':
+            if gender == '여자':
+                options = ['여자가', '강아지가', '토끼가', '다람쥐가']
+                selected_character = random.choice(options)
+            else:
+                options = ['남자가', '곰이', '큰 개가']
+                selected_character = random.choice(options)
+        else:  # S일 경우 성별만 선택
+            selected_character = f'{gender}가'
+
+        res = f'{activity_space}에 있는 {personality}한 {selected_character} {clothing_style}를 입고, {occupation}이자 {hobby}를 즐기는 {selected_character} 주인공인 {movie_genre} 장르의 영화 포스터'
         print(f"Constructed sentence: {res}")
 
         # Google Cloud Translation API로 번역
@@ -435,13 +461,16 @@ def GenerateImageView(request):
         randomint = random.random()
         img_name = f"karlo_{randomint}.jpg"
         print(f"Image URL: {img_url}")
-        img_path = os.path.join(settings.MEDIA_ROOT, 'post', img_name)
-        download(img_url,img_path)
+        
+        img_path = os.path.join('post', img_name)
+        save_path = os.path.join(settings.MEDIA_ROOT, 'post', img_name)
+        print(img_path)
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)  # 필요한 디렉토리를 생성
+        
+        download(img_url, save_path)
 
         return JsonResponse({'img_url': img_path})
-       
-       
-       
+
 from requests import get
 def download(url, file_name):
     with open(file_name, "wb") as file:   # open in binary mode

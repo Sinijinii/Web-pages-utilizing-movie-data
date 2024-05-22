@@ -23,5 +23,5 @@ urlpatterns = [
     path('<int:review_pk>/comments/<int:comment_pk>/', views.comment_update_or_delete), # 대댓글 생성 및 전체 댓글 수정 및 삭제
     path('<int:review_pk>/like/<int:comment_pk>/', views.comment_like),# 댓글 좋아요 등록 및 해제
     path('<int:review_pk>/like_count/<int:comment_pk>/', views.comment_like_count), # 댓글 별 좋아요 개수 조회
-    
+    path('like_post/<int:post_id>/', views.like_post, name='like_post'),
 ]

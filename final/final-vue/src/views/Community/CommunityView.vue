@@ -136,9 +136,6 @@ const toggleLike = (post) => {
 }
 
 
-onMounted(() => {
-    console.error('Error deleting post:', error)
-  })
 
 
 const createComment = async ({ postId, content }) => {
