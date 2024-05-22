@@ -10,6 +10,9 @@
     </div>
     <div class="posts">
       <h1>Community Posts</h1>
+      
+      <!-- {{ posts }} <br> -->
+
 
       <div v-if="posts && posts.length">
         <div v-for="post in posts" :key="post?.id" class="post">
@@ -25,9 +28,14 @@
           </RouterLink>
           <p>{{ post?.content }}</p>
           <p>Likes: {{ post.likes.length }}</p>
-
-          <button class="likebtn" @click="toggleLike(post)">
-            {{ post.likes.includes(store.userId) ? 'Unlike' : 'Like' }}
+          
+          <!-- {{ like_tf?.liked }} -->
+          <button v-if="post.like_list.includes(userstore.LoginUsername)" class="likebtn" @click="toggleLike(post)">
+            Unlike
+          </button>
+          
+          <button v-else class="likebtn" @click="toggleLike(post)">
+            Like
           </button>
 
 
@@ -86,8 +94,11 @@ const replyContents = ref({})
 const showComments = ref(null)
 
 const store = useCommunity()
+const like_tf = ref({})
+
 
 const fetchPosts = async () => {
+  console.log(posts)
   axios({
     method: 'get',
     url: `${store.API_URL}/articles/get_posts/`
@@ -99,6 +110,8 @@ const fetchPosts = async () => {
     console.error('Error fetching posts:', error)
   })
 }
+
+
 
 const deletePost = async (postId) => {
   axios({
@@ -121,18 +134,16 @@ const toggleLike = (post) => {
     method: 'post',
     url: `${store.API_URL}/articles/like_post/${post.id}/`,
     headers: {
-      'Authorization': `Token ${userstore.token}`
+      'Authorization': `Token ${store.token}`
     }
   })
     .then(response => {
-      const liked = response.data.liked
-      if (liked) {
-        post.likes.push(store.userId)
+      if (post.like_list.includes(userstore.LoginUsername)) {
+        post.like_list = post.like_list.filter(username => username !== userstore.LoginUsername)
+        post.likes.length -= 1
       } else {
-        const index = post.likes.indexOf(store.userId)
-        if (index > -1) {
-          post.likes.splice(index, 1)
-        }
+        post.like_list.push(userstore.LoginUsername)
+        post.likes.length += 1
       }
     })
     .catch(error => {

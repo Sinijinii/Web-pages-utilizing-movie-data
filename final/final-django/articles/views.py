@@ -181,6 +181,16 @@ def create_post(request):
 def get_posts(request):
     posts = Post.objects.all().select_related('user').prefetch_related('review_comment__write_comment_user').order_by('-created_at')    
     serializer = PostSerializer(posts, many=True)
+
+    like_user = []
+    post_len = len(serializer.data)
+    for i in range(post_len):
+        if 'likes' in serializer.data[i]:
+            for user in serializer.data[i]['likes']:
+                like_user.append(user['username'])
+        print(serializer)
+        serializer.data[i]['like_list'] = like_user
+    print(serializer.data)
     print('getpost 통과')
     return Response(serializer.data)
 

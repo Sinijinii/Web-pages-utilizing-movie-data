@@ -9,6 +9,7 @@ export const useCommunity = defineStore('Community', () => {
   const store = useCounterStore()
   const token = ref(store.token)
   const router = useRouter()
+  const userId = ref()
 
   // SharePost부분
   const selectedFile = ref(null)
