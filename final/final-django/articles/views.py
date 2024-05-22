@@ -28,7 +28,10 @@ from googletrans import Translator
 import os
 import time
 import random
+from pathlib import Path
 
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 ###########################################################################################
 # CNN 모델을 통한 닮은 꼴 배우 찾기
@@ -40,12 +43,12 @@ actors = ['김다미', '김수현', '김우빈', '김지원', '김태리', '김�
           '손예진', '송강호', '송중기', '송혜교', '수지', '신세경', '유승호', '유해진', '윤아', '이도현', '이동휘', '이병헌', '이세영', '이정재', '이주빈', '임시완', '전도연']
 
 # 모델 파일 경로
-MODEL_PATH = os.path.abspath("C:\\Users\\SSAFY\\Desktop\\Web-pages-utilizing-movie-data\\final\\final-django\\articles\\CNN\\model.h5")
+MODEL_PATH = os.path.abspath(f"{BASE_DIR}/articles/CNN/model.h5")
 print(MODEL_PATH)
 model = load_model(MODEL_PATH)
 REST_API_KEY = '8f7951c8882033e6548aa0bd67a0f772'
 # 얼굴 탐지 모델 로드
-face_cascade = cv2.CascadeClassifier('C:/Users/SSAFY/Desktop/sinijini/fin_pjt/Web-pages-utilizing-movie-data/final/final-django/articles/haarcascade_frontalface_default.xml')
+face_cascade = cv2.CascadeClassifier(f'{BASE_DIR}/articles/haarcascade_frontalface_default.xml')
 print(face_cascade)
 # 이미지 전처리 함수
 def preprocess_image(image):
