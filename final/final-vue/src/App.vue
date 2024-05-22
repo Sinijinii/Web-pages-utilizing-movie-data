@@ -1,15 +1,50 @@
 <template>
-  <nav>
-      <RouterLink class="routerlink" v-if="!store.isLogin" :to="{ name: 'SignUpView' }">회원가입</RouterLink> |
-      <RouterLink class="routerlink" v-if="!store.isLogin" :to="{ name: 'LogInView' }">로그인</RouterLink> |
-      <RouterLink :to="{ name: 'MainView' }">메인페이지</RouterLink> |
-      <RouterLink class="routerlink" v-if="store.isLogin" :to="{ name: 'MyPageView', params:{'username': store.LoginUsername } }">마이페이지</RouterLink> |
-      <RouterLink class="routerlink" v-if="store.isLogin" :to="{ name: 'UserRecommendView' }">추천 영화</RouterLink> |
-      <RouterLink class="routerlink" v-if="store.isLogin" :to="{ name: 'Community' }">Community</RouterLink>
-      <form @submit.prevent="logout()">
-        <button type="submit" v-if="store.isLogin">로그아웃</button>
-      </form>
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <RouterLink class="navbar-brand" :to="{ name: 'MainView' }">로고 이미지</RouterLink>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto mb-2 mb-lg-0"> <!-- 여기서 ml-auto 클래스를 추가합니다 -->
+
+          <li class="nav-item">
+            <RouterLink class="nav-link" aria-current="page" :to="{ name: 'MainView' }">메인페이지</RouterLink>
+          </li>
+
+          <li class="nav-item" v-if="!store.isLogin">
+            <RouterLink class="nav-link" :to="{ name: 'SignUpView' }">회원가입</RouterLink>
+          </li>
+
+          <li class="nav-item" v-if="!store.isLogin">
+            <RouterLink class="nav-link" :to="{ name: 'LogInView' }">로그인</RouterLink>
+          </li>
+
+          <li class="nav-item" v-if="store.isLogin">
+            <RouterLink class="nav-link" :to="{ name: 'MyPageView', params: { 'username': store.LoginUsername } }">마이페이지
+            </RouterLink>
+          </li>
+
+          <li class="nav-item" v-if="store.isLogin">
+            <RouterLink class="nav-link" :to="{ name: 'UserRecommendView' }">추천 영화</RouterLink>
+          </li>
+
+          <li class="nav-item" v-if="store.isLogin">
+            <RouterLink class="nav-link" :to="{ name: 'Community' }">Community</RouterLink>
+          </li>
+
+          <li class="nav-item" v-if="store.isLogin">
+            <form class="d-flex" @submit.prevent="logout()">
+              <button type="submit" class="btn">로그아웃</button>
+            </form>
+          </li>
+
+        </ul>
+      </div>
+    </div>
   </nav>
+
   <RouterView />
 </template>
 
@@ -20,13 +55,33 @@ import { useRouter } from 'vue-router';
 
 const store = useCounterStore()
 const router = useRouter()
-const logout = function() {
+const logout = function () {
   store.token = null
   store.loginmovies = null
   store.isLogin()
-  router.push({ name: 'LogInView'})
+  router.push({ name: 'LogInView' })
 }
 </script>
 
 <style scoped>
+.navbar {
+  height: 70px;
+  /* 네비게이션 바의 높이 조절 */
+  background-color: #4C6A58 !important;
+  /* 네비바 색깔 */
+}
+
+.nav-link {
+  color: #fff !important;
+  /* 네비게이션 바의 링크 텍스트의 글자색을 흰색으로 설정 */
+}
+
+.router-link-active {
+  color: #FFA500 !important;
+  /* 클릭된 네비게이션 바의 링크 텍스트 색상을 주황색으로 설정 */
+}
+
+.btn {
+  background-color: #FF7F47;
+}
 </style>
