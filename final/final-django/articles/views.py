@@ -31,8 +31,7 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+
 ###########################################################################################
 # CNN 모델을 통한 닮은 꼴 배우 찾기
 # 사용자의 사진을 통해 CNN 모델을 돌림
@@ -99,53 +98,98 @@ def find_similar_actor(request):
 
 
 ###########################################################################################
+# 생성형 ai 이미지 출력
+# 사용자의 입력값을 기반으로 번역 후 이미지 출력
+###########################################################################################
+@csrf_exempt
+@api_view(['POST'])
+def GenerateImageView(request):
+    if request.method == 'POST':
+
+        keywords = request.POST.getlist('keywords[]')
+
+        gender = keywords[0]
+        personality = keywords[1]
+        clothing_style = keywords[2]
+        activity_space = keywords[3]
+        occupation = keywords[4]
+        hobby = keywords[5]
+        movie_genre = keywords[6]
+        direction = keywords[7]
+
+        # N일 경우 성별 또는 동물 캐릭터 중 랜덤 선택
+        if direction == 'N':
+            if gender == '여자':
+                options = ['여자가', '강아지가', '토끼가', '다람쥐가']
+                selected_character = random.choice(options)
+            else:
+                options = ['남자가', '곰이', '큰 개가']
+                selected_character = random.choice(options)
+        else:  # S일 경우 성별만 선택
+            selected_character = f'{gender}가'
+
+        res = f'{activity_space}에 있는 {personality}한 {selected_character} {clothing_style}를 입고, {occupation}이자 {hobby}를 즐기는 {selected_character} 주인공인 {movie_genre} 장르의 영화 포스터'
+        print(f"Constructed sentence: {res}")
+
+        # Google Cloud Translation API로 번역
+        translator = Translator()
+        prompt = translator.translate(res, src='ko', dest='en')
+        print(f"Translated prompt: {prompt.text}")
+
+        negative_prompt = ""
+
+        response = t2i(prompt.text, negative_prompt)
+        img_url = response.get("images")[0].get("image")
+        randomint = random.random()
+        img_name = f"karlo_{randomint}.jpg"
+        print(f"Image URL: {img_url}")
+        
+        img_path = os.path.join('post', img_name)
+        save_path = os.path.join(settings.MEDIA_ROOT, 'post', img_name)
+        print(img_path)
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)  # 필요한 디렉토리를 생성
+        
+        download(img_url, save_path)
+
+        return JsonResponse({'img_url': img_path})
+
+from requests import get
+def download(url, file_name):
+    with open(file_name, "wb") as file:   # open in binary mode
+        response = get(url)               # get request
+        file.write(response.content)      # write to file
+
+
+
+# 이미지 생성하기 요청
+def t2i(prompt, negative_prompt):
+    r = requests.post(
+        'https://api.kakaobrain.com/v2/inference/karlo/t2i',
+        json = {
+            "version": "v2.1", 
+            "prompt": prompt,
+            "negative_prompt": negative_prompt, 
+            "height": 1024,
+            "width": 1024
+        },
+        headers = {
+            'Authorization': f'KakaoAK {REST_API_KEY}',
+            'Content-Type': 'application/json'
+        }
+    )
+    # 응답 JSON 형식으로 변환
+    response = json.loads(r.content)
+    return response
+
+
+
+
+###########################################################################################
 # 커뮤니티활용 View
-# 
+# 게시글 CRUD
 ###########################################################################################
 
 
-@api_view(['POST'])
-def upload_post(request):
-    print(request.method)
-    if request.method == 'POST':
-        # 업로드된 파일과 데이터 처리
-        print('여기는 articles의 view함수입니다.')
-        print(request.POST)
-        title = request.POST.get('title')
-        content = request.POST.get('content')
-        image = request.FILES.get('image')
-        if title and content and image:
-            # 이미지 저장
-            file_path = default_storage.save('uploads/' + image.name, image)
-            # 포스트 저장 로직 추가 (예: 데이터베이스에 저장)
-            return JsonResponse({'message': 'Post uploaded successfully'})
-        return JsonResponse({'error': 'Missing required fields'}, status=400)
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
-
-
-
-@csrf_exempt
-@api_view(['POST'])
-def upload_result(request):
-    if request.method == 'POST':
-        data = {
-                'content': request.POST.get('content'),
-                'image': request.POST.get('image'),
-                'user': request.user.id
-            }
-        Post.objects.create(
-            content=request.POST.get('content'),
-            image= request.POST.get('image'),
-            user= request.user
-        )
-        print()
-        return Response(data,status=status.HTTP_201_CREATED)
-    return JsonResponse({'error': 'POST method required'}, status=405)
-
-
-
-
-# 커뮤니티
 @csrf_exempt
 @api_view(['POST'])
 def create_post(request):
@@ -163,14 +207,7 @@ def create_post(request):
         print(data)
         serializer = PostSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
-            print('여길 통과하지 못한거니?')
             serializer.save(user=request.user)
-            print('serializer검증을 했다고....ㅠㅜ')
-            print(request.user)
-            # post.user = request.user
-            # post.save()
-            # print(post)
-            print('성공했니? 여기는 view의 create_post야')
             return Response( serializer.data,status=status.HTTP_201_CREATED)
         # return JsonResponse({'success': True, 'post_id': post.id, 'image_url': image_url})
     return JsonResponse({'error': 'POST method required'}, status=405)
@@ -182,6 +219,16 @@ def get_posts(request):
     posts = Post.objects.all().select_related('user').prefetch_related('review_comment__write_comment_user').order_by('-created_at')    
     serializer = PostSerializer(posts, many=True)
     print('getpost 통과')
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@authentication_classes([TokenAuthentication])
+def detail_post(request,post_id):
+    posts = Post.objects.filter(id=post_id)
+    serializer = PostSerializer(posts, many=True)
+    
+    print(serializer)
     return Response(serializer.data)
 
 
@@ -205,6 +252,25 @@ def update_post(request, post_id):
     return Response(serializer.data)
 
 
+@csrf_exempt
+@api_view(['POST'])
+def upload_result(request):
+    if request.method == 'POST':
+        data = {
+                'content': request.POST.get('content'),
+                'image': request.POST.get('image'),
+                'user': request.user.id
+            }
+        Post.objects.create(
+            content=request.POST.get('content'),
+            image= request.POST.get('image'),
+            user= request.user
+        )
+        print()
+        return Response(data,status=status.HTTP_201_CREATED)
+    return JsonResponse({'error': 'POST method required'}, status=405)
+
+
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
@@ -217,19 +283,10 @@ def my_posts(request):
     return Response(serializer.data)
 
 
-@api_view(['GET'])
-@authentication_classes([TokenAuthentication])
-def detail_post(request,post_id):
-    posts = Post.objects.filter(id=post_id)
-    serializer = PostSerializer(posts, many=True)
-    
-    print(serializer)
-    return Response(serializer.data)
-
 
 ###########################################################################################
-# 댓글 구현 View
-# 
+# 커뮤니티
+# 댓글, 좋아요 구현 View
 ###########################################################################################
 
 
@@ -336,29 +393,7 @@ def comment_like_count(request, review_pk, comment_pk):
     return Response(serializer.data)
 
 
-
-User = get_user_model()
-
-@csrf_exempt
-@api_view(['POST'])
-def follow_user(request):
-    user_id = request.data.get('user_id')
-    try:
-        user_to_follow = User.objects.get(id=user_id)
-        follow, created = Follow.objects.get_or_create(follower=request.user, following=user_to_follow)
-        if not created:
-            follow.delete()
-            following = False
-        else:
-            following = True
-        return JsonResponse({'following': following})
-    except User.DoesNotExist:
-        return JsonResponse({'error': 'User not found'}, status=404)
-
-
-
-# 영빈이 만든 좋아요 기능
-
+# 좋아요
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def like_post(request, post_id):
@@ -378,28 +413,10 @@ def like_post(request, post_id):
 
 
 
-def create_comment(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        user = request.user
-        post_id = data.get('post_id')
-        text = data.get('text')
-        
-        post = Post.objects.get(id=post_id)
-        comment = Comment.objects.create(user=user, post=post, text=text)
-        
-        return JsonResponse({'success': True, 'comment_id': comment.id, 'text': comment.text})
-    return JsonResponse({'error': 'POST method required'})
-
-
-
-
-
-
-
-
-
-
+###########################################################################################
+# 프로필 페이지
+# 
+###########################################################################################
 
 
 @api_view(['GET'])
@@ -417,6 +434,7 @@ def user_profile(request):
         'posts': PostSerializer(posts, many=True).data
     })
 
+
 @api_view(['POST'])
 def upload_profile_image(request):
     user = request.user
@@ -428,100 +446,8 @@ def upload_profile_image(request):
 
 
 
-
 @api_view(['GET'])
 def user_liked_posts(request):
     user = request.user
     liked_posts = user.liked_posts.all()
     return Response({'liked_posts': PostSerializer(liked_posts, many=True).data})
-
-
-
-
-
-
-
-
-###########################################################################################
-# 생성형 ai 이미지 출력
-# 사용자의 입력값을 기반으로 번역 후 이미지 출력
-###########################################################################################
-@csrf_exempt
-@api_view(['POST'])
-def GenerateImageView(request):
-    if request.method == 'POST':
-
-        keywords = request.POST.getlist('keywords[]')
-
-        gender = keywords[0]
-        personality = keywords[1]
-        clothing_style = keywords[2]
-        activity_space = keywords[3]
-        occupation = keywords[4]
-        hobby = keywords[5]
-        movie_genre = keywords[6]
-        direction = keywords[7]
-
-        # N일 경우 성별 또는 동물 캐릭터 중 랜덤 선택
-        if direction == 'N':
-            if gender == '여자':
-                options = ['여자가', '강아지가', '토끼가', '다람쥐가']
-                selected_character = random.choice(options)
-            else:
-                options = ['남자가', '곰이', '큰 개가']
-                selected_character = random.choice(options)
-        else:  # S일 경우 성별만 선택
-            selected_character = f'{gender}가'
-
-        res = f'{activity_space}에 있는 {personality}한 {selected_character} {clothing_style}를 입고, {occupation}이자 {hobby}를 즐기는 {selected_character} 주인공인 {movie_genre} 장르의 영화 포스터'
-        print(f"Constructed sentence: {res}")
-
-        # Google Cloud Translation API로 번역
-        translator = Translator()
-        prompt = translator.translate(res, src='ko', dest='en')
-        print(f"Translated prompt: {prompt.text}")
-
-        negative_prompt = ""
-
-        response = t2i(prompt.text, negative_prompt)
-        img_url = response.get("images")[0].get("image")
-        randomint = random.random()
-        img_name = f"karlo_{randomint}.jpg"
-        print(f"Image URL: {img_url}")
-        
-        img_path = os.path.join('post', img_name)
-        save_path = os.path.join(settings.MEDIA_ROOT, 'post', img_name)
-        print(img_path)
-        os.makedirs(os.path.dirname(save_path), exist_ok=True)  # 필요한 디렉토리를 생성
-        
-        download(img_url, save_path)
-
-        return JsonResponse({'img_url': img_path})
-
-from requests import get
-def download(url, file_name):
-    with open(file_name, "wb") as file:   # open in binary mode
-        response = get(url)               # get request
-        file.write(response.content)      # write to file
-
-
-
-# 이미지 생성하기 요청
-def t2i(prompt, negative_prompt):
-    r = requests.post(
-        'https://api.kakaobrain.com/v2/inference/karlo/t2i',
-        json = {
-            "version": "v2.1", 
-            "prompt": prompt,
-            "negative_prompt": negative_prompt, 
-            "height": 1024,
-            "width": 1024
-        },
-        headers = {
-            'Authorization': f'KakaoAK {REST_API_KEY}',
-            'Content-Type': 'application/json'
-        }
-    )
-    # 응답 JSON 형식으로 변환
-    response = json.loads(r.content)
-    return response
