@@ -21,7 +21,7 @@ def saveinfo(request, user_pk):
     except UserInfo.DoesNotExist:
         return Response({'error': 'UserInfo not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-    userinfo.selectedmovies.clear()
+    # userinfo.selectedmovies.clear()
     userinfo.selectedotts.clear()
 
     for mid in request.data['selectedmovies']:

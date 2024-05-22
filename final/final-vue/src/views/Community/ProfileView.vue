@@ -10,7 +10,7 @@
     </div>
     <div class="profile-content">
       <div class="profile-info">
-        <img :src="profileImage" alt="User Profile Picture" class="profile-picture" />
+        <img :src="`${store.API_URL}${profileImage}`" alt="User Profile Picture" class="profile-picture" />
         <h1>{{ username }}</h1>
         <p>Total Likes: {{ totalLikes }}</p>
         <button @click="toggleEditMode">Edit Profile</button>

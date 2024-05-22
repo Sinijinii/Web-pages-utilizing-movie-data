@@ -36,6 +36,7 @@ const selectedotts = ref([])
 const route = useRoute()
 const userId = ref(route.params.id)
 const router = useRouter()
+
 const movies = [
     { id: 496243, title: '기생충', image: "https://image.tmdb.org/t/p/w500//eRM0PykovgtK4lin1D4BUql8TBa.jpg" },
     { id: 27205, title: '인셉션', image: "https://image.tmdb.org/t/p/w500//zTgjeblxSLSvomt6F6UYtpiD4n7.jpg" },
@@ -92,7 +93,6 @@ axios({
   method: 'post',
   url: `${store.API_URL}/${userId.value}/saveinfo/`,
   data: {
-    // userinfo: userId.value,
     selectedmovies: selectedmovies.value,
     selectedotts: selectedotts.value
   },
@@ -107,6 +107,7 @@ axios({
   console.log(error)
 })
 }
+
 </script>
 
 <style scoped>

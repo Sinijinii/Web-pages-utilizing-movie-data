@@ -13,6 +13,7 @@ export const useCounterStore = defineStore('counter', () => {
   const BasicPosterPath = 'https://image.tmdb.org/t/p/w500'
 
 
+
   // //추천영화 받아오는 함수
   // const getRecommend = () => {
   //   return axios.get(`${API_URL}/api/v1/recommend/`)
@@ -125,7 +126,6 @@ export const useCounterStore = defineStore('counter', () => {
       // 3. 로그인 성공 후 응답 받은 토큰을 저장
         LoginUsername.value = username
         token.value = response.data.key
-        console.log(token.value);
         router.replace({ name : 'MainView' })
       })
       .catch((error) => {
@@ -221,17 +221,6 @@ export const useCounterStore = defineStore('counter', () => {
         console.log(error)
       })
   }
-
-  const getPosts = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/articles/get_posts/`)
-      posts.value = response.data
-    } catch (error) {
-      console.error('Error fetching posts:', error)
-    }
-  }
-
-
 
   return { movies, API_URL, getMovies, signUp, logIn, token, isLogin, uploadResult,
             loginmovies, getLoginMovies, LoginUsername, BasicPosterPath, selectedFile,

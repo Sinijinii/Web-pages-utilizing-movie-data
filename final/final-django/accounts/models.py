@@ -13,3 +13,4 @@ class UserInfo(models.Model):
     user_image = models.ImageField(upload_to='profile/', blank=True, default='profile/default.png')
     selectedmovies = models.ManyToManyField(Movie, related_name='user')
     selectedotts = models.ManyToManyField(OTTPlatform, related_name='user')
+    

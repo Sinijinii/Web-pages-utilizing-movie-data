@@ -129,11 +129,28 @@ def MovieDetail(request, movie_id):
     'overview': movie.overview,
     'ott_platforms': [platform.name for platform in movie.ott_platforms.all()],  # ott_platforms 필드 순회하여 각 객체의 name 속성을 추출
     'vote_average': movie.vote_average,
+    "likes": [ user.pk for user in movie.likes.all()],
     }
 
     return JsonResponse(data)
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def like_movie(request, movie_id):
+    movie = get_object_or_404(Movie, id=movie_id)
+    userinfo = get_object_or_404(UserInfo, user=request.user)
+    # 이미 좋아요를 했으면 좋아요 취소
+    if userinfo in movie.likes.all():
+        movie.likes.remove(userinfo)
+        liked = False
+        userinfo.selectedmovies.remove(Movie.objects.get(id=movie_id))
+    # 좋아요를 하지 않았으면 좋아요 누르기
+    else:
+        movie.likes.add(userinfo)
+        liked = True
+        userinfo.selectedmovies.add(Movie.objects.get(id=movie_id))
 
+    return JsonResponse({'liked': liked, 'likes_count': movie.likes.count()})
 
 def SearchMovie(request,movietitle):
     # 제목에 해당하는 영화를 검색

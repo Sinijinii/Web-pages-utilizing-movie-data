@@ -30,6 +30,11 @@
                 <h2>평점</h2>
                 <span>{{ movie.vote_average }} 점</span>
             </div>
+            <span>Likes :</span><span>{{ movie.likes?.length }}</span>          
+          
+          <button @click="toggleLike(movie)">
+            {{ movie.likes?.includes(store.userId) ? 'Unlike' : 'Like' }}
+          </button>
         </div>
     </div>
 </template>
@@ -38,10 +43,12 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
+import { useCounterStore } from '@/stores/counter'
 
 const route = useRoute()
 const movie = ref({})
 const movieId = ref(null)
+const store = useCounterStore()
 movieId.value = route.params.movieId
 
 const getPosterUrl = function (path) {
@@ -84,6 +91,30 @@ function formatOtt(ott_platforms) {
         return ''
     }
     return ott_platforms.join(', ')
+}
+
+const toggleLike = (movie) => {
+  axios({
+    method: 'post',
+    url: `${store.API_URL}/api/v1/detail/${movieId.value}/likes/`,
+    headers: {
+      'Authorization': `Token ${store.token}`
+    }
+  })
+    .then(response => {
+      const liked = response.data.liked
+      if (liked === true) {
+        movie.likes.push(store.userId)
+      } else {
+        const index = movie.likes.indexOf(store.userId)
+        if (index > -1) {
+          movie.likes.splice(index, 1)
+        }
+      }
+    })
+    .catch(error => {
+      console.error('좋아요 기능 실패했다', error)
+    })
 }
 </script>
 
