@@ -146,6 +146,7 @@ const toggleLike = (movie) => {
 @import url('@/assets/fonts/fonts.css');
 
 
+
 .container {
     display: flex;
     flex-direction: column;
@@ -182,6 +183,9 @@ const toggleLike = (movie) => {
 .movie-title {
     font-size: 50px;
     font-weight: bold;
+    font-family: 'TitleLight';
+    src: url('@/assets/fonts/Title_Light.otf') format('opentype'),
+         url('@/assets/fonts/woff/Title_Light.woff') format('woff');
 }
 
 .info-item {
@@ -192,7 +196,11 @@ const toggleLike = (movie) => {
     height: 40%;
 }
 
-
+.info-item h2 {
+    font-family: 'TitleMedium';
+    src: url('@/assets/fonts/Title_Medium.otf') format('opentype'),
+         url('@/assets/fonts/woff/Title_Medium.woff') format('woff');
+}
 .info-item span {
     font-weight: bold;
 }
@@ -246,6 +254,12 @@ const toggleLike = (movie) => {
     margin-top: 20px;
     border: 1px solid #ccc;
     padding: 10px;
+}
+
+.overview-section h2 {
+    font-family: 'TitleMedium';
+    src: url('@/assets/fonts/Title_Medium.otf') format('opentype'),
+         url('@/assets/fonts/woff/Title_Medium.woff') format('woff');
 }
 
 .overview-section h2,
