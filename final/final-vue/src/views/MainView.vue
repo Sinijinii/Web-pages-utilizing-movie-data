@@ -1,18 +1,10 @@
 <template>
   <div>
 
-
-    <br>
-
     <div class="search">
       <input type="text" v-model="searchTerm" placeholder="영화 제목을 입력하세요">
       <button @click="searchMovie">검색</button>
     </div>
-
-
-
-
-    <br>
 
     <div>
         <OttMovie v-if="store.isLogin"/>
@@ -64,9 +56,6 @@ function searchMovie() {
   }
 }
 
-
-
-
 if (store.isLogin === true) {
   store.getLoginMovies()
 }
@@ -77,7 +66,5 @@ if (store.isLogin === true) {
 .search {
   border: 1px solid black;
 }
-
-
 
 </style>
