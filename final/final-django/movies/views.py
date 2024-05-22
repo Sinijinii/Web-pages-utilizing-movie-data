@@ -115,45 +115,24 @@ def MovieSimilarityView(request):
         for movie in top_10_genres_selec2
     ]}
 
-
-    # print(f'프린트으으으으ㅡ으으으으으으응@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ {result}')
-
     return Response(result, status=status.HTTP_200_OK)
 
 
 
+@api_view(['GET'])
 def MovieDetail(request, movie_id):
     movie = Movie.objects.get(id=movie_id)
     data = {
-    'title': movie.title,
-    'poster_path': movie.poster_path,
-    'genres': [genre.name for genre in movie.genres.all()],  # genres 필드 순회하여 각 객체의 name 속성을 추출
-    'casts': movie.casts,
-    'overview': movie.overview,
-    'ott_platforms': [platform.name for platform in movie.ott_platforms.all()],  # ott_platforms 필드 순회하여 각 객체의 name 속성을 추출
-    'vote_average': movie.vote_average,
+        'title': movie.title,
+        'poster_path': movie.poster_path,
+        'genres': [genre.name for genre in movie.genres.all()],
+        'casts': movie.casts,
+        'overview': movie.overview,
+        'ott_platforms': [platform.name for platform in movie.ott_platforms.all()],
+        'vote_average': movie.vote_average,
     }
-
     return JsonResponse(data)
 
 
 
-# @api_view(['GET'])
-# def MovieSimilarityView(request):
-#     user_info = UserInfo.objects.first() 
-#     selec_data = user_info.selectedMovies.all()
-#     selec2_data = Movie.objects.all()
-
-#     selec_casts, selec_genres = extract_combined_data(selec_data)
-#     top_10_casts_selec2, top_10_genres_selec2 = calculate_similarities(selec_casts, selec_genres, selec2_data)
-
-
-#     result = {
-#         "top_10_casts_selec2": [{"title": movie[0].title, "poster_path": movie[0].poster_path} for movie in top_10_casts_selec2],
-#         "top_10_genres_selec2": [{"title": movie[0].title, "poster_path": movie[0].poster_path} for movie in top_10_genres_selec2]
-#     }
-
-#     print(f' 프린트 : {result}')
-#     # print(f'프린트으으으으으으으으으으으으으으으ㅡ으으으으으으으으ㅡ으으으으으으으으으으으 {result}')
-#     return Response(result, status=status.HTTP_200_OK)
 

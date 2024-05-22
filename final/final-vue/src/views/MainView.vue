@@ -1,18 +1,26 @@
 <template>
   <div>
     <h1>메인 페이지</h1>
+
+    <br>
+
+    <h3>검색창</h3>
+
+    <br>
+
     <div>
-      <OttMovie v-if="store.isLogin" />
-      <TopRateMovie v-if="!loading" />
-      <MostVotedMovie v-if="!loading" />
-      <LatestMovie v-if="!loading" />
+        <OttMovie v-if="store.isLogin"/>
+        <TopRateMovie v-if="!loading"/>
+        <MostVotedMovie v-if="!loading"/>
+        <LatestMovie v-if="!loading"/>
     </div>
   </div>
 </template>
 
 <script setup>
 import { useCounterStore } from '@/stores/counter'
-import { onMounted ,ref,watch } from 'vue'
+import { onMounted ,ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import TopRateMovie from '@/components/TopRateMovie.vue'
 import MostVotedMovie from '@/components/MostVotedMovie.vue'
 import LatestMovie from '@/components/LatestMovie.vue'

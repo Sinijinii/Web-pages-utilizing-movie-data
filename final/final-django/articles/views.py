@@ -26,7 +26,10 @@ from googletrans import Translator
 import os
 import random
 from pathlib import Path
+from pathlib import Path
 
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,11 +44,12 @@ actors = ['김다미', '김수현', '김우빈', '김지원', '김태리', '김�
 
 # 모델 파일 경로
 MODEL_PATH = os.path.abspath(f"{BASE_DIR}/articles/CNN/model.h5")
+MODEL_PATH = os.path.abspath(f"{BASE_DIR}/articles/CNN/model.h5")
 print(MODEL_PATH)
 model = load_model(MODEL_PATH)
 REST_API_KEY = '8f7951c8882033e6548aa0bd67a0f772'
 # 얼굴 탐지 모델 로드
-face_cascade = cv2.CascadeClassifier(f"{BASE_DIR}/articles/haarcascade_frontalface_default.xml")
+face_cascade = cv2.CascadeClassifier(f'{BASE_DIR}/articles/haarcascade_frontalface_default.xml')
 print(face_cascade)
 # 이미지 전처리 함수
 def preprocess_image(image):
