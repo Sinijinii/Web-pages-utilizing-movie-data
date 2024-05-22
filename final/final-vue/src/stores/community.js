@@ -66,7 +66,6 @@ export const useCommunity = defineStore('Community', () => {
     })
       .then((response) => {
         console.log(response);
-        alert('Post shared successfully!')
         router.push('/community')
       })
       .catch((error) => {
@@ -94,7 +93,6 @@ export const useCommunity = defineStore('Community', () => {
     })
       .then((response) => {
         console.log(response);
-        alert('Post shared successfully!')
         router.push('/community')
       })
       .catch((error) => {
