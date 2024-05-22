@@ -30,8 +30,6 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-print('---------------------------------------------------------')
-print(BASE_DIR)
 ###########################################################################################
 # CNN 모델을 통한 닮은 꼴 배우 찾기
 # 사용자의 사진을 통해 CNN 모델을 돌림
@@ -225,12 +223,6 @@ def detail_post(request,post_id):
     return Response(serializer.data)
 
 
-
-
-
-
-
-
 ###########################################################################################
 # 댓글 구현 View
 # 
@@ -359,21 +351,7 @@ def follow_user(request):
     except User.DoesNotExist:
         return JsonResponse({'error': 'User not found'}, status=404)
 
-# @csrf_exempt
-# @api_view(['POST'])
-# def like_post(request):
-#     post_id = request.data.get('post_id')
-#     try:
-#         post = Post.objects.get(id=post_id)
-#         if request.user in post.likes.all():
-#             post.likes.remove(request.user)
-#             liked = False
-#         else:
-#             post.likes.add(request.user)
-#             liked = True
-#         return JsonResponse({'liked': liked, 'likes_count': post.likes.count()})
-#     except Post.DoesNotExist:
-#         return JsonResponse({'error': 'Post not found'}, status=404)
+
 
 # 영빈이 만든 좋아요 기능
 
@@ -408,6 +386,55 @@ def create_comment(request):
         
         return JsonResponse({'success': True, 'comment_id': comment.id, 'text': comment.text})
     return JsonResponse({'error': 'POST method required'})
+
+
+
+
+
+
+
+
+
+
+
+
+@api_view(['GET'])
+def user_profile(request):
+    user = request.user
+    posts = Post.objects.filter(user=user)
+    liked_posts = user.liked_posts.all()
+    profile_image = user.userinfo.user_image.url if user.userinfo.user_image else 'profile/default.png'
+    total_likes = posts.aggregate(total_likes=models.Count('likes'))['total_likes'] or 0
+    return Response({
+        'username': user.username,
+        'profile_image': profile_image,
+        'total_likes': total_likes,
+        'liked_posts': PostSerializer(liked_posts, many=True).data,
+        'posts': PostSerializer(posts, many=True).data
+    })
+
+@api_view(['POST'])
+def upload_profile_image(request):
+    user = request.user
+    if 'profile_image' in request.data:
+        user.userinfo.user_image = request.data['profile_image']
+        user.userinfo.save()
+        return Response({'profile_image': user.userinfo.user_image.url})
+    return Response(status=400, data={'error': 'Profile image not provided'})
+
+
+
+
+@api_view(['GET'])
+def user_liked_posts(request):
+    user = request.user
+    liked_posts = user.liked_posts.all()
+    return Response({'liked_posts': PostSerializer(liked_posts, many=True).data})
+
+
+
+
+
 
 
 
@@ -494,5 +521,3 @@ def t2i(prompt, negative_prompt):
     # 응답 JSON 형식으로 변환
     response = json.loads(r.content)
     return response
-
-
