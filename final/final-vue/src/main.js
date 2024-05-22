@@ -2,6 +2,8 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 // 이거 있으니까 실행전에 npm i pinia-plugin-persistedstate 반드시 실행
 import PiniaPluginPersistedstate  from 'pinia-plugin-persistedstate'
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 import App from './App.vue'
 import router from './router'

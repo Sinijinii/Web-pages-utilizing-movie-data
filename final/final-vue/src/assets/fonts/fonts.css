@@ -1,0 +1,32 @@
+@font-face {
+    font-family: 'TitleLight';
+    src: url('@/assets/fonts/Title_Light.otf') format('opentype'),
+         url('@/assets/fonts/woff/Title_Light.woff') format('woff');
+  }
+  
+  @font-face {
+    font-family: 'TitleMedium';
+    src: url('@/assets/fonts/Title_Medium.otf') format('opentype'),
+         url('@/assets/fonts/woff/Title_Medium.woff') format('woff');
+  }
+  
+  @font-face {
+    font-family: 'BatangBold';
+    src: url('@/assets/fonts/woff/Batang_Bold.woff') format('woff');
+  }
+  
+  @font-face {
+    font-family: 'BatangRegular';
+    src: url('@/assets/fonts/woff/Batang_Regular.woff') format('woff');
+  }
+  
+  @font-face {
+    font-family: 'TitleBold';
+    src: url('@/assets/fonts/woff/Title_Bold.woff') format('woff');
+  }
+  
+  @font-face {
+    font-family: 'TitleV';
+    src: url('@/assets/fonts/woff/TitleV.woff') format('woff');
+  }
+  
