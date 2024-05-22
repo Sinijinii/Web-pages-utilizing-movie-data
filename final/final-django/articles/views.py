@@ -43,19 +43,17 @@ actors = ['김다미', '김수현', '김우빈', '김지원', '김태리', '김�
 
 # 모델 파일 경로
 MODEL_PATH = os.path.abspath(f"{BASE_DIR}/articles/CNN/model.h5")
-MODEL_PATH = os.path.abspath(f"{BASE_DIR}/articles/CNN/model.h5")
-print(MODEL_PATH)
 model = load_model(MODEL_PATH)
 REST_API_KEY = '8f7951c8882033e6548aa0bd67a0f772'
 # 얼굴 탐지 모델 로드
 face_cascade = cv2.CascadeClassifier(f'{BASE_DIR}/articles/haarcascade_frontalface_default.xml')
-print(face_cascade)
+
 # 이미지 전처리 함수
 def preprocess_image(image):
     image = cv2.resize(image, (35, 35))
     image = image.astype("float") / 255.0
-    # print('전처리 완료')
     return image
+
 
 @api_view(['POST'])
 def find_similar_actor(request):
@@ -129,12 +127,10 @@ def GenerateImageView(request):
             selected_character = f'{gender}가'
 
         res = f'{activity_space}에 있는 {personality}한 {selected_character} {clothing_style}를 입고, {occupation}이자 {hobby}를 즐기는 {selected_character} 주인공인 {movie_genre} 장르의 영화 포스터'
-        print(f"Constructed sentence: {res}")
 
         # Google Cloud Translation API로 번역
         translator = Translator()
         prompt = translator.translate(res, src='ko', dest='en')
-        print(f"Translated prompt: {prompt.text}")
 
         negative_prompt = ""
 
@@ -142,11 +138,10 @@ def GenerateImageView(request):
         img_url = response.get("images")[0].get("image")
         randomint = random.random()
         img_name = f"karlo_{randomint}.jpg"
-        print(f"Image URL: {img_url}")
         
         img_path = os.path.join('post', img_name)
         save_path = os.path.join(settings.MEDIA_ROOT, 'post', img_name)
-        print(img_path)
+
         os.makedirs(os.path.dirname(save_path), exist_ok=True)  # 필요한 디렉토리를 생성
         
         download(img_url, save_path)
@@ -194,17 +189,13 @@ def t2i(prompt, negative_prompt):
 @api_view(['POST'])
 def create_post(request):
     if request.method == 'POST':
-        print('여기는 create_post')
-        print(request.POST.get('content'))
-        print(request.FILES['image'])
-        print('여기다')
-        print(request.user.id)
+
         data = {
                 'content': request.POST.get('content'),
                 'image': request.FILES.get('image'),
                 'user': request.user.id
             }
-        print(data)
+
         serializer = PostSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
             serializer.save(user=request.user)
@@ -225,10 +216,9 @@ def get_posts(request):
         if 'likes' in serializer.data[i]:
             for user in serializer.data[i]['likes']:
                 like_user.append(user['username'])
-        print(serializer)
+
         serializer.data[i]['like_list'] = like_user
-    print(serializer.data)
-    print('getpost 통과')
+
     return Response(serializer.data)
 
 
@@ -238,7 +228,6 @@ def detail_post(request,post_id):
     posts = Post.objects.filter(id=post_id)
     serializer = PostSerializer(posts, many=True)
     
-    print(serializer)
     return Response(serializer.data)
 
 
@@ -276,7 +265,7 @@ def upload_result(request):
             image= request.POST.get('image'),
             user= request.user
         )
-        print()
+
         return Response(data,status=status.HTTP_201_CREATED)
     return JsonResponse({'error': 'POST method required'}, status=405)
 
@@ -289,7 +278,6 @@ def my_posts(request):
     posts = Post.objects.filter(user=user).order_by('-created_at')
     serializer = PostSerializer(posts, many=True)
     
-    print(serializer)
     return Response(serializer.data)
 
 
@@ -304,8 +292,7 @@ def my_posts(request):
 @permission_classes([IsAuthenticated])
 
 def comment_list_or_create(request, review_pk):
-    print('-----------------------------------')
-    print(review_pk)
+
     review = get_object_or_404(Post, pk=review_pk)
 
     def comment_list():
