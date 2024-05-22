@@ -44,19 +44,9 @@ def mypage(request, username):
     movies.update(userinfo.selectedmovies.values_list('id', flat=True))
     otts.update(userinfo.selectedotts.values_list('id', flat=True))
 
-    len_m = len(list(movies))
-    add = []
-    for i in range(len_m):
-        movie = Movie.objects.get(id=list(movies)[i])
-        data = {}
-        data
-
-        add.append(serializer)
-    print(add)
     result = {
         "user": user.pk,
-        # "selectedmovies": list(movies),
-        "selectedmovies": add,
+        "selectedmovies": list(movies),
         "selectedotts": list(otts)
     }
 
