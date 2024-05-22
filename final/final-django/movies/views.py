@@ -119,20 +119,37 @@ def MovieSimilarityView(request):
 
 
 
-@api_view(['GET'])
 def MovieDetail(request, movie_id):
     movie = Movie.objects.get(id=movie_id)
     data = {
-        'title': movie.title,
-        'poster_path': movie.poster_path,
-        'genres': [genre.name for genre in movie.genres.all()],
-        'casts': movie.casts,
-        'overview': movie.overview,
-        'ott_platforms': [platform.name for platform in movie.ott_platforms.all()],
-        'vote_average': movie.vote_average,
+    'title': movie.title,
+    'poster_path': movie.poster_path,
+    'genres': [genre.name for genre in movie.genres.all()],  # genres 필드 순회하여 각 객체의 name 속성을 추출
+    'casts': movie.casts,
+    'overview': movie.overview,
+    'ott_platforms': [platform.name for platform in movie.ott_platforms.all()],  # ott_platforms 필드 순회하여 각 객체의 name 속성을 추출
+    'vote_average': movie.vote_average,
     }
+
     return JsonResponse(data)
 
 
 
+def SearchMovie(request,movietitle):
+    # 제목에 해당하는 영화를 검색
+    movies = Movie.objects.filter(title__icontains=movietitle)
+    
+    # 검색 결과가 있을 경우
+    if movies.exists():
+        # 첫 번째 검색 결과를 선택
+        movie = movies.first()
+        # 검색 결과를 JSON 형식으로 반환
+        data = {
 
+            'id':movie.id,
+            # 필요한 다른 필드들을 추가로 포함할 수 있음
+        }
+        return JsonResponse(data)
+    else:
+        # 검색 결과가 없을 경우
+        return JsonResponse({'error': '영화를 찾을 수 없습니다.'}, status=404)
