@@ -13,11 +13,10 @@ import SharePost from '@/components/Community/ShareResult.vue'
 import ImageGenerator from '@/components/Community/ImageGenerator.vue'
 import CommunityView from '@/views/Community/CommunityView.vue'
 import ProfileView from '@/views/Community/ProfileView.vue'
-import FollowingView from '@/views/Community/FollowingView.vue'
 import FindActorView from '@/views/Community/FindActorView.vue'
 import PostDetail from '@/views/Community/PostDetailView.vue'
 import EditPost from '@/views/Community/EditPostView.vue'
-
+import LikePosts from '@/components/Community/LikePosts.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -69,11 +68,6 @@ const router = createRouter({
       component: ProfileView
     },
     {
-      path: '/following',
-      name: 'FollowingView',
-      component: FollowingView
-    },
-    {
       path: '/findactor',
       name: 'FindActor',
       component: FindActorView
@@ -107,6 +101,11 @@ const router = createRouter({
       path: '/detail/:movieId',
       name: 'MovieDetail',
       component: MovieDetail
+    },
+    {
+      path: '/liked-posts',
+      name: 'LikePostsView',
+      component: LikePosts
     },
   ]})
 

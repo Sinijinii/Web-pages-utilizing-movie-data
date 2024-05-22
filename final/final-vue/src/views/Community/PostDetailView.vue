@@ -1,6 +1,15 @@
 <template>
+  <div class="sidebar">
+      <RouterLink :to="{ name: 'Community' }">Community</RouterLink>
+      <RouterLink :to="{ name: 'UploadImage' }">New Post</RouterLink>
+      <RouterLink :to="{ name: 'ProfileView' }">My Profile</RouterLink>
+      <RouterLink :to="{ name: 'LikePostsView' }">Liked Posts</RouterLink>
+      <RouterLink :to="{ name: 'FindActor' }">FindActor</RouterLink>
+      <RouterLink :to="{ name: 'ImageGenerator' }">ImageGenerator</RouterLink>
+    </div>
   <div class="post-detail">
-    <h1>{{ postid }}번 Post</h1>
+    <img :src="`${store.API_URL}${post.user.userinfo.user_image}`" alt="User Profile Picture" class="profile-picture" />
+    <p>{{ post?.user.username }}</p>
     <img :src="`${store.API_URL}${post?.image}`" alt="Post Image" />
     <p>{{ post?.content }}</p>
     <p>{{ post?.created_at }}</p>
@@ -23,6 +32,7 @@
           </div>
           <div v-if="comment?.commented && comment?.commented.length" class="replies">
             <div v-for="reply in comment?.commented" :key="reply?.id" class="reply">
+              {{ reply }}
               <p>{{ reply?.write_comment_user_name }}: {{ reply?.content }}</p>
             </div>
           </div>
