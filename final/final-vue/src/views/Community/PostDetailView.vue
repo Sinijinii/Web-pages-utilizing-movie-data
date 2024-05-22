@@ -1,14 +1,31 @@
 <template>
+  <div class="sidebar">
+      <RouterLink :to="{ name: 'Community' }">Community</RouterLink>
+      <RouterLink :to="{ name: 'UploadImage' }">New Post</RouterLink>
+      <RouterLink :to="{ name: 'ProfileView' }">My Profile</RouterLink>
+      <RouterLink :to="{ name: 'LikePostsView' }">Liked Posts</RouterLink>
+      <RouterLink :to="{ name: 'FindActor' }">FindActor</RouterLink>
+      <RouterLink :to="{ name: 'ImageGenerator' }">ImageGenerator</RouterLink>
+    </div>
   <div class="post-detail">
-    <h1>{{ postid }}번 Post</h1>
+    <img :src="`${store.API_URL}${post.user.userinfo.user_image}`" alt="User Profile Picture" class="profile-picture" />
+    <p>{{ post?.user.username }}</p>
     <img :src="`${store.API_URL}${post?.image}`" alt="Post Image" />
     <p>{{ post?.content }}</p>
     <p>{{ post?.created_at }}</p>
     <p>{{ post?.user.username }}</p>
+
+    <p>Likes: {{ post.likes.length }}</p>
+
+    <button class="likebtn" @click="toggleLike(post)">
+      {{ post.likes.includes(store.userId) ? 'Unlike' : 'Like' }}
+    </button>
+
     <div v-if="userstore.LoginUsername === post?.user.username">
       <RouterLink :to="{ name: 'EditPost', params: { id: postid } }">Edit</RouterLink>
       <button @click="deletePost(postid)">Delete</button>
     </div>
+
     
     <!-- 댓글 섹션 시작 -->
     <div class="comments">
@@ -23,6 +40,7 @@
           </div>
           <div v-if="comment?.commented && comment?.commented.length" class="replies">
             <div v-for="reply in comment?.commented" :key="reply?.id" class="reply">
+              {{ reply }}
               <p>{{ reply?.write_comment_user_name }}: {{ reply?.content }}</p>
             </div>
           </div>
@@ -54,6 +72,31 @@ const post = ref(null)
 const replyFormVisible = ref(null)
 const newCommentContent = ref('')
 const replyContents = ref({})
+
+
+const toggleLike = (post) => {
+  axios({
+    method: 'post',
+    url: `${store.API_URL}/articles/like_post/${post.id}/`,
+    headers: {
+      'Authorization': `Token ${userstore.token}`
+    }
+  })
+    .then(response => {
+      const liked = response.data.liked
+      if (liked) {
+        post.likes.push(store.userId)
+      } else {
+        const index = post.likes.indexOf(store.userId)
+        if (index > -1) {
+          post.likes.splice(index, 1)
+        }
+      }
+    })
+    .catch(error => {
+      console.error('좋아요 기능 실패했다', error)
+    })
+}
 
 const fetchPost = async () => {
   axios({

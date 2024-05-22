@@ -112,6 +112,8 @@ export const useCommunity = defineStore('Community', () => {
   }
 
 
+  
+
 
   return {API_URL, token , uploadResult, similarActor, actorImageUrl, setFile, uploadImage, uploadPost, getPosts }
 }, { persist: true })

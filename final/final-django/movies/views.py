@@ -152,22 +152,21 @@ def like_movie(request, movie_id):
 
     return JsonResponse({'liked': liked, 'likes_count': movie.likes.count()})
 
-# @api_view(['GET'])
-# def MovieSimilarityView(request):
-#     user_info = UserInfo.objects.first() 
-#     selec_data = user_info.selectedMovies.all()
-#     selec2_data = Movie.objects.all()
+def SearchMovie(request,movietitle):
+    # 제목에 해당하는 영화를 검색
+    movies = Movie.objects.filter(title__icontains=movietitle)
+    
+    # 검색 결과가 있을 경우
+    if movies.exists():
+        # 첫 번째 검색 결과를 선택
+        movie = movies.first()
+        # 검색 결과를 JSON 형식으로 반환
+        data = {
 
-#     selec_casts, selec_genres = extract_combined_data(selec_data)
-#     top_10_casts_selec2, top_10_genres_selec2 = calculate_similarities(selec_casts, selec_genres, selec2_data)
-
-
-#     result = {
-#         "top_10_casts_selec2": [{"title": movie[0].title, "poster_path": movie[0].poster_path} for movie in top_10_casts_selec2],
-#         "top_10_genres_selec2": [{"title": movie[0].title, "poster_path": movie[0].poster_path} for movie in top_10_genres_selec2]
-#     }
-
-#     print(f' 프린트 : {result}')
-#     # print(f'프린트으으으으으으으으으으으으으으으ㅡ으으으으으으으으ㅡ으으으으으으으으으으으 {result}')
-#     return Response(result, status=status.HTTP_200_OK)
-
+            'id':movie.id,
+            # 필요한 다른 필드들을 추가로 포함할 수 있음
+        }
+        return JsonResponse(data)
+    else:
+        # 검색 결과가 없을 경우
+        return JsonResponse({'error': '영화를 찾을 수 없습니다.'}, status=404)

@@ -4,7 +4,7 @@
       <RouterLink :to="{ name: 'Community' }">Community</RouterLink>
       <RouterLink :to="{ name: 'UploadImage' }">New Post</RouterLink>
       <RouterLink :to="{ name: 'ProfileView' }">My Profile</RouterLink>
-      <RouterLink :to="{ name: 'FollowingView' }">Following</RouterLink>
+      <RouterLink :to="{ name: 'LikePostsView' }">Liked Posts</RouterLink>
       <RouterLink :to="{ name: 'FindActor' }">FindActor</RouterLink>
       <RouterLink :to="{ name: 'ImageGenerator' }">ImageGenerator</RouterLink>
     </div>
@@ -13,35 +13,41 @@
 
       <div v-if="posts && posts.length">
         <div v-for="post in posts" :key="post?.id" class="post">
-          <RouterLink v-if="post?.id" :to="{ name: 'PostDetail', params: { id: post?.id } }">View Details</RouterLink>
-          <img :src="`${store.API_URL}${post?.image}`" alt="Post Image" />
+          <div class="post-header">
+            <img :src="`${store.API_URL}${post.user.userinfo.user_image}`" alt="User Profile Image" class="profile-picture" />
+            <div>
+              <p>{{ post?.user.username }}</p>
+              <p>{{ post?.created_at }}</p>
+            </div>
+          </div>
+          <RouterLink v-if="post?.id" :to="{ name: 'PostDetail', params: { id: post?.id } }">
+            <img :src="`${store.API_URL}${post?.image}`" alt="Post Image" class="post-image" />
+          </RouterLink>
           <p>{{ post?.content }}</p>
-          <p>{{ post?.created_at }}</p>
-          <p>{{ post?.user.username }}</p>
+          <p>Likes: {{ post.likes.length }}</p>
+
+          <button class="likebtn" @click="toggleLike(post)">
+            {{ post.likes.includes(store.userId) ? 'Unlike' : 'Like' }}
+          </button>
+
+
+          <p>Comments: {{ post.comments.length }}</p>
+          
           <div v-if="userstore.LoginUsername === post?.user.username">
             <RouterLink :to="{ name: 'EditPost', params: { id: post?.id } }">Edit</RouterLink>
             <button @click="deletePost(post?.id)">Delete</button>
           </div>
+
+          <button @click="toggleComments(post?.id)">더보기</button>
           
-                    <span class="title"> 내용 :</span> <span>{{ post.content }}</span> <br>
-          
-                    <span class="title"> 작성시간 : </span> <span>{{ post.created_at }}</span> <br>
-          
-                    <span class="like">Likes :</span><span>{{ post.likes.length }}</span>          
-          
-                    <button class="likebtn" @click="toggleLike(post)">
-                      {{ post.likes.includes(store.userId) ? 'Unlike' : 'Like' }}
-                    </button>
-                    
-                      <!-- <p>Likes: {{ post.likes.length }}</p>
-          
-                    <p>{{ post.user.username }}</p> -->
           <!-- 댓글 섹션 시작 -->
-          <div class="comments">
+          <div v-if="showComments === post?.id" class="comments">
             <h3>Comments</h3>
             <div v-if="post?.comments && post?.comments.length">
               <div v-for="comment in post?.comments" :key="comment?.id" class="comment">
-                <p>{{ comment.write_comment_user_name }}: {{ comment?.content }}</p>
+                <p>{{ comment.write_comment_user.userinfo.user_image ? 
+                `${store.API_URL}${comment.write_comment_user.userinfo.user_image}` : 
+                'default_image_url' }}: {{ comment?.content }}</p>
                 <button @click="toggleReplyForm(comment?.id)">Reply</button>
                 <div v-if="replyFormVisible === comment?.id">
                   <input v-model="replyContents[comment?.id]" placeholder="Write a reply" />
@@ -58,7 +64,6 @@
             <input v-model="newCommentContents[post.id]" placeholder="Write a comment" />
             <button @click="createComment({ postId: post.id, content: newCommentContents[post.id] })">Submit</button>
           </div>
-
         </div>
       </div>
       <p v-else>No posts available.</p>
@@ -78,6 +83,7 @@ const posts = ref([])
 const replyFormVisible = ref(null)
 const newCommentContents = ref({})
 const replyContents = ref({})
+const showComments = ref(null)
 
 const store = useCommunity()
 
@@ -110,7 +116,6 @@ const deletePost = async (postId) => {
   })
 }
 
-
 const toggleLike = (post) => {
   axios({
     method: 'post',
@@ -135,9 +140,6 @@ const toggleLike = (post) => {
       console.error('좋아요 기능 실패했다', error)
     })
 }
-
-
-
 
 const createComment = async ({ postId, content }) => {
   axios({
@@ -201,6 +203,10 @@ const fetchPostById = async (postId) => {
   })
 }
 
+const toggleComments = (postId) => {
+  showComments.value = showComments.value === postId ? null : postId
+}
+
 onBeforeMount(() => {
   fetchPosts()
 })
@@ -238,9 +244,17 @@ onBeforeMount(() => {
   margin-top: 10px;
 }
 
-.post p {
-  width: 80%;
-  margin-top: 10px;
+.post-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.profile-picture {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
 }
 
 .comments {
