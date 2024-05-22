@@ -107,13 +107,25 @@ const resetForm = () => {
   transition: background-color 0.3s;
 }
 
-.sidebar-link.active {
-  background-color: #FF7F47; /* 활성 링크의 배경색 */
-  color: #FFF; /* 활성 링크의 텍스트 색상 */
+.sidebar {
+  width: 200px;
+  padding: 20px;
+  background-color: #4C6A58; /* 짙은 녹색 배경 */
+  min-height: 100vh; /* 화면 전체 높이 */
+  position: fixed; /* 사이드바를 고정 */
+  left: 0; /* 왼쪽 끝에 붙임 */
+  top: 0; /* 상단 끝에 붙임 */
 }
 
-.sidebar-link:hover {
-  background-color: #333333; /* 어두운 회색 배경 */
+.sidebar-link {
+  display: block;
+  color: #FFF6E5; /* 크림색 텍스트 */
+  font-family: 'TitleMedium', sans-serif; /* 제목 폰트 */
+  text-decoration: none;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
 }
 
 .page-background {
@@ -130,6 +142,9 @@ const resetForm = () => {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-left: 220px; /* 사이드바의 너비와 여백 확보 */
+  padding: 20px;
+  width: calc(100% - 220px); /* 전체 너비에서 사이드바 너비를 뺌 */
 }
 
 .upload-section {
@@ -139,6 +154,7 @@ const resetForm = () => {
   border-radius: 10px;
   margin-top: 20px; /* 위쪽 여백 추가 */
 }
+
 
 .upload-section .form-control {
   background-color: #FFF6E5; /* 크림색 */

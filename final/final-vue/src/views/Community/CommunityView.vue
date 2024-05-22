@@ -1,76 +1,77 @@
 <template>
-  <div class="community">
+  <div class="community-page">
     <div class="sidebar">
-      <RouterLink :to="{ name: 'Community' }">Community</RouterLink>
-      <RouterLink :to="{ name: 'UploadImage' }">New Post</RouterLink>
-      <RouterLink :to="{ name: 'ProfileView' }">My Profile</RouterLink>
-      <RouterLink :to="{ name: 'LikePostsView' }">Liked Posts</RouterLink>
-      <RouterLink :to="{ name: 'FindActor' }">FindActor</RouterLink>
-      <RouterLink :to="{ name: 'ImageGenerator' }">ImageGenerator</RouterLink>
+      <RouterLink :to="{ name: 'Community' }" class="sidebar-link" :class="{ active: $route.name === 'Community' }">Community</RouterLink>
+      <RouterLink :to="{ name: 'UploadImage' }" class="sidebar-link" :class="{ active: $route.name === 'UploadImage' }">New Post</RouterLink>
+      <RouterLink :to="{ name: 'ProfileView' }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>
+      <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
+      <RouterLink :to="{ name: 'FindActor' }" class="sidebar-link" :class="{ active: $route.name === 'FindActor' }">Find Actor</RouterLink>
+      <RouterLink :to="{ name: 'ImageGenerator' }" class="sidebar-link" :class="{ active: $route.name === 'ImageGenerator' }">Image Generator</RouterLink>
     </div>
-    <div class="posts">
-      <h1>Community Posts</h1>
-      
-      <!-- {{ posts }} <br> -->
-
-
-      <div v-if="posts && posts.length">
-        <div v-for="post in posts" :key="post?.id" class="post">
+    <div class="posts-container">
+      <h1 class="title">Community Posts</h1>
+      <div v-if="posts && posts.length" class="posts">
+        <div v-for="post in posts" :key="post?.id" class="post-card">
           <div class="post-header">
-            <img :src="`${store.API_URL}${post.user.userinfo.user_image}`" alt="User Profile Image" class="profile-picture" />
+            <RouterLink :to="{ name: 'ProfileView', params: { username: post.user.username } }">
+              <img :src="`${store.API_URL}${post.user.userinfo.user_image}`" alt="User Profile Image" class="profile-picture" />
+            </RouterLink>
             <div>
-              <p>{{ post?.user.username }}</p>
-              <p>{{ post?.created_at }}</p>
+              <RouterLink :to="{ name: 'ProfileView', params: { username: post.user.username } }" class="username">
+                {{ post?.user.username }}
+              </RouterLink>
+              <p class="created-at">{{ formatDate(post?.created_at) }}</p>
             </div>
           </div>
           <RouterLink v-if="post?.id" :to="{ name: 'PostDetail', params: { id: post?.id } }">
             <img :src="`${store.API_URL}${post?.image}`" alt="Post Image" class="post-image" />
           </RouterLink>
-          <p>{{ post?.content }}</p>
-          <p>Likes: {{ post.likes.length }}</p>
-          
-          <!-- {{ like_tf?.liked }} -->
-          <button v-if="post.like_list.includes(userstore.LoginUsername)" class="likebtn" @click="toggleLike(post)">
-            Unlike
-          </button>
-          
-          <button v-else class="likebtn" @click="toggleLike(post)">
-            Like
-          </button>
-
-
-          <p>Comments: {{ post.comments.length }}</p>
-          
-          <div v-if="userstore.LoginUsername === post?.user.username">
-            <RouterLink :to="{ name: 'EditPost', params: { id: post?.id } }">Edit</RouterLink>
-            <button @click="deletePost(post?.id)">Delete</button>
+          <div class="post-content">
+            <p>{{ post?.content }}</p>
           </div>
-
-          <button @click="toggleComments(post?.id)">더보기</button>
-          
-          <!-- 댓글 섹션 시작 -->
+          <hr class="divider" />
+          <div class="post-actions">
+            <button v-if="post.like_list && post.like_list.includes(userstore.LoginUsername)" class="likebtn" @click="toggleLike(post)">
+              🧡 {{ post.likes.length }}
+            </button>
+            <button v-else class="likebtn" @click="toggleLike(post)">
+              🤍 {{ post.likes.length }}
+            </button>
+            <button class="comment-btn" @click="toggleComments(post?.id)">💬 {{ post.comments.length }}</button>
+          </div>
           <div v-if="showComments === post?.id" class="comments">
-            <h3>Comments</h3>
             <div v-if="post?.comments && post?.comments.length">
               <div v-for="comment in post?.comments" :key="comment?.id" class="comment">
-                <p>{{ comment.write_comment_user.userinfo.user_image ? 
-                `${store.API_URL}${comment.write_comment_user.userinfo.user_image}` : 
-                'default_image_url' }}: {{ comment?.content }}</p>
-                <button @click="toggleReplyForm(comment?.id)">Reply</button>
-                <div v-if="replyFormVisible === comment?.id">
-                  <input v-model="replyContents[comment?.id]" placeholder="Write a reply" />
-                  <button @click="createCommentToComment({ postId: post?.id, superCommentId: comment?.id, content: replyContents[comment?.id] })">Submit</button>
+                <div class="comment-header">
+                  <div class="comment-content">
+                    <img :src="`${store.API_URL}${comment.write_comment_user.userinfo.user_image}`" alt="Commenter Profile Image" class="profile-picture" />
+                    <p>{{ comment.write_comment_user.username }}: {{ comment?.content }}</p>
+                  </div>
+                  <p class="comment-time">{{ formatDate(comment?.created_at) }}</p>
+                </div>
+                <button @click="toggleReplyForm(comment?.id)" class="reply-btn">Reply</button>
+                <div v-if="replyFormVisible === comment?.id" class="reply-form">
+                  <input v-model="replyContents[comment?.id]" placeholder="Write a reply" class="form-control" />
+                  <button @click="createCommentToComment({ postId: post?.id, superCommentId: comment?.id, content: replyContents[comment?.id] })" class="submit-btn">Submit</button>
                 </div>
                 <div v-if="comment?.commented && comment?.commented.length" class="replies">
                   <div v-for="reply in comment?.commented" :key="reply?.id" class="reply">
-                    <p>{{ reply.write_comment_user_name }}: {{ reply?.content }}</p>
+                    <div class="reply-header">
+                      <div class="reply-content">
+                        <img :src="`${store.API_URL}${reply.write_comment_user.userinfo.user_image}`" alt="Reply User Image" class="profile-picture" />
+                        <p>{{ reply.write_comment_user.username }}: {{ reply?.content }}</p>
+                      </div>
+                      <p class="reply-time">{{ formatDate(reply?.created_at) }}</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
             <div v-else>No comments available.</div>
-            <input v-model="newCommentContents[post.id]" placeholder="Write a comment" />
-            <button @click="createComment({ postId: post.id, content: newCommentContents[post.id] })">Submit</button>
+            <div class="new-comment-form">
+              <input v-model="newCommentContents[post.id]" placeholder="Write a comment" class="form-control" />
+              <button @click="createComment({ postId: post.id, content: newCommentContents[post.id] })" class="submit-btn">Submit</button>
+            </div>
           </div>
         </div>
       </div>
@@ -81,10 +82,11 @@
 
 <script setup>
 import { RouterLink } from 'vue-router'
-import { onMounted, ref, onBeforeMount } from 'vue'
+import { onMounted, ref, onBeforeMount, watch } from 'vue'
 import axios from 'axios'
 import { useCommunity } from '@/stores/community'
 import { useCounterStore } from '@/stores/counter'
+import { useRoute } from 'vue-router'
 
 const userstore = useCounterStore()
 const posts = ref([])
@@ -96,22 +98,15 @@ const showComments = ref(null)
 const store = useCommunity()
 const like_tf = ref({})
 
-
 const fetchPosts = async () => {
-  console.log(posts)
-  axios({
-    method: 'get',
-    url: `${store.API_URL}/articles/get_posts/`
-  })
-  .then((response) => {
+  try {
+    const response = await axios.get(`${store.API_URL}/articles/get_posts/`)
+    console.log('Fetched posts:', response.data) // 디버깅을 위한 로그
     posts.value = response.data
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error('Error fetching posts:', error)
-  })
+  }
 }
-
-
 
 const deletePost = async (postId) => {
   axios({
@@ -125,7 +120,7 @@ const deletePost = async (postId) => {
     posts.value = posts.value.filter(post => post.id !== postId)
   })
   .catch((error) => {
-        console.log(error)
+    console.log(error)
   })
 }
 
@@ -138,7 +133,7 @@ const toggleLike = (post) => {
     }
   })
     .then(response => {
-      if (post.like_list.includes(userstore.LoginUsername)) {
+      if (post.like_list && post.like_list.includes(userstore.LoginUsername)) {
         post.like_list = post.like_list.filter(username => username !== userstore.LoginUsername)
         post.likes.length -= 1
       } else {
@@ -161,9 +156,8 @@ const createComment = async ({ postId, content }) => {
     data: { content }
   })
   .then((response) => {
-    // 댓글 작성 후 게시물 데이터 다시 불러오기
     fetchPostById(postId)
-    newCommentContents.value[postId] = '' // 댓글 작성 후 입력 필드를 빈 값으로 설정
+    newCommentContents.value[postId] = ''
   })
   .catch((error) => {
     console.error('Error creating comment:', error)
@@ -180,9 +174,9 @@ const createCommentToComment = async ({ postId, superCommentId, content }) => {
     data: { content }
   })
   .then((response) => {
-    // 대댓글 작성 후 게시물 데이터 다시 불러오기
     fetchPostById(postId)
-    replyContents.value[superCommentId] = '' // 대댓글 작성 후 입력 필드를 빈 값으로 설정
+    replyContents.value[superCommentId] = ''
+    replyFormVisible.value = null // Hide the reply form after submission
   })
   .catch((error) => {
     console.error('Error creating reply:', error)
@@ -217,46 +211,97 @@ const toggleComments = (postId) => {
   showComments.value = showComments.value === postId ? null : postId
 }
 
+const formatDate = (dateString) => {
+  const options = { year:'2-digit', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }
+  return new Date(dateString).toLocaleString('ko-KR', options)
+}
+
 onBeforeMount(() => {
   fetchPosts()
+})
+
+// New post creation logic to auto-refresh the posts list
+const route = useRoute()
+
+watch(() => route.params, (newParams, oldParams) => {
+  if (route.name === 'Community' && newParams !== oldParams) {
+    fetchPosts()
+  }
 })
 </script>
 
 <style scoped>
-.community {
+@import url('@/assets/fonts/fonts.css');
+
+.community-page {
   display: flex;
 }
 
 .sidebar {
   width: 200px;
   padding: 20px;
-  background-color: #f0f0f0;
+  background-color: #4C6A58; /* 짙은 녹색 배경 */
+  min-height: 100vh; /* 화면 전체 높이 */
 }
 
-.sidebar a {
+.sidebar-link {
   display: block;
-  margin-bottom: 10px;
+  color: #FFF6E5; /* 크림색 텍스트 */
+  font-family: 'TitleMedium', sans-serif; /* 제목 폰트 */
   text-decoration: none;
-  color: #000;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
 }
 
-.posts {
+.sidebar-link.active {
+  background-color: #FF7F47; /* 활성 링크의 배경색 */
+  color: #FFF; /* 활성 링크의 텍스트 색상 */
+}
+
+.sidebar-link:hover {
+  background-color: #333333; /* 어두운 회색 배경 */
+}
+
+.posts-container {
+  background-color: #FFF6E5; /* 전체 페이지 배경색 */
+  min-height: 100vh;
   flex-grow: 1;
   padding: 20px;
 }
 
-.post {
+.title {
+  color: #333333; /* 텍스트 색상 */
+  font-family: 'TitleMedium', sans-serif; /* 제목 폰트 */
+  text-align: center;
   margin-bottom: 20px;
 }
 
-.post img {
-  max-width: 200px;
-  margin-top: 10px;
+.posts {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.post-card {
+  background-color: #FAF7F5; /* 하얀색 배경 */
+  border: 1px solid #ddd; /* 옅은 회색 테두리 */
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 800px; /* 카드 최대 너비를 800px로 설정 */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .post-header {
   display: flex;
   align-items: center;
+  width: 100%;
   margin-bottom: 10px;
 }
 
@@ -267,12 +312,119 @@ onBeforeMount(() => {
   margin-right: 10px;
 }
 
+.username {
+  font-weight: bold;
+  color: #000;
+  text-decoration: none;
+}
+
+.username:hover {
+  text-decoration: underline;
+}
+
+.created-at {
+  font-size: 0.8em;
+  color: #888;
+}
+
+.post-image {
+  width: 100%;
+  height: 400px; /* 이미지 높이를 400px로 설정 */
+  border-radius: 10px;
+  margin: 10px 0;
+  object-fit: cover; /* 이미지를 부모 요소에 맞게 자르기 */
+}
+
+.post-content {
+  text-align: center;
+  width: 100%;
+}
+
+.divider {
+  width: 100%;
+  border: 0.5px solid #ddd; /* 실선 추가 */
+  margin: 20px 0;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: flex-start; /* 좋아요와 댓글 버튼을 가까이 */
+  gap: 10px; /* 버튼 사이 간격 조절 */
+  width: 100%;
+}
+
+.likebtn {
+  background-color: #FF7F47;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-family: 'TitleMedium', sans-serif;
+  color: white;
+}
+
+.comment-btn {
+  background-color: #4C6A58;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-family: 'TitleMedium', sans-serif;
+  color: white;
+}
+
 .comments {
   margin-top: 20px;
+  width: 100%;
 }
 
 .comment {
   margin-bottom: 10px;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 댓글 시간 오른쪽 정렬 */
+}
+
+.comment-content {
+  display: flex;
+  align-items: center;
+}
+
+.comment-time {
+  margin-left: 10px;
+  font-size: 0.8em;
+  color: #888;
+  white-space: nowrap;
+}
+
+.comment img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.reply-btn {
+  background-color: #4C6A58;
+  border: none;
+  padding: 3px 7px;
+  cursor: pointer;
+  border-radius: 5px;
+  color: white;
+  font-size: 0.8em;
+}
+
+.submit-btn {
+  background-color: #FF7F47;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  color: white;
+  margin-top: 5px;
 }
 
 .replies {
@@ -281,5 +433,38 @@ onBeforeMount(() => {
 
 .reply {
   margin-bottom: 5px;
+}
+
+.reply-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 대댓글 시간 오른쪽 정렬 */
+}
+
+.reply-content {
+  display: flex;
+  align-items: center;
+}
+
+.reply-time {
+  margin-left: 10px;
+  font-size: 0.8em;
+  color: #888;
+  white-space: nowrap;
+}
+
+.reply img {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.reply-form,
+.new-comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 10px;
 }
 </style>
