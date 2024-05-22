@@ -25,6 +25,12 @@
           </RouterLink>
           <p>{{ post?.content }}</p>
           <p>Likes: {{ post.likes.length }}</p>
+
+          <button class="likebtn" @click="toggleLike(post)">
+            {{ post.likes.includes(store.userId) ? 'Unlike' : 'Like' }}
+          </button>
+
+
           <p>Comments: {{ post.comments.length }}</p>
           
           <div v-if="userstore.LoginUsername === post?.user.username">

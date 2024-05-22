@@ -18,6 +18,9 @@
               <p>{{ post.created_at }}</p>
               <p>Likes: {{ post.likes.length }}</p>
             </RouterLink>
+            <button class="likebtn" @click="toggleLike(post)">
+              {{ post.likes.includes(store.userId) ? 'Unlike' : 'Like' }}
+            </button>
           </div>
         </div>
         <p v-else>No liked posts available.</p>
@@ -51,6 +54,32 @@
     })
   }
   
+
+  const toggleLike = (post) => {
+    axios({
+      method: 'post',
+      url: `${store.API_URL}/articles/like_post/${post.id}/`,
+      headers: {
+        'Authorization': `Token ${tokenstore.token}`
+      }
+    })
+      .then(response => {
+        const liked = response.data.liked
+        if (liked) {
+          post.likes.push(store.userId)
+        } else {
+          const index = post.likes.indexOf(store.userId)
+          if (index > -1) {
+            post.likes.splice(index, 1)
+          }
+        }
+      })
+      .catch(error => {
+        console.error('좋아요 기능 실패했다', error)
+      })
+  }
+
+
   onBeforeMount(() => {
     fetchLikedPosts()
   })

@@ -14,10 +14,18 @@
     <p>{{ post?.content }}</p>
     <p>{{ post?.created_at }}</p>
     <p>{{ post?.user.username }}</p>
+
+    <p>Likes: {{ post.likes.length }}</p>
+
+    <button class="likebtn" @click="toggleLike(post)">
+      {{ post.likes.includes(store.userId) ? 'Unlike' : 'Like' }}
+    </button>
+
     <div v-if="userstore.LoginUsername === post?.user.username">
       <RouterLink :to="{ name: 'EditPost', params: { id: postid } }">Edit</RouterLink>
       <button @click="deletePost(postid)">Delete</button>
     </div>
+
     
     <!-- 댓글 섹션 시작 -->
     <div class="comments">
@@ -64,6 +72,31 @@ const post = ref(null)
 const replyFormVisible = ref(null)
 const newCommentContent = ref('')
 const replyContents = ref({})
+
+
+const toggleLike = (post) => {
+  axios({
+    method: 'post',
+    url: `${store.API_URL}/articles/like_post/${post.id}/`,
+    headers: {
+      'Authorization': `Token ${userstore.token}`
+    }
+  })
+    .then(response => {
+      const liked = response.data.liked
+      if (liked) {
+        post.likes.push(store.userId)
+      } else {
+        const index = post.likes.indexOf(store.userId)
+        if (index > -1) {
+          post.likes.splice(index, 1)
+        }
+      }
+    })
+    .catch(error => {
+      console.error('좋아요 기능 실패했다', error)
+    })
+}
 
 const fetchPost = async () => {
   axios({
