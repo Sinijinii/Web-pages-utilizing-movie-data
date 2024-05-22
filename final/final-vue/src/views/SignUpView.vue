@@ -19,7 +19,7 @@
   </div> -->
 
   <!-- 적용 -->
-  <div class="container text-center" id="container">
+  <div class="container text-center margintop" id="container">
     <div class="form-container sign-in-container">
       <form @submit.prevent="signUp">
         <h1>회원가입</h1>
@@ -78,6 +78,10 @@ template {
   font-family: 'Montserrat', sans-serif;
   height: 100vh;
   margin: -20px 0 50px;
+}
+
+.margintop {
+  margin-top: 200px
 }
 
 h1 {
