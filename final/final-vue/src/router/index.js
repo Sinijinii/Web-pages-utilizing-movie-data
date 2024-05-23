@@ -24,7 +24,13 @@ const router = createRouter({
     {
       path: '/',
       name: 'MainView',
-      component: MainView
+      component: MainView,
+      beforeEnter: (to, from) => {
+        const store = useCounterStore()
+        if (from === true) {
+          store.getLoginMovies()
+        }
+      }
     },
     {
       path: '/signup',
