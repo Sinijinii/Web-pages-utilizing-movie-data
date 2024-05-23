@@ -13,18 +13,22 @@
     </div>
 
     <div class="buttons">
-      <button v-if="store.loginmovies.Netflix" @click="scrollToSection('netflix')">넷플릭스 영화</button>
-      <button v-if="store.loginmovies.DisneyPlus" @click="scrollToSection('disney')">디즈니 영화</button>
-      <button v-if="store.loginmovies.Watcha" @click="scrollToSection('watcha')">왓챠 영화</button>
-      <button @click="scrollToSection('topRate')">인기순 영화</button>
-      <button @click="scrollToSection('mostVoted')">최다 득표순 영화</button>
-      <button @click="scrollToSection('latest')">최신순 영화</button>
+      <button v-if="store.loginmovies?.Netflix" @click="scrollToSection('netflix')">넷플릭스</button>
+      <button v-if="store.loginmovies?.DisneyPlus" @click="scrollToSection('disney')">디즈니</button>
+      <button v-if="store.loginmovies?.Watcha" @click="scrollToSection('watcha')">왓챠</button>
+      <button @click="scrollToSection('topRate')">인기순</button>
+      <button @click="scrollToSection('mostVoted')">최다 득표순</button>
+      <button @click="scrollToSection('latest')">최신순</button>
     </div>
+    <br>
+    <br>
+    <br>
+    <br>
 
-    <div v-if="store.loginmovies.Netflix" id="netflix" class="movie-section">
+    <div v-if="store.loginmovies?.Netflix" id="netflix" class="movie-section">
       <div class="section-header">
         <img src="@/../logo/NetflixLogo.png" alt="Netflix Logo" class="logo-image">
-        <h3 class="section-title">넷플릭스 영화</h3>
+        <h3 class="section-title">넷플릭스</h3>
       </div>
       <div class="poster-container">
         <button class="scroll-button left" @click="scrollLeft('netflixPosters')">
@@ -38,11 +42,12 @@
         </button>
       </div>
     </div>
-
-    <div v-if="store.loginmovies.DisneyPlus" id="disney" class="movie-section">
+    <br>
+    <br>
+    <div v-if="store.loginmovies?.DisneyPlus" id="disney" class="movie-section">
       <div class="section-header">
         <img src="@/../logo/DisneyLogo.png" alt="Disney Logo" class="logo-image">
-        <h3 class="section-title">디즈니 영화</h3>
+        <h3 class="section-title">디즈니</h3>
       </div>
       <div class="poster-container">
         <button class="scroll-button left" @click="scrollLeft('disneyPosters')">
@@ -56,11 +61,12 @@
         </button>
       </div>
     </div>
-
-    <div v-if="store.loginmovies.Watcha" id="watcha" class="movie-section">
+    <br>
+    <br>
+    <div v-if="store.loginmovies?.Watcha" id="watcha" class="movie-section">
       <div class="section-header">
         <img src="@/../logo/WatchaLogo.png" alt="Watcha Logo" class="logo-image">
-        <h3 class="section-title">왓챠 영화</h3>
+        <h3 class="section-title">왓챠</h3>
       </div>
       <div class="poster-container">
         <button class="scroll-button left" @click="scrollLeft('watchaPosters')">
@@ -74,10 +80,11 @@
         </button>
       </div>
     </div>
-
+    <br>
+    <br>
     <div id="topRate" class="movie-section">
       <div class="section-header">
-        <h3 class="section-title">인기순 영화</h3>
+        <h3 class="section-title">인기순</h3>
       </div>
       <div class="poster-container">
         <button class="scroll-button left" @click="scrollLeft('topRatePosters')">
@@ -91,10 +98,11 @@
         </button>
       </div>
     </div>
-
+    <br>
+    <br>
     <div id="mostVoted" class="movie-section">
       <div class="section-header">
-        <h3 class="section-title">최다 득표순 영화</h3>
+        <h3 class="section-title">최다 득표순</h3>
       </div>
       <div class="poster-container">
         <button class="scroll-button left" @click="scrollLeft('mostVotedPosters')">
@@ -108,10 +116,11 @@
         </button>
       </div>
     </div>
-
+    <br>
+    <br>
     <div id="latest" class="movie-section">
       <div class="section-header">
-        <h3 class="section-title">최신순 영화</h3>
+        <h3 class="section-title">최신순</h3>
       </div>
       <div class="poster-container">
         <button class="scroll-button left" @click="scrollLeft('latestPosters')">
@@ -213,6 +222,8 @@ function scrollRight(id) {
 if (store.isLogin === true) {
   store.getLoginMovies()
 }
+
+console.log(store.loginmovies);
 </script>
 
 
@@ -228,7 +239,7 @@ if (store.isLogin === true) {
 
 .search-section {
   position: relative;
-  height: 500px;
+  height: 700px;
   background-color: #fcfcfc;
   max-width: 100%;
 }
@@ -281,6 +292,7 @@ if (store.isLogin === true) {
   display: flex;
   justify-content: center;
   margin: 20px 0;
+  margin-top: 50px;
 }
 
 .buttons button {
@@ -290,6 +302,7 @@ if (store.isLogin === true) {
   cursor: pointer;
   font-family: 'TitleMedium', Arial, sans-serif;
   margin: 0 30px;
+  margin-top: 30px;
   background-color: orange;
 }
 

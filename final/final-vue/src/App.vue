@@ -82,6 +82,9 @@ watch(route, (newRoute) => {
   /* 네비게이션 바의 높이 조절 */
   background-color: #4C6A58 !important;
   /* 네비바 색깔 */
+  position: sticky;
+  top: 0px;
+  z-index: 50;
 }
 
 .nav-link {
