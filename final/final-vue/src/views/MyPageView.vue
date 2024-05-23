@@ -104,35 +104,6 @@ body, html {
     margin-bottom: 20px;
 }
 
-/* Responsive adjustments */
-/* @media (max-width: 576px) {
-    .col-6 {
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-}
-
-@media (min-width: 576px) and (max-width: 768px) {
-    .col-6 {
-        flex: 0 0 50%;
-        max-width: 50%;
-    }
-}
-
-@media (min-width: 768px) and (max-width: 992px) {
-    .col-md-4 {
-        flex: 0 0 33.3333%;
-        max-width: 33.3333%;
-    }
-}
-
-@media (min-width: 992px) {
-    .col-lg-3 {
-        flex: 0 0 25%;
-        max-width: 25%;
-    }
-} */
-
 .movie-container {
   display: inline-block;
   margin: 10px;

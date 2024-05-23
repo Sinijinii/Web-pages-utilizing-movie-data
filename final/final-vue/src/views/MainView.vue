@@ -37,20 +37,16 @@ onMounted(async () => {
 
 function searchMovie() {
   if (searchTerm.value.trim() !== '') {
-    console.log(searchTerm.value) 
     axios({
       method: 'get',
       url: `${store.API_URL}/api/v1/searchmovie/${searchTerm.value}`,
     })
       .then((response) => {
-        console.log("넘어왔니?");
-        console.log(response.data.id);
         router.push({ name: 'MovieDetail', params: { movieId: response.data.id } })
       })
       .catch((error) => {
         console.log(error)
       })
-
   } else {
     alert('영화제목 입력해야함')
   }
