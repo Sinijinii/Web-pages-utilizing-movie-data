@@ -32,6 +32,8 @@
           </div>
           <hr class="divider" />
           <div class="post-actions">
+            {{ post.like_list }}
+            {{ post.like_list.includes(userstore.LoginUsername) }}
             <button v-if="post.like_list && post.like_list.includes(userstore.LoginUsername)" class="likebtn" @click="toggleLike(post)">
               🧡 {{ post.likes.length }}
             </button>

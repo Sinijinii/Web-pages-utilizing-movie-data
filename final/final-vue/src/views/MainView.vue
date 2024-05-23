@@ -392,4 +392,3 @@ console.log(store.loginmovies);
   height: 300px;
 }
 </style>
-
