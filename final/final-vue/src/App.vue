@@ -3,7 +3,7 @@
     <nav v-if="showNavbar" class="navbar navbar-expand bg-body-tertiary">
       <div class="container-fluid">
         <RouterLink class="navbar-brand" :to="{ name: 'MainView' }">
-          <img src="../logo/MainLogo.png" alt="Main Logo" class="logo-image" />
+          <img src="../logo/Main.png" alt="Main Logo" class="logo-image" />
         </RouterLink>
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
           <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
@@ -24,11 +24,11 @@
               <RouterLink class="nav-link" :to="{ name: 'UserRecommendView' }">추천 영화</RouterLink>
             </li>
             <li class="nav-item" v-if="store.isLogin">
-              <RouterLink class="nav-link" :to="{ name: 'Community' }">Community</RouterLink>
+              <RouterLink class="nav-link" :to="{ name: 'Community' }">Community  </RouterLink>  
             </li>
             <li class="nav-item" v-if="store.isLogin">
               <form class="d-flex" @submit.prevent="logout()">
-                <button type="submit" class="btn">로그아웃</button>
+                <button type="submit" class="btn" >로그아웃</button>
               </form>
             </li>
           </ul>
@@ -80,7 +80,7 @@ watch(route, (newRoute) => {
 .navbar {
   height: 70px;
   /* 네비게이션 바의 높이 조절 */
-  background-color: #4C6A58 !important;
+  background-color: hsl(144, 16%, 36%) !important;
   /* 네비바 색깔 */
   position: sticky;
   top: 0px;
@@ -90,6 +90,7 @@ watch(route, (newRoute) => {
 .nav-link {
   color: #fff !important;
   /* 네비게이션 바의 링크 텍스트의 글자색을 흰색으로 설정 */
+  font-family: 'TitleMedium', sans-serif; /* 제목 폰트 */
 }
 
 .router-link-active {
@@ -100,6 +101,7 @@ watch(route, (newRoute) => {
 .btn {
   background-color: #FF7F47;
   color: white;
+  font-family: 'TitleMedium', sans-serif; /* 제목 폰트 */
 }
 
 .logo-image {

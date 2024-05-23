@@ -6,8 +6,8 @@
       <RouterLink :to="{ name: 'Community' }" class="sidebar-link" :class="{ active: $route.name === 'Community' }">Community</RouterLink>
       <RouterLink :to="{ name: 'UploadImage' }" class="sidebar-link" :class="{ active: $route.name === 'UploadImage' }">New Post</RouterLink>
       <RouterLink :to="{ name: 'ProfileView', params: { username: userstore.LoginUsername } }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>      <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
-      <RouterLink :to="{ name: 'FindActor' }" class="sidebar-link" :class="{ active: $route.name === 'FindActor' }">Find Actor</RouterLink>
-      <RouterLink :to="{ name: 'ImageGenerator' }" class="sidebar-link" :class="{ active: $route.name === 'ImageGenerator' }">Image Generator</RouterLink>
+      <RouterLink :to="{ name: 'FindActor' }" class="sidebar-link" :class="{ active: $route.name === 'FindActor' }">닮은꼴 배우찾기</RouterLink>
+      <RouterLink :to="{ name: 'ImageGenerator' }" class="sidebar-link" :class="{ active: $route.name === 'ImageGenerator' }">나만의 영화 포스터</RouterLink>
     </div>
     <div class="posts-container">
       <h1 class="title">Community Posts</h1>
@@ -32,13 +32,11 @@
           </div>
           <hr class="divider" />
           <div class="post-actions">
-            {{ post.like_list }}
-            {{ post.like_list.includes(userstore.LoginUsername) }}
-            <button v-if="post.like_list && post.like_list.includes(userstore.LoginUsername)" class="likebtn" @click="toggleLike(post)">
-              🧡 {{ post.likes.length }}
+            <button v-if="post?.like_list && post?.like_list.includes(userstore.LoginUsername)" class="likebtn" @click="toggleLike(post)">
+              🧡 {{ post?.likes.length }}
             </button>
             <button v-else class="likebtn" @click="toggleLike(post)">
-              🤍 {{ post.likes.length }}
+              🤍 {{ post?.likes.length }}
             </button>
             <button class="comment-btn" @click="toggleComments(post?.id)">💬 {{ post.comments.length }}</button>
           </div>
@@ -49,8 +47,8 @@
                   <div class="comment-content">
                     <RouterLink :to="{ name: 'ProfileView', params: { username: comment.write_comment_user.username } }">
                       <img :src="`${store.API_URL}${comment.write_comment_user.userinfo.user_image}`" alt="Commenter Profile Image" class="profile-picture" />
-                      <p>{{ comment.write_comment_user.username }}: {{ comment?.content }}</p>
                     </RouterLink>
+                    <p>{{ comment.write_comment_user.username }}: {{ comment?.content }}</p>
                   </div>
                   <p class="comment-time">{{ formatDate(comment?.created_at) }}</p>
                 </div>
@@ -65,8 +63,8 @@
                       <div class="reply-content">
                         <RouterLink :to="{ name: 'ProfileView', params: { username: reply.write_comment_user.username } }">
                           <img :src="`${store.API_URL}${reply.write_comment_user.userinfo.user_image}`" alt="Reply User Image" class="profile-picture" />
-                          <p>{{ reply.write_comment_user.username }}: {{ reply?.content }}</p>
                         </RouterLink>
+                        <p>{{ reply.write_comment_user.username }}: {{ reply?.content }}</p>
                       </div>
                       <p class="reply-time">{{ formatDate(reply?.created_at) }}</p>
                     </div>
@@ -76,8 +74,8 @@
             </div>
             <div v-else>No comments available.</div>
             <div class="new-comment-form">
-              <input v-model="newCommentContents[post.id]" placeholder="Write a comment" class="form-control" />
-              <button @click="createComment({ postId: post.id, content: newCommentContents[post.id] })" class="submit-btn">Submit</button>
+              <input v-model="newCommentContents[post?.id]" placeholder="Write a comment" class="form-control" />
+              <button @click="createComment({ postId: post?.id, content: newCommentContents[post?.id] })" class="submit-btn">Submit</button>
             </div>
           </div>
         </div>
@@ -139,6 +137,7 @@ const toggleLike = async (post) => {
     })
 
     const liked = response.data.liked
+    post.is_liked = liked // 좋아요 상태 업데이트
     if (liked) {
       post.like_list.push(userstore.LoginUsername)
       post.likes.length += 1
@@ -154,6 +153,7 @@ const toggleLike = async (post) => {
   }
 }
 
+
 const createComment = async ({ postId, content }) => {
   axios({
     method: 'post',
@@ -166,6 +166,7 @@ const createComment = async ({ postId, content }) => {
   .then((response) => {
     fetchPostById(postId)
     newCommentContents.value[postId] = ''
+    fetchPosts()
   })
   .catch((error) => {
     console.error('Error creating comment:', error)
@@ -185,6 +186,7 @@ const createCommentToComment = async ({ postId, superCommentId, content }) => {
     fetchPostById(postId)
     replyContents.value[superCommentId] = ''
     replyFormVisible.value = null // Hide the reply form after submission
+    fetchPosts()
   })
   .catch((error) => {
     console.error('Error creating reply:', error)
@@ -199,24 +201,28 @@ const toggleReplyForm = (commentId) => {
 }
 
 const fetchPostById = async (postId) => {
-  axios({
-    method: 'get',
-    url: `${store.API_URL}/articles/detail_post/${postId}/`
-  })
-  .then((response) => {
+  try {
+    const response = await axios.get(`${store.API_URL}/articles/detail_post/${postId}/`, {
+      headers: {
+        'Authorization': `Token ${userstore.token}`
+      }
+    })
     const updatedPost = response.data[0]
     const postIndex = posts.value.findIndex(post => post.id === postId)
     if (postIndex !== -1) {
+      // 좋아요 상태 유지
+      updatedPost.is_liked = posts.value[postIndex].is_liked
       posts.value[postIndex] = updatedPost
     }
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error('Error fetching post by ID:', error)
-  })
+  }
 }
+
 
 const toggleComments = (postId) => {
   showComments.value = showComments.value === postId ? null : postId
+  fetchPostById()
 }
 
 const formatDate = (dateString) => {
@@ -233,7 +239,6 @@ const route = useRoute()
 
 watch(() => route.params, (newParams, oldParams) => {
   if (route.name === 'Community' && newParams !== oldParams) {
-    fetchPosts()
   }
 })
 </script>

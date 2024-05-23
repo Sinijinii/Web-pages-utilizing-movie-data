@@ -1,6 +1,6 @@
 <template>
     <div class="recommend-page">
-        <h1 class="pagetitle">추천 영화 페이지</h1>
+        <h1 class="pagetitle">영화 추천</h1>
 
         <div class="section">
             <h3 class="section-title">장르별 추천영화</h3>

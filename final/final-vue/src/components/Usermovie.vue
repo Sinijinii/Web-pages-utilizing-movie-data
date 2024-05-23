@@ -94,7 +94,7 @@ const movies = [
 ]
 const otts = [
   { id: 8, name: 'Netflix', logopath: "https://image.tmdb.org/t/p/w500//pbpMk2JmcoNnQwx5JGpXngfoWtp.jpg" },
-  { id: 97, name: 'Watcha', logopath: "https://image.tmdb.org/t/p/w500//5gmEivxOGPdq4Afpq1f8ktLtEW1.jpg" },
+  { id: 97, name: 'Watcha', logopath: "https://i.pinimg.com/originals/7c/96/ba/7c96ba272a0a675e3a41f764cb39a7fe.png" },
   { id: 337, name: 'Disney Plus', logopath: "https://image.tmdb.org/t/p/w500//97yvRBw1GzX7fXprcF80er19ot.jpg" }
   ]
 //  수정

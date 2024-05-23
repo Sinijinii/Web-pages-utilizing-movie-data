@@ -8,8 +8,8 @@
       <RouterLink :to="{ name: 'ProfileView', params: { username: userstore.LoginUsername } }" v-if="responsedata?.username===userstore.LoginUsername" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>
       <RouterLink :to="{ name: 'ProfileView', params: { username: userstore.LoginUsername } }" v-else class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">{{ responsedata?.username }} Profile</RouterLink>
       <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
-      <RouterLink :to="{ name: 'FindActor' }" class="sidebar-link" :class="{ active: $route.name === 'FindActor' }">Find Actor</RouterLink>
-      <RouterLink :to="{ name: 'ImageGenerator' }" class="sidebar-link" :class="{ active: $route.name === 'ImageGenerator' }">Image Generator</RouterLink>
+      <RouterLink :to="{ name: 'FindActor' }" class="sidebar-link" :class="{ active: $route.name === 'FindActor' }">닮은꼴 배우찾기</RouterLink>
+      <RouterLink :to="{ name: 'ImageGenerator' }" class="sidebar-link" :class="{ active: $route.name === 'ImageGenerator' }">나만의 영화 포스터</RouterLink>
     </div>
     <div class="profile-content">
       <div class="profile-info">

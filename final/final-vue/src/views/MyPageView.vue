@@ -9,14 +9,20 @@
         <div class="col-3 pt-2 border-bottom header-bg">
           <h3 class="title-font text-end my-1">내가 구독한 ott</h3>
         </div>
+      
         <div class="col-2 text-start border-bottom border-end header-bg">
           <div class="ott-card" v-for="ott in selectedotts" :key="ott.id">
-            <img :src="`${store.BasicPosterPath}${ott.logopath}`"
+            <img v-if="ott.logopath === '/5gmEivxOGPdq4Afpq1f8ktLtEW1.jpg'" :src="`https://i.pinimg.com/originals/7c/96/ba/7c96ba272a0a675e3a41f764cb39a7fe.png`"
+              class="object-fit-cover border rounded ott-small mx-1 my-1" :alt="`${ott.id}`">
+            <img v-else :src="`${store.BasicPosterPath}${ott.logopath}`"
               class="object-fit-cover border rounded ott-small mx-1 my-1" :alt="`${ott.id}`">
           </div>
         </div>
         <blank class="col-1"></blank>
       </div>
+      <br>
+      <br>
+      <br>
       <div class="row my-3">
         <div class="col-1"></div>
         <div class="col-5">
