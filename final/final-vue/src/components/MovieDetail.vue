@@ -103,35 +103,6 @@ onMounted(() => {
         })
 })
 
-
-function formatCasts(casts) {
-    if (!casts || casts.length === 0) {
-        return ''
-    }
-    return casts.map(cast => `<span>${cast}</span><br>`).join('');
-}
-
-// function formatGenres(genres) {
-//     if (!genres || genres.length === 0) {
-//         return ''
-//     }
-//     return genres.map(genres => `<span>${genres}</span><br>`).join('');
-// }
-
-function formatGenres(genres) {
-    if (!genres || genres.length === 0) {
-        return ''
-    }
-    return genres.join(' ')  // 각 장르를 공백으로 연결
-}
-
-function formatOtt(ott_platforms) {
-    if (!ott_platforms || ott_platforms.length === 0) {
-        return ''
-    }
-    return ott_platforms.join(', ')
-}
-
 const toggleLike = (movie) => {
     axios({
         method: 'post',
@@ -141,8 +112,9 @@ const toggleLike = (movie) => {
         }
     })
         .then(response => {
-            const liked = response.data.liked
-            if (liked === true) {
+            store.Liked = response.data.liked
+            console.log(response.data.liked);
+            if (store.Liked === true) {
                 movie.likes.push(store.userId)
             } else {
                 const index = movie.likes.indexOf(store.userId)
@@ -150,6 +122,7 @@ const toggleLike = (movie) => {
                     movie.likes.splice(index, 1)
                 }
             }
+            console.log(movie.likes);
         })
         .catch(error => {
             console.error('좋아요 기능 실패했다', error)

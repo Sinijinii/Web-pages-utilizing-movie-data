@@ -140,6 +140,7 @@ def like_movie(request, movie_id):
     movie = get_object_or_404(Movie, id=movie_id)
     userinfo = get_object_or_404(UserInfo, user=request.user)
     # 이미 좋아요를 했으면 좋아요 취소
+
     if userinfo in movie.likes.all():
         movie.likes.remove(userinfo)
         liked = False
@@ -149,6 +150,9 @@ def like_movie(request, movie_id):
         movie.likes.add(userinfo)
         liked = True
         userinfo.selectedmovies.add(Movie.objects.get(id=movie_id))
+    
+    print(userinfo)
+    print(movie.likes.all())
 
     return JsonResponse({'liked': liked, 'likes_count': movie.likes.count()})
 

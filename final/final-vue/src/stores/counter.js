@@ -4,13 +4,15 @@ import axios from 'axios'
 import { useRouter } from 'vue-router'
 
 export const useCounterStore = defineStore('counter', () => {
-  const movies = ref()
-  const loginmovies = ref()
+  const movies = ref(null)
+  const loginmovies = ref(null)
   const API_URL = 'http://127.0.0.1:8000'
   const token = ref(null)
   const LoginUsername = ref(null)
   const router = useRouter()
   const BasicPosterPath = 'https://image.tmdb.org/t/p/w500'
+  const Liked = ref(false)
+  const userId = ref(null)
 
 
 
@@ -128,6 +130,7 @@ export const useCounterStore = defineStore('counter', () => {
     .then((response) => {
       // 3. 로그인 성공 후 응답 받은 토큰을 저장
         LoginUsername.value = username
+        console.log(response.data);
         token.value = response.data.key
         router.replace({ name : 'MainView' })
       })
@@ -227,6 +230,7 @@ export const useCounterStore = defineStore('counter', () => {
 
   return { movies, API_URL, getMovies, signUp, logIn, token, isLogin, uploadResult,
             loginmovies, getLoginMovies, LoginUsername, BasicPosterPath, selectedFile,
-            similarActor, actorImageUrl, setFile, uploadImage, uploadPost, getRecommend
+            similarActor, actorImageUrl, setFile, uploadImage, uploadPost, getRecommend,
+            Liked
         }
 }, { persist: true })

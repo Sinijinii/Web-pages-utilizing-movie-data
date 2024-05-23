@@ -27,7 +27,7 @@ const router = createRouter({
       component: MainView,
       beforeEnter: (to, from) => {
         const store = useCounterStore()
-        if (store.isLogin === true) {
+        if (from === true) {
           store.getLoginMovies()
         }
       }

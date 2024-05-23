@@ -16,7 +16,7 @@
 
 <script setup>
 import { useCounterStore } from '@/stores/counter'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import TopRateMovie from '@/components/TopRateMovie.vue'
 import MostVotedMovie from '@/components/MostVotedMovie.vue'
