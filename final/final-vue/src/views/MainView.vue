@@ -1,11 +1,10 @@
 <template>
   <div>
-
+    <p v-show="none">{{ store.loginmovies }}</p>
     <div class="search">
       <input type="text" v-model="searchTerm" placeholder="영화 제목을 입력하세요">
       <button @click="searchMovie">검색</button>
     </div>
-
     <div>
         <OttMovie v-if="store.isLogin"/>
         <TopRateMovie v-if="!loading"/>
@@ -29,6 +28,7 @@ const store = useCounterStore()
 const loading = ref(true)
 const searchTerm = ref('')
 const router = useRouter()
+const none = ref(false)
 
 onMounted(async () => {
   await store.getMovies()

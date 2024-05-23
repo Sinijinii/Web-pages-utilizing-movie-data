@@ -64,6 +64,9 @@ export const useCounterStore = defineStore('counter', () => {
     })
       .then(response => {
         movies.value = response.data
+        if (isLogin.value === true) {
+          getLoginMovies()
+        }
       })
       .catch(error => {
         console.log(error)

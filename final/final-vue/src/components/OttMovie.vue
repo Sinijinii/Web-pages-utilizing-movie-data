@@ -37,4 +37,5 @@ const goToMovieDetail = (movieId) => {
     margin: 10px;
     cursor: pointer;
     width: 100px
-}</style>
+}
+</style>
