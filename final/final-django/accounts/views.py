@@ -10,7 +10,7 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 
 from django.shortcuts import get_object_or_404, get_list_or_404
-from .serializers import MovieSerializer
+from .serializers import MovieSerializer, OttSerializer
 
 
 @api_view(['POST'])
@@ -43,11 +43,23 @@ def mypage(request, username):
     otts = set()
     movies.update(userinfo.selectedmovies.values_list('id', flat=True))
     otts.update(userinfo.selectedotts.values_list('id', flat=True))
+    add = list()
+    addott = list()
+    for i in movies:
+        movie = Movie.objects.get(id = i)
+        serializer = MovieSerializer(movie)
+        add.append(serializer.data)
+    for j in otts:
+        ott = OTTPlatform.objects.get(id=j)
+        serializer = OttSerializer(ott)
+        addott.append(serializer.data)
+    print(addott)
+    print(add)
 
     result = {
         "user": user.pk,
-        "selectedmovies": list(movies),
-        "selectedotts": list(otts)
+        "selectedmovies": add,
+        "selectedotts": addott
     }
 
     return Response(result)

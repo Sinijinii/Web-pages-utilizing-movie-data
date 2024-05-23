@@ -14,7 +14,7 @@
   </div> -->
 
   <!-- 적용 -->
-  <div class="container d-flex align-items-center" id="container">
+  <div class="container d-flex align-items-center margintop" id="container">
     <div class="form-container sign-in-container">
       <form @submit.prevent="logIn">
         <h1>로그인</h1>
@@ -30,8 +30,9 @@
       <div class="overlay">
         <div class="overlay-panel overlay-right">
           <h1 class="h2">오늘 영화 뭐봄?</h1>
+          <br>
+          <h1 class="h2">여기서 추천받아봐!</h1>
           <a href="/signup"><button class="ghost" style="background-color: #FF416C;" id="signUp">회원가입</button></a>
-          <h1 class="h2">여기서 해준다</h1>
         </div>
       </div>
     </div>
@@ -189,6 +190,10 @@ input {
   opacity: 1;
   z-index: 5;
   animation: show 0.6s;
+}
+
+.margintop {
+  margin-top: 200px
 }
 
 @keyframes show {

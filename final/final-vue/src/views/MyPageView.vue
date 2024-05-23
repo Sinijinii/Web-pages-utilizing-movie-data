@@ -1,32 +1,47 @@
 <template>
   <div>
-    <h1 class="title">마이페이지</h1>
-    <mainbox class="container text-center">
+    <mainbox class="container">
       <div class="row">
-        <mymovie class="col">
-          <p>내가 좋아요 표시한 영화</p>
-          <div class="container text-center">
-            <div class="row">
-              <div class="col">
-                <div class="card" style="width: 18rem;" v-for="movie in selectedmovies">
-                  <img src="" class="card-img-top" alt="$`{movie.poster_path}`">
-                  <div class="card-body">
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                  </div>
-                  <p>{{ movie }}</p>
+        <blank class="col-1 border-end"></blank>
+        <div class="col-5 border-bottom header-bg">
+          <h1 class="title-font my-1">{{ username }}</h1>
+        </div>
+        <div class="col-3 pt-2 border-bottom header-bg">
+          <h3 class="title-font text-end my-1">내가 구독한 ott</h3>
+        </div>
+        <div class="col-2 text-start border-bottom border-end header-bg">
+          <div class="ott-card" v-for="ott in selectedotts" :key="ott.id">
+            <img :src="`${store.BasicPosterPath}${ott.logopath}`" class="object-fit-cover border rounded ott-small mx-1 my-1" :alt="`${ott.id}`">
+          </div>
+        </div>
+        <blank class="col-1"></blank>
+      </div>
+      <div class="row my-3">
+        <div class="col-1"></div>
+        <div class="col-5">
+          <h3 class="title-font text-start">내가 좋아요 표시한 영화</h3>
+        </div>
+        <div class="col-5 text-end">
+          <button class="btn btn-success button-color" @click="moreinfo">추가 정보 수정하기</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+          <div class="row">
+            <div class="col-6 col-md-4 col-lg-3 mb-4" v-for="movie in selectedmovies" :key="movie.id">
+              <div class="card h-100 mb-1">
+                <img :src="`${store.BasicPosterPath}${movie.poster_path}`" class="card-img-top fixed-size" :alt="`${movie.title}`">
+                <div class="card-body">
+                  <p class="card-text movie-font">{{ movie.title }}</p>
                 </div>
               </div>
             </div>
           </div>
-        </mymovie>
-        <div class="col">
-          <p>내가 구독한 ott</p>
-          <p>{{ selectedotts }}</p>
         </div>
+        <div class="col-1"></div>
       </div>
     </mainbox>
-    <!-- 회원 수정, ott, 영화 선택, 좋아하는 영화 장르 변경, 닮은꼴 찾기 링크 -->
-    <button @click="moreinfo">추가 정보 수정하기</button>
   </div>
 </template>
 
@@ -68,8 +83,66 @@ onMounted (() => {
 </script>
 
 <style scoped>
-.title {
-  font-family: 'TitleBold';
 
+body, html {
+    height: 100%;
+    margin: 0;
+}
+
+.container {
+    padding: 20px;
+}
+
+.card-img-top.fixed-size {
+    width: 100%;
+    height: 200px; /* Adjust the height as needed */
+    object-fit: cover;
+    /* object-fit: contain;  으로 포스터 전부 보이게 가능*/
+}
+
+.card {
+    margin-bottom: 20px;
+}
+
+.movie-container {
+  display: inline-block;
+  margin: 10px;
+}
+
+.title-font {
+  font-family: 'TitleBold';
+}
+
+.title {
+  text-align: left;
+  padding-top: 25px;
+  padding-left: 25px;
+}
+.text-center {
+  /* display: flex; */
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.ott-card {
+  display: inline;
+}
+
+.ott-small {
+  width: 50px;
+}
+
+.movie-font {
+  font-family: 'TitleMedium';
+}
+
+.header-bg {
+  background-color: #fff6e5;
+}
+
+.button-color {
+  background-color: #FF7F47;
+  border-color: #FF7F47;
 }
 </style>

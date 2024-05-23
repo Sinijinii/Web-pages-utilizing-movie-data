@@ -5,12 +5,12 @@ from movies.models import OTTPlatform, Movie, Genre
 class OttSerializer(serializers.ModelSerializer):
     class Meta:
         model = OTTPlatform
-        fields = ('id',)
+        fields = ('id','logopath')
 
 class MovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
-        fields = ('id','poster_path','vote_average','vote_count','release_date')
+        fields = ('id','title','poster_path','vote_average','vote_count','release_date')
         
 class UserInfoSerializer(serializers.ModelSerializer):
     

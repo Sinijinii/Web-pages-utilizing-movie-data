@@ -16,19 +16,33 @@
                 </div>
 
                 <div class="info-item">
-                    <h2>평점</h2>
-                    <span class="vote">{{ movie.vote_average }} 점</span>
+                    <h2>평점</h2> 
+                    <span class="vote centered">{{ movie.vote_average }} / 10</span>
                 </div>
 
                 <div class="info-item">
                     <h2>장르</h2>
-                    <span class="genrestext" v-html="formatGenres(movie.genres)"></span>
+                    <div class="genrestext">
+                        <span v-for="(genre, index) in movie.genres" :key="index">{{ genre }}</span>
+                    </div>
                 </div>
 
                 <div class="info-item">
                     <h2>배우</h2>
-                    <span v-html="formatCasts(movie.casts)"></span>
+                    <div class="caststext">
+                        <span v-for="(cast, index) in movie.casts" :key="index">{{ cast }}</span>
+                    </div>
                 </div>
+
+                <!-- <div class="info-item">
+                    <h2>장르</h2>
+                    <span class="genrestext" v-html="formatGenres(movie.genres)"></span>
+                </div> -->
+
+                <!-- <div class="info-item">
+                    <h2>배우</h2>
+                    <span class="caststext" v-html="formatCasts(movie.casts)"></span>
+                </div> -->
 
             </div>
         </div>
@@ -39,7 +53,7 @@
             </div>
 
             <div class="ott-section">
-                <h2>OTT Platforms</h2>
+                <h2 class="otttitle">OTT Platforms</h2>
                 <div class="ott-items">
                     <div v-for="(platform, index) in movie.ott_platforms" :key="index" class="ott-item">
                         <div class="ott-logo-wrapper">
@@ -89,12 +103,6 @@ onMounted(() => {
         })
 })
 
-// function formatGenres(genres) {
-//     if (!genres || genres.length === 0) {
-//         return ''
-//     }
-//     return genres.join(', ')
-// }
 
 function formatCasts(casts) {
     if (!casts || casts.length === 0) {
@@ -103,11 +111,18 @@ function formatCasts(casts) {
     return casts.map(cast => `<span>${cast}</span><br>`).join('');
 }
 
+// function formatGenres(genres) {
+//     if (!genres || genres.length === 0) {
+//         return ''
+//     }
+//     return genres.map(genres => `<span>${genres}</span><br>`).join('');
+// }
+
 function formatGenres(genres) {
     if (!genres || genres.length === 0) {
         return ''
     }
-    return genres.map(genres => `<span>${genres}</span><br>`).join('');
+    return genres.join(' ')  // 각 장르를 공백으로 연결
 }
 
 function formatOtt(ott_platforms) {
@@ -151,6 +166,7 @@ const toggleLike = (movie) => {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    margin-top: 20px; /* 네비바 아래 여백 조절 */
 }
 
 .top-section {
@@ -166,6 +182,7 @@ const toggleLike = (movie) => {
 .poster img {
     width: 100%;
     height: auto;
+    border-radius: 5px;
 }
 
 .details {
@@ -190,10 +207,33 @@ const toggleLike = (movie) => {
 
 .info-item {
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    height: 40%;
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.votediv {
+    display: flex;
+    justify-content: space-between; /* 내부 요소를 좌우로 분산 정렬합니다. */
     border: 1px solid #ccc;
     padding: 10px;
     height: 40%;
+    display: flex;
+    font-family: 'TitleMedium';
+    src: url('@/assets/fonts/Title_Medium.otf') format('opentype'),
+         url('@/assets/fonts/woff/Title_Medium.woff') format('woff');
+}
+
+.centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 .info-item h2 {
@@ -205,13 +245,32 @@ const toggleLike = (movie) => {
     font-weight: bold;
 }
 
+
+
 .vote {
-    font-size: 28px;
+    font-size: 50px;
+    display: flex;
 }
 
 .genrestext {
-    font-size: 28px;
+    font-size: 23px;
+    display: flex;
+    flex-wrap: wrap; /* 필요 시 장르가 한 줄에 모두 표시되도록 wrap 설정 */
+    gap: 40px; /* 각 장르 요소 사이의 간격을 조절합니다. */
+    font-family: 'BatangRegular';
+    src: url('@/assets/fonts/woff/Batang_Regular.woff') format('woff');
+    justify-content: center; /* 요소들을 가운데 정렬합니다. */
 }
+
+.caststext {
+        font-size: 23px;
+        display: flex;
+        flex-wrap: wrap; /* 필요 시 배우가 한 줄에 모두 표시되도록 wrap 설정 */
+        gap: 40px; /* 각 배우 요소 사이의 간격을 조절합니다. */
+        font-family: 'BatangRegular';
+        src: url('@/assets/fonts/woff/Batang_Regular.woff') format('woff');
+        justify-content: center; /* 요소들을 가운데 정렬합니다. */
+    }
 
 .like-section {
     display: flex;
@@ -249,14 +308,34 @@ const toggleLike = (movie) => {
     gap: 1px;
 }
 
-.overview-section,
-.ott-section {
-    margin-top: 20px;
+.overview-section {
     border: 1px solid #ccc;
+    border-radius: 5px;
     padding: 10px;
+    
+}
+.ott-section {
+    margin-top: 30px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 40px;
 }
 
+
+
 .overview-section h2 {
+    font-family: 'TitleMedium';
+    src: url('@/assets/fonts/Title_Medium.otf') format('opentype'),
+         url('@/assets/fonts/woff/Title_Medium.woff') format('woff');
+}
+
+.overview-section span {
+    font-family: 'BatangRegular';
+    src: url('@/assets/fonts/woff/Batang_Regular.woff') format('woff');
+}
+
+.otttitle {
     font-family: 'TitleMedium';
     src: url('@/assets/fonts/Title_Medium.otf') format('opentype'),
          url('@/assets/fonts/woff/Title_Medium.woff') format('woff');
