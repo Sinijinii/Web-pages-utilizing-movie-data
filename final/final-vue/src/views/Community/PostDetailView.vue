@@ -155,7 +155,7 @@ const fetchPost = async () => {
 
 const deletePost = async (postId) => {
   try {
-    await axios.delete(`${store.API_URL}/delete_post/${postId}/`, {
+    await axios.delete(`${store.API_URL}/articles/delete_post/${postId}/`, {
       headers: {
         'Authorization': `Token ${store.token}`
       }

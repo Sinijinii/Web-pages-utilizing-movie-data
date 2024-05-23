@@ -1,16 +1,16 @@
 <template>
-  <div class="findactor">
+  <div class="findactor-page">
     <div class="sidebar">
       <RouterLink :to="{ name: 'MainView' }" class="sidebar-link" :class="{ active: $route.name === 'Mainpage' }">Mainpage</RouterLink>
       <hr>
       <RouterLink :to="{ name: 'Community' }" class="sidebar-link" :class="{ active: $route.name === 'Community' }">Community</RouterLink>
       <RouterLink :to="{ name: 'UploadImage' }" class="sidebar-link" :class="{ active: $route.name === 'UploadImage' }">New Post</RouterLink>
-      <RouterLink :to="{ name: 'ProfileView', params: { username: userstore.LoginUsername } }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>      <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
+      <RouterLink :to="{ name: 'ProfileView', params: { username: userstore.LoginUsername } }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>
       <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
       <RouterLink :to="{ name: 'FindActor' }" class="sidebar-link" :class="{ active: $route.name === 'FindActor' }">Find Actor</RouterLink>
       <RouterLink :to="{ name: 'ImageGenerator' }" class="sidebar-link" :class="{ active: $route.name === 'ImageGenerator' }">Image Generator</RouterLink>
     </div>
-    <div class="container-fluid page-background">
+    <div class="findactor">
       <div class="container py-5">
         <h1 class="text-center title-medium mb-5">Find Similar Actor</h1>
         <div v-if="!similarActor" class="d-flex justify-content-center align-items-center upload-section mb-5">
@@ -121,17 +121,16 @@ const resetForm = () => {
 <style scoped>
 @import url('@/assets/fonts/fonts.css');
 
-.findactor {
+.findactor-page {
   display: flex;
+  background-color:#FAF7F5;
 }
+
 .sidebar {
   width: 200px;
   padding: 20px;
   background-color: #4C6A58; /* 짙은 녹색 배경 */
   min-height: 100vh; /* 화면 전체 높이 */
-  position: fixed; /* 사이드바를 고정 */
-  left: 0; /* 왼쪽 끝에 붙임 */
-  top: 0; /* 상단 끝에 붙임 */
 }
 
 .sidebar-link {
@@ -154,20 +153,22 @@ const resetForm = () => {
   background-color: #333333; /* 어두운 회색 배경 */
 }
 
-.page-background {
-  background-color: #FAF7F5; /* 전체 페이지 배경색 */
+.findactor {
+  background-color: #FFF6E5; /* 전체 페이지 배경색 */
   min-height: 100vh;
   flex-grow: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 20px;
 }
 
 .container {
-  background-color: #FFF6E5; /* 크림색 배경 */
+  background-color: #FAF7F5; /* 크림색 배경 */
+  margin: 10px 10px 10px 10px;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-left: 220px; /* 사이드바의 너비와 여백 확보 */
-  padding: 20px;
-  width: calc(100% - 220px); /* 전체 너비에서 사이드바 너비를 뺌 */
 }
 
 .title-medium {
@@ -176,14 +177,14 @@ const resetForm = () => {
 }
 
 .upload-section {
-  background-color: #FFF6E5; /* 크림색 배경 */
+  background-color: #FAF7F5; /* 크림색 배경 */
   border: 1px solid #4C6A58; /* 어두운 녹색 테두리 */
   padding: 20px;
   border-radius: 10px;
 }
 
 .upload-section .form-control {
-  background-color: #FFF6E5; /* 크림색 */
+  background-color: #FAF7F5; /* 크림색 */
   border: 1px solid #FF7F47; /* 주황색 */
   color: #333333; /* 텍스트 색상 */
 }

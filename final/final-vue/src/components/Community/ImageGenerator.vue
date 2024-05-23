@@ -5,7 +5,7 @@
       <hr>
       <RouterLink :to="{ name: 'Community' }" class="sidebar-link" :class="{ active: $route.name === 'Community' }">Community</RouterLink>
       <RouterLink :to="{ name: 'UploadImage' }" class="sidebar-link" :class="{ active: $route.name === 'UploadImage' }">New Post</RouterLink>
-      <RouterLink :to="{ name: 'ProfileView', params: { username: userstore.LoginUsername } }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>      <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
+      <RouterLink :to="{ name: 'ProfileView', params: { username: userstore.LoginUsername } }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink> 
       <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
       <RouterLink :to="{ name: 'FindActor' }" class="sidebar-link" :class="{ active: $route.name === 'FindActor' }">Find Actor</RouterLink>
       <RouterLink :to="{ name: 'ImageGenerator' }" class="sidebar-link" :class="{ active: $route.name === 'ImageGenerator' }">Image Generator</RouterLink>
@@ -50,6 +50,7 @@
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-body text-center">
+            <h5>이미지 생성중</h5>
             <img :src="loadingGif" alt="Loading..." />
           </div>
         </div>
@@ -229,9 +230,13 @@ onUnmounted(() => {
 
 <style scoped>
 @import url('@/assets/fonts/fonts.css');
-
+.title-medium {
+  color: #333333; /* 텍스트 색상 */
+  font-family: 'TitleMedium', sans-serif; /* 제목 폰트 */
+}
 .image-generator-page {
   display: flex;
+  background-color:#FAF7F5;
 }
 
 .sidebar {
@@ -262,7 +267,7 @@ onUnmounted(() => {
 }
 
 .image-generator {
-  background-color: #FAF7F5; /* 전체 페이지 배경색 */
+  background-color: #FFF6E5; /* 전체 페이지 배경색 */
   min-height: 100vh;
   flex-grow: 1;
   display: flex;
@@ -272,7 +277,8 @@ onUnmounted(() => {
 }
 
 .container {
-  background-color: #FFF6E5; /* 크림색 배경 */
+  background-color: #FAF7F5; /* 크림색 배경 */
+  margin: 10px 10px 10px 10px;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

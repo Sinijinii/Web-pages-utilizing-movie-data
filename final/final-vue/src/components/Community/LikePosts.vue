@@ -5,7 +5,7 @@
       <hr>
       <RouterLink :to="{ name: 'Community' }" class="sidebar-link" :class="{ active: $route.name === 'Community' }">Community</RouterLink>
       <RouterLink :to="{ name: 'UploadImage' }" class="sidebar-link" :class="{ active: $route.name === 'UploadImage' }">New Post</RouterLink>
-      <RouterLink :to="{ name: 'ProfileView', params: { username: userstore.LoginUsername } }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>      <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
+      <RouterLink :to="{ name: 'ProfileView', params: { username: userstore.LoginUsername } }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink> 
       <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
       <RouterLink :to="{ name: 'FindActor' }" class="sidebar-link" :class="{ active: $route.name === 'FindActor' }">Find Actor</RouterLink>
       <RouterLink :to="{ name: 'ImageGenerator' }" class="sidebar-link" :class="{ active: $route.name === 'ImageGenerator' }">Image Generator</RouterLink>
@@ -19,9 +19,8 @@
           </RouterLink>
           <p>{{ post.content }}</p>
           <p class="created-at">{{ formatDate(post.created_at) }}</p>
-          <p>Likes: {{ post.likes.length }}</p>
           <button class="likebtn" @click="toggleLike(post)">
-            {{ post.likes.includes(store.userId) ? 'Unlike' : 'Like' }}
+            🧡: {{ post.likes.length }}
           </button>
         </div>
       </div>
@@ -49,6 +48,7 @@ const fetchLikedPosts = async () => {
     }
   })
   .then(response => {
+    console.log(response.data);
     likedPosts.value = response.data.liked_posts.reverse() // 최신 글이 가장 위에 오도록 정렬
   })
   .catch(error => {
@@ -154,10 +154,11 @@ onBeforeMount(() => {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 20px;
   text-align: center;
+  width: 100%; /* 추가: 부모 요소 너비를 100%로 설정 */
 }
 
 .post img {
-  width: 250px; /* 이미지의 너비와 높이 조정 */
+  width: 100%; /* 이미지의 너비를 부모 요소에 맞춤 */
   height: 180px;
   object-fit: cover;
   border-radius: 10px;

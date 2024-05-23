@@ -283,12 +283,19 @@ def upload_result(request):
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def my_posts(request):
-    user = request.user
+def my_posts(request, username):
+    user = get_object_or_404(User, username=username)
     posts = Post.objects.filter(user=user).order_by('-created_at')
-    serializer = PostSerializer(posts, many=True)
-    
-    return Response(serializer.data)
+    profile_image = user.userinfo.profile_image.url if user.userinfo.profile_image else ''
+    total_likes = sum(post.likes.count() for post in posts)
+    response_data = {
+        'username': user.username,
+        'profile_image': profile_image,
+        'posts': [{'id': post.id, 'image': post.image.url if post.image else ''} for post in posts],
+        'total_likes': total_likes,
+    }
+    return JsonResponse(response_data)
+
 
 
 
@@ -429,13 +436,14 @@ def like_post(request, post_id):
 @api_view(['GET'])
 def user_profile(request, username):
     user = get_object_or_404(User, username=username)
-    posts = user.post_set.all()
+    posts = Post.objects.filter(user=user).order_by('-created_at')
     profile_image = user.userinfo.user_image.url
+    print(posts)
     total_likes = sum(post.likes.count() for post in posts)
     response_data = {
         'username': user.username,
         'profile_image': profile_image,
-        'posts': [{'id': post.id, 'image': post.image.url} for post in posts],
+        'posts': [{'id': post.id, 'image': post.image.url if post.image else ''} for post in posts],
         'total_likes': total_likes,
     }
     return JsonResponse(response_data)

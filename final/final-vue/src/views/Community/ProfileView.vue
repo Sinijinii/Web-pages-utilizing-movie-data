@@ -1,9 +1,12 @@
 <template>
   <div class="profile-page">
     <div class="sidebar">
+      <RouterLink :to="{ name: 'MainView' }" class="sidebar-link" :class="{ active: $route.name === 'Mainpage' }">Mainpage</RouterLink>
+      <hr>
       <RouterLink :to="{ name: 'Community' }" class="sidebar-link" :class="{ active: $route.name === 'Community' }">Community</RouterLink>
       <RouterLink :to="{ name: 'UploadImage' }" class="sidebar-link" :class="{ active: $route.name === 'UploadImage' }">New Post</RouterLink>
-      <RouterLink :to="{ name: 'ProfileView', params: { username: userstore.LoginUsername } }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>
+      <RouterLink :to="{ name: 'ProfileView', params: { username: userstore.LoginUsername } }" v-if="responsedata?.username===userstore.LoginUsername" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>
+      <RouterLink :to="{ name: 'ProfileView', params: { username: userstore.LoginUsername } }" v-else class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">{{ responsedata?.username }} Profile</RouterLink>
       <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
       <RouterLink :to="{ name: 'FindActor' }" class="sidebar-link" :class="{ active: $route.name === 'FindActor' }">Find Actor</RouterLink>
       <RouterLink :to="{ name: 'ImageGenerator' }" class="sidebar-link" :class="{ active: $route.name === 'ImageGenerator' }">Image Generator</RouterLink>
@@ -11,7 +14,7 @@
     <div class="profile-content">
       <div class="profile-info">
         <img :src="`${store.API_URL}${profileImage}`" alt="User Profile Picture" class="profile-picture mb-3" />
-        <h1 class="title-medium">{{ username }}</h1>
+        <h1 class="title-medium">{{ responsedata?.username }}</h1>
         <div class="profile-stats">
           <div>
             <p class="stat-number">{{ posts.length }}</p>
@@ -22,7 +25,7 @@
             <p class="stat-label">좋아요</p>
           </div>
         </div>
-        <div class="profile-actions mt-3">
+        <div v-if="responsedata?.username===userstore.LoginUsername" class="profile-actions mt-3">
           <button @click="toggleEditMode" class="btn btn-primary me-2">프로필 수정</button>
           <RouterLink :to="{ name: 'LikePostsView' }" class="btn btn-outline-primary">좋아요한 페이지</RouterLink>
         </div>
@@ -35,7 +38,8 @@
       </div>
 
       <div class="my-posts">
-        <h2 class="title-medium mb-4">My Posts</h2>
+        <h2 v-if="responsedata?.username===userstore.LoginUsername" class="title-medium mb-4">My Posts</h2>
+        <h2 v-else="" class="title-medium mb-4">{{ responsedata?.username }} Posts</h2>
         <div v-if="posts && posts.length" class="posts-grid">
           <div v-for="post in posts" :key="post.id" class="post">
             <RouterLink :to="{ name: 'PostDetail', params: { id: post.id } }">
@@ -59,7 +63,7 @@ import { useRoute } from 'vue-router'
 const posts = ref([])
 const profileImage = ref('')
 const totalLikes = ref(0)
-const username = ref('')
+const responsedata = ref('')
 const selectedFile = ref(null)
 const editMode = ref(false)
 
@@ -76,10 +80,10 @@ const fetchUserProfile = async (username) => {
     }
   })
   .then(response => {
-    const sortedPosts = response.data.posts.reverse()
+    const sortedPosts = response.data.posts
     posts.value = sortedPosts
     profileImage.value = response.data.profile_image
-    username.value = response.data.username
+    responsedata.value = response.data
     totalLikes.value = response.data.total_likes
   })
   .catch(error => {
@@ -99,7 +103,7 @@ const uploadProfileImage = () => {
     method: 'post',
     url: `${store.API_URL}/articles/upload_profile_image/`,
     headers: {
-      Authorization: `Token ${tokenstore.token}`,
+      Authorization: `Token ${userstore.token}`,
       'Content-Type': 'multipart/form-data'
     },
     data: formData
@@ -178,6 +182,7 @@ watch(
 }
 
 .profile-info {
+  background-color: #FAF7F5;
   text-align: center;
   margin-bottom: 20px;
   border: 1px solid #ddd; /* 옅은 회색 테두리 */

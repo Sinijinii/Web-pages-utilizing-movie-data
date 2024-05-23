@@ -5,12 +5,12 @@
       <hr>
       <RouterLink :to="{ name: 'Community' }" class="sidebar-link" :class="{ active: $route.name === 'Community' }">Community</RouterLink>
       <RouterLink :to="{ name: 'UploadImage' }" class="sidebar-link" :class="{ active: $route.name === 'UploadImage' }">New Post</RouterLink>
-      <RouterLink :to="{ name: 'ProfileView', params: { username: userstore.LoginUsername } }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>      <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
+      <RouterLink :to="{ name: 'ProfileView', params: { username: userstore.LoginUsername } }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>
       <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
       <RouterLink :to="{ name: 'FindActor' }" class="sidebar-link" :class="{ active: $route.name === 'FindActor' }">Find Actor</RouterLink>
       <RouterLink :to="{ name: 'ImageGenerator' }" class="sidebar-link" :class="{ active: $route.name === 'ImageGenerator' }">Image Generator</RouterLink>
     </div>
-    <div class="container-fluid page-background">
+    <div class="upload page-background">
       <div class="container py-5">
         <!-- 이미지 선택 페이지 -->
         <h1 class="text-center title-medium mb-5">New Post</h1>
@@ -88,11 +88,9 @@ const resetForm = () => {
 
 .upload-page {
   display: flex;
+  background-color:#FAF7F5;
 }
-.title-medium {
-  color: #333333; /* 텍스트 색상 */
-  font-family: 'TitleMedium', sans-serif; /* 제목 폰트 */
-}
+
 .sidebar {
   width: 200px;
   padding: 20px;
@@ -111,57 +109,51 @@ const resetForm = () => {
   transition: background-color 0.3s;
 }
 
-.sidebar {
-  width: 200px;
-  padding: 20px;
-  background-color: #4C6A58; /* 짙은 녹색 배경 */
-  min-height: 100vh; /* 화면 전체 높이 */
-  position: fixed; /* 사이드바를 고정 */
-  left: 0; /* 왼쪽 끝에 붙임 */
-  top: 0; /* 상단 끝에 붙임 */
+.sidebar-link.active {
+  background-color: #FF7F47; /* 활성 링크의 배경색 */
+  color: #FFF; /* 활성 링크의 텍스트 색상 */
 }
 
-.sidebar-link {
-  display: block;
-  color: #FFF6E5; /* 크림색 텍스트 */
-  font-family: 'TitleMedium', sans-serif; /* 제목 폰트 */
-  text-decoration: none;
-  padding: 10px 15px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  transition: background-color 0.3s;
+.sidebar-link:hover {
+  background-color: #333333; /* 어두운 회색 배경 */
 }
 
-.page-background {
-  background-color: #FAF7F5; /* 전체 페이지 배경색 */
+.upload {
+  background-color: #FFF6E5; /* 전체 페이지 배경색 */
   min-height: 100vh;
   flex-grow: 1;
   display: flex;
-  flex-direction: column; /* 수직 정렬 */
-  align-items: center;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 20px;
 }
 
 .container {
-  background-color: #FFF6E5; /* 크림색 배경 */
+  background-color: #FAF7F5; /* 크림색 배경 */
+  margin: 10px 10px 10px 10px;
   padding: 20px;
   border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-left: 220px; /* 사이드바의 너비와 여백 확보 */
-  padding: 20px;
-  width: calc(100% - 220px); /* 전체 너비에서 사이드바 너비를 뺌 */
 }
 
 .upload-section {
-  background-color: #FFF6E5; /* 크림색 배경 */
+  background-color: #FAF7F5; /* 크림색 배경 */
   border: 1px solid #4C6A58; /* 어두운 녹색 테두리 */
   padding: 20px;
   border-radius: 10px;
-  margin-top: 20px; /* 위쪽 여백 추가 */
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-
 .upload-section .form-control {
-  background-color: #FFF6E5; /* 크림색 */
+  background-color: #FAF7F5; /* 크림색 */
   border: 1px solid #FF7F47; /* 주황색 */
   color: #333333; /* 텍스트 색상 */
 }
@@ -181,9 +173,13 @@ const resetForm = () => {
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center; /* 섹션 전체 텍스트 가운데 정렬 */
-  margin-top: 20px; /* 위쪽 여백 추가 */
+  width: 100%;
+  max-width: 600px;
 }
-
+.title-medium {
+  color: #333333; /* 텍스트 색상 */
+  font-family: 'TitleMedium', sans-serif; /* 제목 폰트 */
+}
 .upload-image {
   width: 100%;
   height: 450px;
