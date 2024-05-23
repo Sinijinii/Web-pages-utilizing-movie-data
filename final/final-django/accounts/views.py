@@ -53,8 +53,6 @@ def mypage(request, username):
         ott = OTTPlatform.objects.get(id=j)
         serializer = OttSerializer(ott)
         addott.append(serializer.data)
-    print(addott)
-    print(add)
 
     result = {
         "user": user.pk,

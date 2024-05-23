@@ -84,7 +84,11 @@ const fetchMovie = async () => {
   try {
     const response = await axios.get(`http://127.0.0.1:8000/api/v1/detail/${movieId.value}/`)
     movie.value = response.data
-    isLiked.value = response.data.is_liked  // 서버에서 받아온 is_liked 값을 설정
+    console.log(movie.value.likes);
+    console.log(store.LoginUsername);
+    if (movie.value.likes.includes(store.LoginUsername)) {
+        isLiked.value = true 
+        } // 서버에서 받아온 is_liked 값을 설정
   } catch (error) {
     console.error('영화 정보 가져오기 실패:', error)
   }

@@ -130,7 +130,6 @@ export const useCounterStore = defineStore('counter', () => {
     .then((response) => {
       // 3. 로그인 성공 후 응답 받은 토큰을 저장
         LoginUsername.value = username
-        console.log(response.data);
         token.value = response.data.key
         router.replace({ name : 'MainView' })
       })

@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from itertools import chain
 from typing import Set, List, Dict, Any
 from rest_framework.response import Response
@@ -9,12 +8,12 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
-from django.shortcuts import get_object_or_404, get_list_or_404
-from movies.models import OTTPlatform, Movie, Genre
+from django.shortcuts import get_object_or_404
+from movies.models import OTTPlatform, Movie
 from accounts.models import UserInfo
 from accounts.serializers import MovieSerializer
+from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
 from django.http import JsonResponse
 
 
@@ -117,10 +116,14 @@ def MovieSimilarityView(request):
 
     return Response(result, status=status.HTTP_200_OK)
 
-
-
+@api_view(['GET'])
 def MovieDetail(request, movie_id):
+    User = get_user_model()
     movie = Movie.objects.get(id=movie_id)
+    likes = []
+    for userinfo in movie.likes.all():
+        user = get_object_or_404(User, id = userinfo.id)
+        likes.append(user.username)
     data = {
     'title': movie.title,
     'poster_path': movie.poster_path,
@@ -129,9 +132,8 @@ def MovieDetail(request, movie_id):
     'overview': movie.overview,
     'ott_platforms': [platform.name for platform in movie.ott_platforms.all()],  # ott_platforms 필드 순회하여 각 객체의 name 속성을 추출
     'vote_average': movie.vote_average,
-    "likes": [ user.pk for user in movie.likes.all()],
+    "likes": likes,
     }
-
     return JsonResponse(data)
 
 @api_view(['POST'])
@@ -151,9 +153,6 @@ def like_movie(request, movie_id):
         liked = True
         userinfo.selectedmovies.add(Movie.objects.get(id=movie_id))
     
-    print(userinfo)
-    print(movie.likes.all())
-
     return JsonResponse({'liked': liked, 'likes_count': movie.likes.count()})
 
 def SearchMovie(request,movietitle):

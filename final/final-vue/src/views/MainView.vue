@@ -221,11 +221,7 @@ function scrollRight(id) {
 if (store.isLogin === true) {
   store.getLoginMovies()
 }
-
-console.log(store.loginmovies);
 </script>
-
-
 
 
 <style scoped>
