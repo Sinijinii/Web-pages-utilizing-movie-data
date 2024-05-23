@@ -1,10 +1,11 @@
 <template>
   <div class="community-page">
     <div class="sidebar">
+      <RouterLink :to="{ name: 'MainView' }" class="sidebar-link" :class="{ active: $route.name === 'Mainpage' }">Mainpage</RouterLink>
+      <hr>
       <RouterLink :to="{ name: 'Community' }" class="sidebar-link" :class="{ active: $route.name === 'Community' }">Community</RouterLink>
       <RouterLink :to="{ name: 'UploadImage' }" class="sidebar-link" :class="{ active: $route.name === 'UploadImage' }">New Post</RouterLink>
-      <RouterLink :to="{ name: 'ProfileView' }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>
-      <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
+      <RouterLink :to="{ name: 'ProfileView', params: { username: userstore.LoginUsername } }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>      <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
       <RouterLink :to="{ name: 'FindActor' }" class="sidebar-link" :class="{ active: $route.name === 'FindActor' }">Find Actor</RouterLink>
       <RouterLink :to="{ name: 'ImageGenerator' }" class="sidebar-link" :class="{ active: $route.name === 'ImageGenerator' }">Image Generator</RouterLink>
     </div>
@@ -44,8 +45,10 @@
               <div v-for="comment in post?.comments" :key="comment?.id" class="comment">
                 <div class="comment-header">
                   <div class="comment-content">
-                    <img :src="`${store.API_URL}${comment.write_comment_user.userinfo.user_image}`" alt="Commenter Profile Image" class="profile-picture" />
-                    <p>{{ comment.write_comment_user.username }}: {{ comment?.content }}</p>
+                    <RouterLink :to="{ name: 'ProfileView', params: { username: comment.write_comment_user.username } }">
+                      <img :src="`${store.API_URL}${comment.write_comment_user.userinfo.user_image}`" alt="Commenter Profile Image" class="profile-picture" />
+                      <p>{{ comment.write_comment_user.username }}: {{ comment?.content }}</p>
+                    </RouterLink>
                   </div>
                   <p class="comment-time">{{ formatDate(comment?.created_at) }}</p>
                 </div>
@@ -58,8 +61,10 @@
                   <div v-for="reply in comment?.commented" :key="reply?.id" class="reply">
                     <div class="reply-header">
                       <div class="reply-content">
-                        <img :src="`${store.API_URL}${reply.write_comment_user.userinfo.user_image}`" alt="Reply User Image" class="profile-picture" />
-                        <p>{{ reply.write_comment_user.username }}: {{ reply?.content }}</p>
+                        <RouterLink :to="{ name: 'ProfileView', params: { username: reply.write_comment_user.username } }">
+                          <img :src="`${store.API_URL}${reply.write_comment_user.userinfo.user_image}`" alt="Reply User Image" class="profile-picture" />
+                          <p>{{ reply.write_comment_user.username }}: {{ reply?.content }}</p>
+                        </RouterLink>
                       </div>
                       <p class="reply-time">{{ formatDate(reply?.created_at) }}</p>
                     </div>
@@ -101,7 +106,6 @@ const like_tf = ref({})
 const fetchPosts = async () => {
   try {
     const response = await axios.get(`${store.API_URL}/articles/get_posts/`)
-    console.log('Fetched posts:', response.data) // 디버깅을 위한 로그
     posts.value = response.data
   } catch (error) {
     console.error('Error fetching posts:', error)
@@ -124,26 +128,28 @@ const deletePost = async (postId) => {
   })
 }
 
-const toggleLike = (post) => {
-  axios({
-    method: 'post',
-    url: `${store.API_URL}/articles/like_post/${post.id}/`,
-    headers: {
-      'Authorization': `Token ${store.token}`
-    }
-  })
-    .then(response => {
-      if (post.like_list && post.like_list.includes(userstore.LoginUsername)) {
-        post.like_list = post.like_list.filter(username => username !== userstore.LoginUsername)
-        post.likes.length -= 1
-      } else {
-        post.like_list.push(userstore.LoginUsername)
-        post.likes.length += 1
+const toggleLike = async (post) => {
+  try {
+    const response = await axios.post(`${store.API_URL}/articles/like_post/${post.id}/`, null, {
+      headers: {
+        'Authorization': `Token ${store.token}`
       }
     })
-    .catch(error => {
-      console.error('좋아요 기능 실패했다', error)
-    })
+
+    const liked = response.data.liked
+    if (liked) {
+      post.like_list.push(userstore.LoginUsername)
+      post.likes.length += 1
+    } else {
+      const index = post.like_list.indexOf(userstore.LoginUsername)
+      if (index > -1) {
+        post.like_list.splice(index, 1)
+        post.likes.length -= 1
+      }
+    }
+  } catch (error) {
+    console.error('좋아요 기능 실패했다', error)
+  }
 }
 
 const createComment = async ({ postId, content }) => {

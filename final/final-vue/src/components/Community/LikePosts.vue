@@ -1,9 +1,11 @@
 <template>
   <div class="liked-posts-page">
     <div class="sidebar">
+      <RouterLink :to="{ name: 'MainView' }" class="sidebar-link" :class="{ active: $route.name === 'Mainpage' }">Mainpage</RouterLink>
+      <hr>
       <RouterLink :to="{ name: 'Community' }" class="sidebar-link" :class="{ active: $route.name === 'Community' }">Community</RouterLink>
       <RouterLink :to="{ name: 'UploadImage' }" class="sidebar-link" :class="{ active: $route.name === 'UploadImage' }">New Post</RouterLink>
-      <RouterLink :to="{ name: 'ProfileView' }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>
+      <RouterLink :to="{ name: 'ProfileView', params: { username: userstore.LoginUsername } }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>      <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
       <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
       <RouterLink :to="{ name: 'FindActor' }" class="sidebar-link" :class="{ active: $route.name === 'FindActor' }">Find Actor</RouterLink>
       <RouterLink :to="{ name: 'ImageGenerator' }" class="sidebar-link" :class="{ active: $route.name === 'ImageGenerator' }">Image Generator</RouterLink>
@@ -16,7 +18,7 @@
             <img :src="`${store.API_URL}${post.image}`" alt="Post Image" class="post-image" />
           </RouterLink>
           <p>{{ post.content }}</p>
-          <p>{{ post.created_at }}</p>
+          <p class="created-at">{{ formatDate(post.created_at) }}</p>
           <p>Likes: {{ post.likes.length }}</p>
           <button class="likebtn" @click="toggleLike(post)">
             {{ post.likes.includes(store.userId) ? 'Unlike' : 'Like' }}
@@ -36,46 +38,52 @@ import { useCommunity } from '@/stores/community'
 
 const likedPosts = ref([])
 const store = useCommunity()
-const tokenstore = useCounterStore()
+const userstore = useCounterStore()
 
 const fetchLikedPosts = async () => {
   axios({
     method: 'get',
     url: `${store.API_URL}/articles/user_liked_posts/`,
     headers: {
-      Authorization: `Token ${tokenstore.token}`
+      Authorization: `Token ${userstore.token}`
     }
   })
   .then(response => {
-    likedPosts.value = response.data.liked_posts
+    likedPosts.value = response.data.liked_posts.reverse() // 최신 글이 가장 위에 오도록 정렬
   })
   .catch(error => {
     console.log(error)
   })
 }
 
-const toggleLike = (post) => {
-  axios({
-    method: 'post',
-    url: `${store.API_URL}/articles/like_post/${post.id}/`,
-    headers: {
-      'Authorization': `Token ${tokenstore.token}`
-    }
-  })
-    .then(response => {
-      const liked = response.data.liked
-      if (liked) {
-        post.likes.push(store.userId)
-      } else {
-        const index = post.likes.indexOf(store.userId)
-        if (index > -1) {
-          post.likes.splice(index, 1)
-        }
+const toggleLike = async (post) => {
+  try {
+    const response = await axios({
+      method: 'post',
+      url: `${store.API_URL}/articles/like_post/${post.id}/`,
+      headers: {
+        'Authorization': `Token ${userstore.token}`
       }
     })
-    .catch(error => {
-      console.error('좋아요 기능 실패했다', error)
-    })
+    const liked = response.data.liked
+    if (liked) {
+      post.likes.push(store.userId)
+    } else {
+      const index = post.likes.indexOf(store.userId)
+      if (index > -1) {
+        post.likes.splice(index, 1)
+      }
+      // 좋아요를 취소한 게시글을 likedPosts 배열에서 제거
+      likedPosts.value = likedPosts.value.filter(p => p.id !== post.id)
+    }
+  } catch (error) {
+    console.error('좋아요 기능 실패했다', error)
+  }
+}
+
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }
+  return new Date(dateString).toLocaleDateString(undefined, options)
 }
 
 onBeforeMount(() => {
@@ -169,4 +177,10 @@ onBeforeMount(() => {
 .likebtn:hover {
   background-color: #FFB899; /* 주황색의 더 연한 톤 */
 }
+
+.created-at {
+  font-size: 0.9em;
+  color: #888;
+}
+
 </style>

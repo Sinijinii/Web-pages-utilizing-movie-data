@@ -51,9 +51,12 @@ export const useCommunity = defineStore('Community', () => {
   const uploadResult = (content, img_url) =>{
     console.log('토큰이다 이자식아');
     console.log(token);
+    console.log(img_url);
+    console.log('여기까지가 store인데욤');
     const formData = new FormData()
     formData.append('content', content)
     formData.append('image', img_url)
+    console.log(formData);
     axios({
       method: 'post',
       url: `${API_URL}/articles/upload_result/`,

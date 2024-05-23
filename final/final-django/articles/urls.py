@@ -25,7 +25,7 @@ urlpatterns = [
     path('like_post/<int:post_id>/', views.like_post, name='like_post'),
     
     ## 프로필 페이지
-    path('user_profile/', views.user_profile, name='user_profile'),
+    path('user_profile/<str:username>/', views.user_profile, name='user_profile'),
     path('upload_profile_image/', views.upload_profile_image, name='upload_profile_image'),
     path('user_liked_posts/', views.user_liked_posts, name='user_liked_posts'),
 ]
