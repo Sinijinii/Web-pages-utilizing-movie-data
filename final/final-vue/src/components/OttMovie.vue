@@ -1,12 +1,10 @@
 <template>
     <div>
-<<<<<<< HEAD
         <div v-if="ott && ott.length" class="movie-list">
             <div v-for="movie in ott" :key="movie.id" class="movie-item">
                 <img class="movie-container" :src="getPostUrl(movie.poster_path)" alt="영화 포스터"
                     @click="movetodetail(movie.id)">
             </div>
-=======
         <h3 v-if="store.loginmovies">Ott별</h3>
             <div v-if="'Netflix' in store.loginmovies">
                 <h4>Netflix</h4>
@@ -25,14 +23,15 @@
             </div>
         <div v-else>
             <h4>영화를 추가해 주세요</h4>
->>>>>>> c501d2a3dbb7a717512cf3b3ddc324b13fc0de0e
         </div>
+    </div>
     </div>
 </template>
 
 <script setup>
 import { ref, defineProps } from 'vue'
 import { useRouter } from 'vue-router'
+import { useCounterStore } from '@/stores/counter'
 
 const props = defineProps({
     ott: {
@@ -42,6 +41,7 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const store = useCounterStore()
 
 const getPostUrl = (posterPath) => {
     return `https://image.tmdb.org/t/p/w500${posterPath}`
@@ -68,15 +68,10 @@ const movetodetail = (movieId) => {
     margin-left: 15px;
     margin-right: 15px;
     cursor: pointer;
-<<<<<<< HEAD
     width: 200px;
     border-radius: 5px;
     height: 300px;
     object-fit: cover;
 }
+
 </style>
-=======
-    width: 100px
-}
-</style>
->>>>>>> c501d2a3dbb7a717512cf3b3ddc324b13fc0de0e
