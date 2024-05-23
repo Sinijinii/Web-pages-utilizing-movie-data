@@ -11,7 +11,7 @@
     </div>
     <div class="findactor">
       <div class="container py-5">
-        <h1 class="text-center title-medium mb-5">Find Similar Actor</h1>
+        <h1 class="text-center title-medium mb-5">닮은꼴 배우 찾기</h1>
         <div v-if="!similarActor" class="d-flex justify-content-center align-items-center upload-section mb-5">
           <div class="me-2">
             <input type="file" class="form-control" @change="onFileChange" accept="image/*" />
