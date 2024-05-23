@@ -131,7 +131,7 @@
 
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useCounterStore } from '@/stores/counter'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
@@ -143,6 +143,12 @@ import LatestMovie from '@/components/LatestMovie.vue'
 const store = useCounterStore()
 const searchTerm = ref('')
 const router = useRouter()
+const none = ref(false)
+
+onMounted(async () => {
+  await store.getMovies()
+  loading.value = false
+});
 const loading = ref(false)
 const currentVideoSource = ref('/videos/Avengers2_trailer.mp4') // 초기 동영상 소스
 

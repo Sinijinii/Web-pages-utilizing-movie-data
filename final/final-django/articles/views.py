@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from tensorflow.keras.models import load_model
 from django.db.models import Count
 from .models import *
+from accounts.models import *
 from .serializers import *
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -185,22 +186,24 @@ def t2i(prompt, negative_prompt):
 ###########################################################################################
 
 
-@csrf_exempt
 @api_view(['POST'])
 def create_post(request):
     if request.method == 'POST':
+        user = request.user
+        user_info = get_object_or_404(UserInfo, user=user)
 
         data = {
-                'content': request.POST.get('content'),
-                'image': request.FILES.get('image'),
-                'user': request.user.id
-            }
+            'content': request.POST.get('content'),
+            'image': request.FILES.get('image'),
+            'user': user.id,
+            'user_info': user_info.id
+        }
 
-        serializer = PostSerializer(data=data)
+        serializer = PostSerializer(data=data, context={'request': request})
         if serializer.is_valid(raise_exception=True):
-            serializer.save(user=request.user)
-            return Response( serializer.data,status=status.HTTP_201_CREATED)
-        # return JsonResponse({'success': True, 'post_id': post.id, 'image_url': image_url})
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
     return JsonResponse({'error': 'POST method required'}, status=405)
 
 
@@ -255,18 +258,25 @@ def update_post(request, post_id):
 @api_view(['POST'])
 def upload_result(request):
     if request.method == 'POST':
+        user = request.user
+        user_info = get_object_or_404(UserInfo, user=user)
+        print('---------------------------------------')
+        print(request.POST.get('image'))
         data = {
-                'content': request.POST.get('content'),
-                'image': request.POST.get('image'),
-                'user': request.user.id
-            }
+            'content': request.POST.get('content'),
+            'image': request.POST.get('image'),
+            'user': user.id,
+            'user_info': user_info.id
+        }
+
         Post.objects.create(
             content=request.POST.get('content'),
-            image= request.POST.get('image'),
-            user= request.user
+            image=request.POST.get('image'),
+            user=user,
+            user_info=user_info
         )
 
-        return Response(data,status=status.HTTP_201_CREATED)
+        return Response(data, status=status.HTTP_201_CREATED)
     return JsonResponse({'error': 'POST method required'}, status=405)
 
 
@@ -417,19 +427,18 @@ def like_post(request, post_id):
 
 
 @api_view(['GET'])
-def user_profile(request):
-    user = request.user
-    posts = Post.objects.filter(user=user)
-    liked_posts = user.liked_posts.all()
-    profile_image = user.userinfo.user_image.url if user.userinfo.user_image else 'profile/default.png'
-    total_likes = posts.aggregate(total_likes=models.Count('likes'))['total_likes'] or 0
-    return Response({
+def user_profile(request, username):
+    user = get_object_or_404(User, username=username)
+    posts = user.post_set.all()
+    profile_image = user.userinfo.user_image.url
+    total_likes = sum(post.likes.count() for post in posts)
+    response_data = {
         'username': user.username,
         'profile_image': profile_image,
+        'posts': [{'id': post.id, 'image': post.image.url} for post in posts],
         'total_likes': total_likes,
-        'liked_posts': PostSerializer(liked_posts, many=True).data,
-        'posts': PostSerializer(posts, many=True).data
-    })
+    }
+    return JsonResponse(response_data)
 
 
 @api_view(['POST'])

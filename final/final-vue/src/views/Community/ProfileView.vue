@@ -3,7 +3,7 @@
     <div class="sidebar">
       <RouterLink :to="{ name: 'Community' }" class="sidebar-link" :class="{ active: $route.name === 'Community' }">Community</RouterLink>
       <RouterLink :to="{ name: 'UploadImage' }" class="sidebar-link" :class="{ active: $route.name === 'UploadImage' }">New Post</RouterLink>
-      <RouterLink :to="{ name: 'ProfileView' }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>
+      <RouterLink :to="{ name: 'ProfileView', params: { username: userstore.LoginUsername } }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>
       <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
       <RouterLink :to="{ name: 'FindActor' }" class="sidebar-link" :class="{ active: $route.name === 'FindActor' }">Find Actor</RouterLink>
       <RouterLink :to="{ name: 'ImageGenerator' }" class="sidebar-link" :class="{ active: $route.name === 'ImageGenerator' }">Image Generator</RouterLink>
@@ -50,10 +50,11 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount } from 'vue'
+import { ref, onBeforeMount, watch } from 'vue'
 import axios from 'axios'
 import { useCounterStore } from '@/stores/counter'
 import { useCommunity } from '@/stores/community'
+import { useRoute } from 'vue-router'
 
 const posts = ref([])
 const profileImage = ref('')
@@ -63,18 +64,20 @@ const selectedFile = ref(null)
 const editMode = ref(false)
 
 const store = useCommunity()
-const tokenstore = useCounterStore()
+const userstore = useCounterStore()
+const route = useRoute()
 
-const fetchMyPosts = async () => {
+const fetchUserProfile = async (username) => {
   axios({
     method: 'get',
-    url: `${store.API_URL}/articles/user_profile/`,
+    url: `${store.API_URL}/articles/user_profile/${username}/`,
     headers: {
-      Authorization: `Token ${tokenstore.token}`
+      Authorization: `Token ${userstore.token}`
     }
   })
   .then(response => {
-    posts.value = response.data.posts
+    const sortedPosts = response.data.posts.reverse()
+    posts.value = sortedPosts
     profileImage.value = response.data.profile_image
     username.value = response.data.username
     totalLikes.value = response.data.total_likes
@@ -115,8 +118,19 @@ const toggleEditMode = () => {
 }
 
 onBeforeMount(() => {
-  fetchMyPosts()
+  if (route.params.username) {
+    fetchUserProfile(route.params.username)
+  } else {
+    fetchUserProfile(userstore.LoginUsername)
+  }
 })
+
+watch(
+  () => route.params.username,
+  (newUsername) => {
+    fetchUserProfile(newUsername)
+  }
+)
 </script>
 
 <style scoped>

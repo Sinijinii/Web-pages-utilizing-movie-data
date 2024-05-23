@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Post, Comment
 from accounts.models import User, UserInfo
 from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 
 # 커스텀 사용자 모델 가져오기
 User = get_user_model()
@@ -78,15 +79,23 @@ class CommentLikeSerializer(serializers.ModelSerializer):
 # 게시글
 class PostSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)  # 사용자 정보를 포함하기 위해 UserSerializer 사용
+    user_info = serializers.PrimaryKeyRelatedField(read_only=True)  # user_info 필드를 추가
     likes = UserSerializer(read_only=True, many=True)  # 좋아요한 사용자 정보를 포함
     comments = serializers.SerializerMethodField()  # 댓글을 가져오는 메소드
 
     class Meta:
         model = Post
-        fields = ['id', 'user', 'image', 'content', 'created_at', 'updated_at', 'comments', 'likes']
+        fields = ['id', 'user', 'user_info', 'image', 'content', 'created_at', 'updated_at', 'comments', 'likes']
 
     # 게시글에 대한 댓글을 가져오는 메소드
     def get_comments(self, obj):
         comments = obj.review_comment.filter(super_comment=None)
         serializer = NewSuperCommentSerializer(comments, many=True)
         return serializer.data
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        user_info = get_object_or_404(UserInfo, user=user)
+        validated_data['user'] = user
+        validated_data['user_info'] = user_info
+        return super().create(validated_data)

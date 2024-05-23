@@ -1,26 +1,59 @@
 <template>
-  <div>
-    <h1>영화, OTT 선택하는 곳</h1>
-  </div>
-  <form @submit.prevent="saveinfo">
-    <div>
-      <h2>선호하는 영화를 선택하세요 (최소 3개)</h2>
-        <div v-for="movie in movies" :key="movie.id" class="movie-container" @click="toggleSelection(movie.id)">
-          <img :src="movie.image" :alt="movie.title" :class="{'selected': selectedmovies.includes(movie.id)}" style="width: 100px; height: auto;">
+
+<div>
+    <mainbox class="container">
+      <div class="row">
+        <blank class="col-1"></blank>
+        <div class="col-5">
+          <h1 class="title-font my-1">영화 정보 입력</h1>
         </div>
-    </div>
-
-    <div>
-      <h2>구독하신 ott를 선택하세요</h2>
-        <div v-for="ott in otts" :key="ott.id" class="ott-container" @click="toggleSelectionOtt(ott.id)">
-          <img :src="ott.logopath" :alt="ott.name" :class="{'selected': selectedotts.includes(ott.id)}">
-        <div>
-    </div>
-
       </div>
-    </div>
-    <button type="submit">입력</button>
-  </form>
+      <form @submit.prevent="saveinfo">
+      <div class="row my-3">
+        <div class="col-1"></div>
+        <div class="col-5">
+          <h3 class="title-font text-start">구독하신 OTT를 선택하세요</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-1"></div>
+        <div class="col-10">
+          <!-- <div v-for="ott in otts" :key="ott.id" class="ott-container" @click="toggleSelectionOtt(ott.id)">
+            <img :src="ott.logopath" :alt="ott.name" :class="{'selected': selectedotts.includes(ott.id)}">
+          </div> -->
+          <div v-for="ott in otts" :key="ott.id" class="ott-container position-relative" @click="toggleSelectionOtt(ott.id)">
+            <img :src="ott.logopath" :alt="ott.name" :class="{'selected': selectedotts.includes(ott.id)}" class="img-fluid">
+              <div v-if="selectedotts.includes(ott.id)" class="check-overlay">
+                <i class="bi bi-check-circle-fill"></i>
+              </div>
+          </div>
+        </div>
+        <div class="col-1"></div>
+
+        <div class="row my-3">
+          <div class="col-1"></div>
+          <div class="col">
+            <h3 class="title-font text-start">좋아하는 영화를 선택하세요 (최소 3개)</h3>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-1"></div>
+          <div class="col-10 border bg-warning-subtle py-3">
+            <div v-for="movie in movies" :key="movie.id" class="movie-container" @click="toggleSelection(movie.id)">
+              <img :src="movie.image" :alt="movie.title" :class="{'selected': selectedmovies.includes(movie.id)}" style="width: 100px; height: auto;">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-10"></div>
+          <div class="col">
+            <button type="submit" class="btn btn-success button-color">입력</button>
+          </div>
+        </div>
+      </div>
+    </form>
+    </mainbox>
+  </div>
 </template>
 
 <script setup>
@@ -83,7 +116,6 @@ const toggleSelectionOtt = (OttId) => {
   }
 }
 
-
 const saveinfo = function () {
 if (selectedmovies.value.length < 3) {
   alert('최소 3개의 영화를 선택해주세요.');
@@ -111,6 +143,9 @@ axios({
 </script>
 
 <style scoped>
+.title-font {
+  font-family: 'TitleBold';
+}
 .movie-container {
   display: inline-block;
   margin: 10px;
@@ -143,11 +178,11 @@ axios({
 }
 
 .ott-container img.selected {
-  border: 5px solid blue;
-  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  border: 5px solid green;
+  box-sizing: border-box;
 }
 
 .movie-container img.selected {
-  border: 5px solid blue;
+  border: 5px solid green;
 }
 </style>

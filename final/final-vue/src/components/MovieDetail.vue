@@ -103,8 +103,9 @@ const toggleLike = (movie) => {
         }
     })
         .then(response => {
-            const liked = response.data.liked
-            if (liked === true) {
+            store.Liked = response.data.liked
+            console.log(response.data.liked);
+            if (store.Liked === true) {
                 movie.likes.push(store.userId)
             } else {
                 const index = movie.likes.indexOf(store.userId)
@@ -112,6 +113,7 @@ const toggleLike = (movie) => {
                     movie.likes.splice(index, 1)
                 }
             }
+            console.log(movie.likes);
         })
         .catch(error => {
             console.error('좋아요 기능 실패했다', error)
