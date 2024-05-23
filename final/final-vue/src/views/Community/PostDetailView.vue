@@ -1,9 +1,11 @@
 <template>
   <div class="movie-detail-page">
     <div class="sidebar">
+      <RouterLink :to="{ name: 'MainView' }" class="sidebar-link" :class="{ active: $route.name === 'Mainpage' }">Mainpage</RouterLink>
+      <hr>
       <RouterLink :to="{ name: 'Community' }" class="sidebar-link" :class="{ active: $route.name === 'Community' }">Community</RouterLink>
       <RouterLink :to="{ name: 'UploadImage' }" class="sidebar-link" :class="{ active: $route.name === 'UploadImage' }">New Post</RouterLink>
-      <RouterLink :to="{ name: 'ProfileView' }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>
+      <RouterLink :to="{ name: 'ProfileView', params: { username: userstore.LoginUsername } }" class="sidebar-link" :class="{ active: $route.name === 'ProfileView' }">My Profile</RouterLink>      <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
       <RouterLink :to="{ name: 'LikePostsView' }" class="sidebar-link" :class="{ active: $route.name === 'LikePostsView' }">Liked Posts</RouterLink>
       <RouterLink :to="{ name: 'FindActor' }" class="sidebar-link" :class="{ active: $route.name === 'FindActor' }">Find Actor</RouterLink>
       <RouterLink :to="{ name: 'ImageGenerator' }" class="sidebar-link" :class="{ active: $route.name === 'ImageGenerator' }">Image Generator</RouterLink>
@@ -73,6 +75,7 @@
                       <RouterLink :to="{ name: 'ProfileView', params: { username: reply.write_comment_user.username } }" class="reply-user">
                         {{ reply.write_comment_user.username }}:
                       </RouterLink>
+                      {{ reply.write_comment_user.username }}:
                       <p class="reply-content">{{ reply?.content }}</p>
                     </div>
                   </div>
@@ -103,6 +106,7 @@ import { useCommunity } from '@/stores/community'
 const route = useRoute()
 const store = useCommunity()
 const userstore = useCounterStore()
+
 const postid = route.params.id
 
 const router = useRouter()

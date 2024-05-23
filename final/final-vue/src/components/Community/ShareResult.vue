@@ -28,6 +28,8 @@ const content = ref('')
 
 const sharePost = () => {
   store.uploadResult(content.value, props.actorImageUrl)
+  console.log('여기는 ShareResult.vue');
+  console.log(props.actorImageUrl);
 }
 </script>
 
