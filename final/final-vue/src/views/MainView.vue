@@ -24,7 +24,6 @@
     <br>
     <br>
     <br>
-
     <div v-if="store.loginmovies?.Netflix" id="netflix" class="movie-section">
       <div class="section-header">
         <img src="@/../logo/NetflixLogo.png" alt="Netflix Logo" class="logo-image">
