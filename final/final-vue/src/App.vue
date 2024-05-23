@@ -1,12 +1,10 @@
 <template>
   <div>
-    <nav v-if="showNavbar" class="navbar navbar-expand-lg bg-body-tertiary">
+    <nav v-if="showNavbar" class="navbar navbar-expand bg-body-tertiary">
       <div class="container-fluid">
-        <RouterLink class="navbar-brand" :to="{ name: 'MainView' }">로고 이미지</RouterLink>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+        <RouterLink class="navbar-brand" :to="{ name: 'MainView' }">
+          <img src="../logo/MainLogo.png" alt="Main Logo" class="logo-image" />
+        </RouterLink>
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
           <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
             <li class="nav-item">
@@ -19,7 +17,8 @@
               <RouterLink class="nav-link" :to="{ name: 'LogInView' }">로그인</RouterLink>
             </li>
             <li class="nav-item" v-if="store.isLogin">
-              <RouterLink class="nav-link" :to="{ name: 'MyPageView', params: { 'username': store.LoginUsername } }">마이페이지</RouterLink>
+              <RouterLink class="nav-link" :to="{ name: 'MyPageView', params: { 'username': store.LoginUsername } }">마이페이지
+              </RouterLink>
             </li>
             <li class="nav-item" v-if="store.isLogin">
               <RouterLink class="nav-link" :to="{ name: 'UserRecommendView' }">추천 영화</RouterLink>
@@ -60,7 +59,7 @@ const logout = () => {
 // 네비게이션 바 표시 여부를 경로에 따라 결정
 watch(route, (newRoute) => {
   if (
-    newRoute.name === 'Community' || 
+    newRoute.name === 'Community' ||
     newRoute.name === 'UploadImage' ||
     newRoute.name === 'ProfileView' ||
     newRoute.name === 'FindActor' ||
@@ -68,8 +67,7 @@ watch(route, (newRoute) => {
     newRoute.name === 'PostDetail' ||
     newRoute.name === 'EditPost' ||
     newRoute.name === 'SharePost' ||
-    newRoute.name === 'LikePostsView' 
-    
+    newRoute.name === 'LikePostsView'
   ) {
     showNavbar.value = false
   } else {
@@ -98,5 +96,13 @@ watch(route, (newRoute) => {
 
 .btn {
   background-color: #FF7F47;
+  color: white;
+}
+
+.logo-image {
+  width: 100px;
+  /* 로고 이미지의 너비 조절 */
+  height: auto;
+  /* 높이는 자동 조절 */
 }
 </style>
