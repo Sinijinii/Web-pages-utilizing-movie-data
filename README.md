@@ -54,7 +54,7 @@
 ---
 ### 실행 화면
 
-![Alt text](image/페이지.mp4)
+![Alt text](image/페이지.gif)
 
 
 ---
